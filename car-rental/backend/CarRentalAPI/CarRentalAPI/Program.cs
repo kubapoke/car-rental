@@ -1,3 +1,6 @@
+using CarRentalAPI;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Load the environment variables
@@ -8,6 +11,9 @@ DotNetEnv.Env.Load();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
+string connextionString = Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING");
+builder.Services.AddDbContext<CarRentalDbContext>(options =>
+                options.UseSqlServer(Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING")));
 
 var allowedOrigins = Environment.GetEnvironmentVariable("ALLOWED_ORIGINS")?.Split(',');
 
