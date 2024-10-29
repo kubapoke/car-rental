@@ -6,6 +6,5 @@ namespace CarRentalAPI
     public class CarRentalDbContext : DbContext
     {
         public CarRentalDbContext(DbContextOptions<CarRentalDbContext> options) : base(options) { }
-        
     }
 }
