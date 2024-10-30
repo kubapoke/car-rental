@@ -1,0 +1,67 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy ASP.Net Core app to Azure Web App - carrentapi
+
+on:
+  push:
+    branches:
+      - development  # Trigger build on development for testing changes
+      - main         # Trigger build and deploy on main for production
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    if: github.ref == 'refs/heads/development' || github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      - name: Build with dotnet
+        run: dotnet build car-rental/backend/CarRentalAPI --configuration Release
+
+      - name: dotnet publish
+        run: dotnet publish car-rental/backend/CarRentalAPI -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: .net-app
+          path: "${{env.DOTNET_ROOT}}/myapp"
+
+  deploy:
+    runs-on: windows-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'  # Only run deployment if push is on main
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    permissions:
+      id-token: write  # Required for requesting the JWT
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: .net-app
+      
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_7682ECE7E38E420B9A2792F48DC92B52 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_6166A5C7588645BB93AF144AE0D65CD0 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_D2DBAAAE1F7B4852928C575796831D20 }}
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'carrentapi'
+          slot-name: 'Production'
+          package: .
