@@ -29,6 +29,7 @@ jobs:
           npm install
           npm run build --if-present
           npm run test --if-present
+
       - name: Zip artifact for deployment
         working-directory: car-search/frontend/car-search  # Path to the project
         run: zip -r release.zip ./*
@@ -55,9 +56,20 @@ jobs:
         with:
           name: node-app
 
+      - name: List directory contents after download
+        run: ls -la
+
+      - name: Check if release.zip exists
+        run: |
+          if [ -f release.zip ]; then
+            echo "release.zip exists"
+          else
+            echo "release.zip does not exist" && exit 1
+          fi
+
       - name: Unzip artifact for deployment
-        run: unzip car-search/frontend/car-search/release.zip
-      
+        run: unzip release.zip -d temp-deployment-dir/
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -71,4 +83,4 @@ jobs:
         with:
           app-name: 'carsearch'
           slot-name: 'Production'
-          package: .
+          package: temp-deployment-dir/
