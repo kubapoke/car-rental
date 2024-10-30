@@ -1,4 +1,5 @@
-# YAML for deploying Node.js app to Azure Web App - carsearch
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
 
 name: Build and deploy Node.js app to Azure Web App - carsearch
 
@@ -23,21 +24,15 @@ jobs:
           node-version: '20.x'
 
       - name: npm install, build, and test
-        working-directory: car-search/frontend/car-search
+        working-directory: car-search/frontend/car-search  # Path to the project
         run: |
           npm install
           npm run build --if-present
           npm run test --if-present
 
-      # Ensure static assets are in the build directory
-      - name: Move static assets to build folder
-        run: |
-          mkdir -p car-search/frontend/car-search/build/public
-          cp -r car-search/frontend/car-search/public/* car-search/frontend/car-search/build/public
-
       - name: Zip artifact for deployment
-        working-directory: car-search/frontend/car-search/build
-        run: zip -r ../release.zip ./*
+        working-directory: car-search/frontend/car-search  # Path to the project
+        run: zip -r release.zip ./*
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -51,8 +46,9 @@ jobs:
     if: github.ref == 'refs/heads/main'  # Only deploy if push is on main
     environment:
       name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write
+      id-token: write  # Required for requesting the JWT
 
     steps:
       - name: Download artifact from build job
@@ -71,9 +67,6 @@ jobs:
             echo "release.zip does not exist" && exit 1
           fi
 
-      - name: Inspect release.zip contents
-        run: unzip -l release.zip
-
       - name: Unzip artifact for deployment
         run: unzip release.zip -d temp-deployment-dir/
 
@@ -90,4 +83,4 @@ jobs:
         with:
           app-name: 'carsearch'
           slot-name: 'Production'
-          package: temp-deployment-dir/release.zip  # Ensure correct package path
+          package: temp-deployment-dir/
