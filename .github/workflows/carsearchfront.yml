@@ -32,13 +32,13 @@ jobs:
 
       - name: Zip artifact for deployment
         working-directory: car-search/frontend/car-search  # Path to the project
-        run: zip -r release.zip ./*
+        run: zip -r ../../../../release.zip ./*
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: car-search/frontend/car-search/release.zip
+          path: release.zip  # File is now in the root directory
 
   deploy:
     runs-on: ubuntu-latest
@@ -57,7 +57,7 @@ jobs:
           name: node-app
 
       - name: Unzip artifact for deployment
-        run: unzip car-search/frontend/car-search/release.zip
+        run: unzip release.zip
       
       - name: Login to Azure
         uses: azure/login@v2
