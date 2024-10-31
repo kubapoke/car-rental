@@ -39,7 +39,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: node-app
-          path: car-search/frontend/car-search/build # Adjust this if your build output is in a different folder
+          path: car-search/frontend/car-search/dist # Adjusted for Vite's default output directory
 
   deploy:
     if: github.ref == 'refs/heads/main'
@@ -67,4 +67,4 @@ jobs:
           app-name: 'carsearch'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_2E07AAC139EF446DA244AC632C954B41 }}
-          package: car-search/frontend/car-search/build # Adjust this path based on your output
+          package: car-search/frontend/car-search/dist # Adjusted for Vite's output
