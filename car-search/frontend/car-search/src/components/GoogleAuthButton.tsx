@@ -31,7 +31,7 @@ const GoogleAuthButton: React.FC = () => {
             <div>
                 {user ? (
                     <div>
-                        <h2>Welcome</h2>
+                        <h2>Welcome {user.email}</h2>
                         <button onClick={logout}>Logout</button>
                     </div>
                 ) : (
