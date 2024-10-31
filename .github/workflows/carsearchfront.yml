@@ -29,17 +29,17 @@ jobs:
           npm run build --if-present
           npm run test --if-present
 
-      - name: List contents of build directory before uploading
+      - name: Zip the dist directory
         working-directory: car-search/frontend/car-search
         run: |
-          echo "Listing files in the build directory:"
-          ls -R .
+          echo "Creating a zip file of the dist directory..."
+          zip -r dist.zip dist
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: node-app
-          path: car-search/frontend/car-search/dist # Adjusted for Vite's default output directory
+          path: car-search/frontend/car-search/dist.zip
 
   deploy:
     if: github.ref == 'refs/heads/main'
@@ -55,11 +55,6 @@ jobs:
         with:
           name: node-app
 
-      - name: List downloaded files for debug
-        run: |
-          echo "Listing files in the download directory:"
-          ls -R .
-
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
@@ -67,4 +62,4 @@ jobs:
           app-name: 'carsearch'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_2E07AAC139EF446DA244AC632C954B41 }}
-          package: car-search/frontend/car-search/dist # Adjusted for Vite's output
+          package: dist.zip # Point to the zipped package
