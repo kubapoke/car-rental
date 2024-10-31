@@ -29,11 +29,17 @@ jobs:
           npm run build --if-present
           npm run test --if-present
 
+      - name: List contents of build directory before uploading
+        working-directory: car-search/frontend/car-search
+        run: |
+          echo "Listing files in the build directory:"
+          ls -R .
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: node-app
-          path: car-search/frontend/car-search/build # Adjust if your build output is in a different folder
+          path: car-search/frontend/car-search/build # Adjust this if your build output is in a different folder
 
   deploy:
     if: github.ref == 'refs/heads/main'
@@ -49,9 +55,10 @@ jobs:
         with:
           name: node-app
 
-      - name: List files in directory for debug
+      - name: List downloaded files for debug
         run: |
-          ls -R car-search/frontend/car-search
+          echo "Listing files in the download directory:"
+          ls -R .
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
