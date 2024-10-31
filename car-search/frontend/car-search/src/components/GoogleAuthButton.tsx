@@ -1,5 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {jwtDecode} from 'jwt-decode'
+import { GoogleOAuthProvider, GoogleLogin, googleLogout } from '@react-oauth/google'
 
 declare const google: any;
 
@@ -11,57 +12,35 @@ const GoogleAuthButton: React.FC = () => {
     const [user, setUser] = useState<GoogleUser | null>(null);
     const clientId = import.meta.env.VITE_CLIENT_ID_FOR_OATH;
 
-    useEffect(() => {
-        const loadGoogleAuth = () => {
-            google.accounts.id.initialize({
-                client_id: clientId,
-                callback: handleCredentialResponse,
-            });
-
-            google.accounts.id.renderButton(
-                document.getElementById('googleSignInDiv'),
-                {
-                    theme: 'outline',
-                    size: 'large',
-                }
-            );
-        };
-
-        if (window.google) {
-            loadGoogleAuth();
-        } else {
-            const script = document.createElement('script');
-            script.src = 'https://accounts.google.com/gsi/client';
-            script.async = true;
-            script.onload = loadGoogleAuth;
-            document.body.appendChild(script);
-        }
-    }, []);
-
     const handleCredentialResponse = (response: any) => {
         const decodedUser = jwtDecode<GoogleUser>(response.credential);
         setUser({
             email: decodedUser.email,
         });
-        console.log(user?.email);
+        console.log("Logged In");
     };
 
     const logout = () => {
-        google.accounts.id.disableAutoSelect();
+        googleLogout();
         setUser(null);
-        console.log('Logedout');
+        console.log("Logged Out");
     }
 
     return (
-        <div>
-            {user ? (
-                <div>
-                    <button onClick={logout}>Logout</button>
-                </div>
-            ) : (
-                <div id='googleSignInDiv'></div>
-            )}
-        </div>
+        <GoogleOAuthProvider clientId={clientId}>
+            <div>
+                {user ? (
+                    <div>
+                        <h2>Welcome</h2>
+                        <button onClick={logout}>Logout</button>
+                    </div>
+                ) : (
+                    <GoogleLogin
+                        onSuccess={(credentialResponse) => handleCredentialResponse(credentialResponse)}
+                        onError={() => {console.log("Login error")}}/>
+                )}
+            </div>
+        </GoogleOAuthProvider>
     )
 }
 
