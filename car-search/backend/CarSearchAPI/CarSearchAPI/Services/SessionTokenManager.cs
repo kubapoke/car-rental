@@ -1,4 +1,7 @@
-﻿namespace CarSearchAPI.Services
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens;
+
+namespace CarSearchAPI.Services
 {
     public class SessionTokenManager
     {
