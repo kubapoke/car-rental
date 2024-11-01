@@ -7,6 +7,6 @@ namespace CarSearchAPI
     {
         public CarSearchDbContext(DbContextOptions<CarSearchDbContext> options) : base(options) { }
 
-        DbSet<ApplicationUser> applicationUsers {  get; set; }
+        public DbSet<ApplicationUser> applicationUsers {  get; set; }
     }
 }
