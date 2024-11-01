@@ -35,12 +35,12 @@ namespace CarSearchAPI.Controllers
 
             if (user != null)
             {
-                var jwtToken = sessionTokenManager.GenerateJwtToken(); 
+                var jwtToken = sessionTokenManager.GenerateJwtToken(user.email, false); 
                 return Ok(new { jwtToken, isNewUser = false });
             }
             else
             {
-                var tmpToken = sessionTokenManager.GenerateTemporaryJwtToken();
+                var tmpToken = sessionTokenManager.GenerateJwtToken(payload.Email, true);
                 return Ok(new { tmpToken, isNewUser = true });
             }
         }
