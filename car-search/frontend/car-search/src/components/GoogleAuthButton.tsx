@@ -15,7 +15,7 @@ const GoogleAuthButton: React.FC = () => {
     const clientId = import.meta.env.VITE_CLIENT_ID_FOR_OATH;
 
     const handleCredentialResponse = async (response: any) => {
-        const backEndResponse = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/AuthController/google-signin`, {
+        const backEndResponse = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/Auth/google-signin`, {
             method: 'POST',
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(response)
