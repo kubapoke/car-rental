@@ -6,6 +6,9 @@ using Google.Apis.Auth;
 using Microsoft.EntityFrameworkCore;
 using CarSearchAPI.DTOs.Users;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
+using System.Security.Claims;
+using System.Security.Cryptography.Xml;
 
 namespace CarSearchAPI.Controllers
 {
@@ -51,7 +54,32 @@ namespace CarSearchAPI.Controllers
         [HttpPost("complete-registration")]
         public async Task<IActionResult> CompleteRegistration([FromBody] NewUserInfoDto userInfo)
         {
-            return Ok();
+            var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (string.IsNullOrEmpty(email))
+            {
+                return Unauthorized("Invalid temporary session");
+            }
+            var user = await _context.applicationUsers.FirstOrDefaultAsync(u => u.email == email);
+            if (user == null)
+            {
+                user = new ApplicationUser
+                {
+                    email = email,
+                    name = userInfo.Name,
+                    surname = userInfo.Surname,
+                    birthDate = userInfo.birthDate,
+                    licenceDate = userInfo.licenceDate
+                };
+                _context.applicationUsers.Add(user);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                return BadRequest("This user already exist");
+            }
+            SessionTokenManager sessionTokenManager = new SessionTokenManager();
+            var sessionToken = sessionTokenManager.GenerateJwtToken(email, false);
+            return Ok(new {sessionToken});
         }
     }
 
