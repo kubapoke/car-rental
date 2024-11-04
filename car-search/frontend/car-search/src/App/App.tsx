@@ -1,5 +1,4 @@
-import '../Styles/index.css'
-import GoogleAuthButton from "../components/GoogleAuthButton.tsx";
+// import '../Styles/index.css'
 import '../index.css'
 import {
     Route,
@@ -11,7 +10,7 @@ import MainLayout from "../Layouts/MainLayout.tsx";
 import HomePage from "../Pages/HomePage.tsx";
 import NotFoundPage from "../Pages/NotFoundPage.tsx";
 import BrowseOffersPage from "../Pages/BrowseOffersPage.tsx";
-import OfferPage, {offerLoader} from "../Pages/OfferPage.tsx";
+import OfferPage from "../Pages/OfferPage.tsx";
 import {toast} from 'react-toastify';
 
 function App() {
@@ -26,7 +25,7 @@ function App() {
           <Route path="/" element={<MainLayout/>}>
               <Route index element={<HomePage/>}/>
               <Route path='/offers' element={<BrowseOffersPage/>}/>
-              <Route path='/offers/:id' element={<OfferPage rentCar={rentCar}/>} loader={offerLoader}/>
+              <Route path='/offers/:id' element={<OfferPage rentCar={rentCar}/>}/>
               <Route path="*" element={<NotFoundPage/>}/>
           </Route>
       )
