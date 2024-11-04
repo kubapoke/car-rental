@@ -4,6 +4,8 @@ using CarSearchAPI.Models;
 using CarSearchAPI.Services;
 using Google.Apis.Auth;
 using Microsoft.EntityFrameworkCore;
+using CarSearchAPI.DTOs.Users;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CarSearchAPI.Controllers
 {
@@ -44,5 +46,14 @@ namespace CarSearchAPI.Controllers
                 return Ok(new { tmpToken, isNewUser = true });
             }
         }
+
+        [Authorize]
+        [HttpPost("complete-registration")]
+        public async Task<IActionResult> CompleteRegistration([FromBody] NewUserInfoDto userInfo)
+        {
+            return Ok();
+        }
     }
+
+
 }
