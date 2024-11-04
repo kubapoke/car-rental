@@ -1,5 +1,6 @@
 import logo from '../Assets/Images/logo.png';
 import {NavLink} from 'react-router-dom';
+import GoogleAuthButton from './GoogleAuthButton.tsx';
 
 const Navbar = () => {
     return (
@@ -23,11 +24,7 @@ const Navbar = () => {
                             </NavLink>
                             <div className="md:ml-auto">
                                 <div className="flex space-x-2">
-                                    <NavLink
-                                        to="/login"
-                                        className='text-white hover:bg-gray-900 hover:text-white rounded-md px-3 py-2'
-                                    >Log in</NavLink
-                                    >
+                                    <GoogleAuthButton/>
                                 </div>
                             </div>
                         </div>
