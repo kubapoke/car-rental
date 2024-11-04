@@ -1,13 +1,38 @@
 import '../Styles/index.css'
 import GoogleAuthButton from "../components/GoogleAuthButton.tsx";
+import '../index.css'
+import {
+    Route,
+    createBrowserRouter,
+    createRoutesFromElements,
+    RouterProvider
+} from 'react-router-dom';
+import MainLayout from "../Layouts/MainLayout.tsx";
+import HomePage from "../Pages/HomePage.tsx";
+import NotFoundPage from "../Pages/NotFoundPage.tsx";
+import BrowseOffersPage from "../Pages/BrowseOffersPage.tsx";
+import OfferPage, {offerLoader} from "../Pages/OfferPage.tsx";
+import {toast} from 'react-toastify';
 
 function App() {
-  return (
-    <>
-      <h2>Hello world!</h2>
-        <GoogleAuthButton/>
-    </>
-  )
+    
+    const rentCar = (id: string) => {
+        console.log('Request for car id: ', id);
+        toast.success("Request for car rental sent successfully!");
+    }
+    
+    const router = createBrowserRouter(
+      createRoutesFromElements(
+          <Route path="/" element={<MainLayout/>}>
+              <Route index element={<HomePage/>}/>
+              <Route path='/offers' element={<BrowseOffersPage/>}/>
+              <Route path='/offers/:id' element={<OfferPage rentCar={rentCar}/>} loader={offerLoader}/>
+              <Route path="*" element={<NotFoundPage/>}/>
+          </Route>
+      )
+    );
+  
+  return <RouterProvider router={router}/>
 }
 
 export default App
