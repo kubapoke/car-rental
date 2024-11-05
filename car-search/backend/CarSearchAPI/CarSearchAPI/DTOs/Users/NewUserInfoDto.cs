@@ -1,5 +1,6 @@
 ﻿namespace CarSearchAPI.DTOs.Users
 {
+    // Used to get information from new-user-form from front-end, email is not here because it will be in the bearer token
     public class NewUserInfoDto
     {
         public string name { get; set; }

@@ -16,21 +16,21 @@ DotNetEnv.Env.Load();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers()
-    .AddJsonOptions(options =>
+    .AddJsonOptions(options =>  // this will add instruction of how to serialize/deserialize different datatypes (not sure of how it works) 
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
     });
 builder.Services.AddDbContext<CarSearchDbContext>(options =>
-                options.UseSqlServer(Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING")));
-builder.Services.AddAuthentication(options =>
+                options.UseSqlServer(Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING"))); // add connection string to your local db to .env
+builder.Services.AddAuthentication(options => // that is instruction, how to check bearer token
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     })
     .AddJwtBearer(options =>
     {
-        options.TokenValidationParameters = new TokenValidationParameters
+        options.TokenValidationParameters = new TokenValidationParameters // we check only using secret key, write secret key to .env (usually 256 bit key)
         {
             ValidateAudience = false,
             ValidateIssuer = false,
