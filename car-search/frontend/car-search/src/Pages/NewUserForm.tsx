@@ -14,12 +14,12 @@ const NewUserForm: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const token = sessionStorage.getItem('tmpToken');
+            const token = sessionStorage.getItem('tmpToken'); // get our token to access [Authorize] api
             const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/Auth/complete-registration`, {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
+                    "Authorization": `Bearer ${token}`, // this is required when we use [Authorize] api's
                 },
                 body: JSON.stringify(formData)
             });
@@ -27,8 +27,8 @@ const NewUserForm: React.FC = () => {
                 throw new Error('Failed to complete registration');
             }
             const data = await response.json();
-            sessionStorage.removeItem('tmpToken');
-            sessionStorage.setItem('authToken', data.jwtToken);
+            sessionStorage.removeItem('tmpToken'); // remove our temporary token
+            sessionStorage.setItem('authToken', data.jwtToken); // add main token
             navigate('/');
 
         } catch (error) {

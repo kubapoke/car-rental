@@ -18,7 +18,6 @@ const OfferPage = ({rentCar}: OfferPageProps) => {
     
     const onRentClick = (offerId: string) => {
         rentCar(offerId);
-        //navigate('/somewhere');
     }
     
     return (
