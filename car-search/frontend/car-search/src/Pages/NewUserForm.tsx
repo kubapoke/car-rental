@@ -14,9 +14,13 @@ const NewUserForm: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+            const token = sessionStorage.getItem('tmpToken');
             const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/Auth/complete-registration`, {
                 method: 'POST',
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
                 body: JSON.stringify(formData)
             });
             if (!response.ok) {
@@ -47,11 +51,11 @@ const NewUserForm: React.FC = () => {
                 </label>
                 <label>
                     Birth Date:
-                    <input type="date" name="birthDate" value={formData.birthDate} onChange={handleChange} required/>
+                    <input type="date" name="birthDate" placeholder="dd-mm-yyyy" value={formData.birthDate} onChange={handleChange} required/>
                 </label>
                 <label>
                     License Date:
-                    <input type="date" name="licenseDate" value={formData.licenseDate} onChange={handleChange} required/>
+                    <input type="date" name="licenseDate" placeholder="dd-mm-yyyy" value={formData.licenseDate} onChange={handleChange} required/>
                 </label>
                 <button type="submit">Submit</button>
             </form>

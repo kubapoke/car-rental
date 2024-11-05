@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {jwtDecode} from 'jwt-decode'
 import { GoogleOAuthProvider, GoogleLogin, googleLogout } from '@react-oauth/google'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
 declare const google: any;
 
@@ -15,28 +16,34 @@ const GoogleAuthButton: React.FC = () => {
     const clientId = import.meta.env.VITE_CLIENT_ID_FOR_OATH;
 
     const handleCredentialResponse = async (response: any) => {
-        const backEndResponse = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/Auth/google-signin`, {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(response)
+
+        const url = `${import.meta.env.VITE_SERVER_URL}/api/Auth/google-signin`;
+
+
+        // Send POST request using axios
+        const backEndResponse = await axios.post(url, response.credential, {
+            headers: {
+                'Content-Type': 'application/json', // Ensures JSON format
+            },
         });
-        if (backEndResponse.ok) {
+
+        if (backEndResponse.status == 200) {
             const decodedUser = jwtDecode<GoogleUser>(response.credential);
             setUser({
                 email: decodedUser.email,
             });
-            const { jwtToken, isNewUser } = await backEndResponse.json();
+            const { jwtToken, isNewUser } = await backEndResponse.data;
             if (isNewUser) {
                 sessionStorage.setItem('tmpToken', jwtToken);
                 console.log("New user logged In");
-                navigate("/complete-profile");
+                navigate("/new-user-form");
             } else {
                 sessionStorage.setItem('authToken', jwtToken);
                 console.log("Old user logged In");
             }
 
         } else {
-
+            // some error message here
         }
 
     };
@@ -44,6 +51,9 @@ const GoogleAuthButton: React.FC = () => {
     const logout = () => {
         googleLogout();
         setUser(null);
+        sessionStorage.removeItem('tmpToken');
+        sessionStorage.removeItem('authToken');
+        navigate("/");
         console.log("Logged Out");
     }
 
