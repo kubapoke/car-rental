@@ -45,8 +45,8 @@ namespace CarSearchAPI.Controllers
             }
             else
             {
-                var tmpToken = sessionTokenManager.GenerateJwtToken(payload.Email, true);
-                return Ok(new { tmpToken, isNewUser = true });
+                var jwtToken = sessionTokenManager.GenerateJwtToken(payload.Email, true);
+                return Ok(new { jwtToken, isNewUser = true });
             }
         }
 
@@ -54,20 +54,24 @@ namespace CarSearchAPI.Controllers
         [HttpPost("complete-registration")]
         public async Task<IActionResult> CompleteRegistration([FromBody] NewUserInfoDto userInfo)
         {
+            Console.WriteLine("inside the api");
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            
             if (string.IsNullOrEmpty(email))
             {
+                Console.WriteLine("Email is null");
                 return Unauthorized("Invalid temporary session");
             }
             if (!ModelState.IsValid) { return BadRequest(ModelState); }
+            Console.WriteLine("Here");  
             var user = await _context.applicationUsers.FirstOrDefaultAsync(u => u.email == email);
             if (user == null)
             {
                 user = new ApplicationUser
                 {
                     email = email,
-                    name = userInfo.Name,
-                    surname = userInfo.Surname,
+                    name = userInfo.name,
+                    surname = userInfo.surname,
                     birthDate = userInfo.birthDate,
                     licenceDate = userInfo.licenceDate
                 };

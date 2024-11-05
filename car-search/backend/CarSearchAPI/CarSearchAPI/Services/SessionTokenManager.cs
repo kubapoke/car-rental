@@ -12,7 +12,7 @@ namespace CarSearchAPI.Services
         public string GenerateJwtToken(string email, bool isTemporary)
         {
             var tokenHandelr = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JWT_TOKEN_SECRET_KEY"));
+            var key = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_TOKEN_SECRET_KEY"));
             var claim = new Claim(JwtRegisteredClaimNames.Email, email);
             double expirationMinutes;
             if (isTemporary)
