@@ -59,6 +59,7 @@ namespace CarSearchAPI.Controllers
             {
                 return Unauthorized("Invalid temporary session");
             }
+            if (!ModelState.IsValid) { return BadRequest(ModelState); }
             var user = await _context.applicationUsers.FirstOrDefaultAsync(u => u.email == email);
             if (user == null)
             {
