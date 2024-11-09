@@ -15,12 +15,14 @@ const GoogleAuthButton: React.FC = () => {
     const navigate = useNavigate();
     const clientId = import.meta.env.VITE_CLIENT_ID_FOR_OATH;
 
+    // logic for successful GoogleLogin. response: answer from google. response.credential: google identity token
     const handleCredentialResponse = async (response: any) => {
 
-        const url = `${import.meta.env.VITE_SERVER_URL}/api/Auth/google-signin`;
+        const url = `${import.meta.env.VITE_SERVER_URL}/api/Auth/google-signin`; // url of API
 
-
-        // Send POST request using axios
+        // Send POST request using axios to API, which will confirm identity (verify google token), and return token,
+        // which will be used to get access to [Authorize] api's. Also will return a flag, telling is current user
+        // logged in for the first time
         const backEndResponse = await axios.post(url, response.credential, {
             headers: {
                 'Content-Type': 'application/json', // Ensures JSON format
@@ -28,17 +30,17 @@ const GoogleAuthButton: React.FC = () => {
         });
 
         if (backEndResponse.status == 200) {
-            const decodedUser = jwtDecode<GoogleUser>(response.credential);
+            const decodedUser = jwtDecode<GoogleUser>(response.credential); // get user information from Google
             setUser({
-                email: decodedUser.email,
+                email: decodedUser.email, // this is part mostly for UI representation of logged in user
             });
             const { jwtToken, isNewUser } = await backEndResponse.data;
             if (isNewUser) {
-                sessionStorage.setItem('tmpToken', jwtToken);
+                sessionStorage.setItem('tmpToken', jwtToken); // store token in sessionStorage of browser
                 console.log("New user logged In");
                 navigate("/new-user-form");
             } else {
-                sessionStorage.setItem('authToken', jwtToken);
+                sessionStorage.setItem('authToken', jwtToken); // store token in sessionStorage of browser
                 console.log("Old user logged In");
             }
 
