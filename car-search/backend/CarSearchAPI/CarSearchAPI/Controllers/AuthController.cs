@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using System.Security.Claims;
 using System.Security.Cryptography.Xml;
+using CarSearchAPI.Abstractions;
 
 namespace CarSearchAPI.Controllers
 {
@@ -18,17 +19,21 @@ namespace CarSearchAPI.Controllers
     {
         private readonly CarSearchDbContext _context;
 
-        public AuthController(CarSearchDbContext context)
+        private readonly IAuthService _authService;
+
+        private readonly SessionTokenManager _sessionTokenManager;
+
+        public AuthController(CarSearchDbContext context, IAuthService authService, SessionTokenManager sessionTokenManager)
         {
             _context = context;
+            _authService = authService;
+            _sessionTokenManager = sessionTokenManager;
         }
 
         [HttpPost("google-signin")]
         public async Task<IActionResult> GoogleSignIn([FromBody] string idToken)
-        {
-            GoogleAuthService googleAuthService = new GoogleAuthService();
-            SessionTokenManager sessionTokenManager = new SessionTokenManager();
-            bool isValid = await googleAuthService.VerifyGoogleToken(idToken);
+        {            
+            bool isValid = await _authService.VerifyToken(idToken);
 
             if (!isValid)
             {
@@ -40,12 +45,12 @@ namespace CarSearchAPI.Controllers
 
             if (user != null)
             {
-                var jwtToken = sessionTokenManager.GenerateJwtToken(user.email, false); // create normal token for old user
+                var jwtToken = _sessionTokenManager.GenerateJwtToken(user.email, false); // create normal token for old user
                 return Ok(new { jwtToken, isNewUser = false });
             }
             else
             {
-                var jwtToken = sessionTokenManager.GenerateJwtToken(payload.Email, true); // create temporary token to finish registration
+                var jwtToken = _sessionTokenManager.GenerateJwtToken(payload.Email, true); // create temporary token to finish registration
                 return Ok(new { jwtToken, isNewUser = true });
             }
         }
@@ -87,8 +92,7 @@ namespace CarSearchAPI.Controllers
             }
 
             // creation of new token
-            SessionTokenManager sessionTokenManager = new SessionTokenManager();
-            var sessionToken = sessionTokenManager.GenerateJwtToken(email, false);
+            var sessionToken = _sessionTokenManager.GenerateJwtToken(email, false);
             return Ok(new {sessionToken});
         }
     }

@@ -5,6 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json.Serialization;
 using CarSearchAPI.Utilities;
+using CarSearchAPI.Services;
+using CarSearchAPI.Abstractions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,10 @@ builder.Services.AddControllers()
     });
 builder.Services.AddDbContext<CarSearchDbContext>(options =>
                 options.UseSqlServer(Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING"))); // add connection string to your local db to .env
+
+builder.Services.AddScoped<IAuthService, GoogleAuthService>();
+builder.Services.AddScoped<SessionTokenManager>();
+
 builder.Services.AddAuthentication(options => // that is instruction, how to check bearer token
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

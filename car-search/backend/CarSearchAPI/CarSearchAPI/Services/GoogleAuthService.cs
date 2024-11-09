@@ -1,12 +1,13 @@
 ﻿using Google.Apis.Auth;
 using Microsoft.AspNetCore.Mvc;
+using CarSearchAPI.Abstractions;
 
 namespace CarSearchAPI.Services
 {
-    public class GoogleAuthService
+    public class GoogleAuthService : IAuthService
     {
         // this will check if google token is valid
-        public async Task<bool> VerifyGoogleToken(string idToken)
+        public async Task<bool> VerifyToken(string idToken)
         {
             try
             {
