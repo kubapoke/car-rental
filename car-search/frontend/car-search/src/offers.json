@@ -1,0 +1,39 @@
+{
+  "cars": [
+    {
+      "id": "1",
+      "brand": "Lincoln",
+      "model": "Continental",
+      "year": "1976",
+      "price": "1000 PLN"
+    },
+    {
+      "id": "2",
+      "brand": "Tesla",
+      "model": "Roadster",
+      "year": "2009",
+      "price": "2300 PLN"
+    },
+    {
+      "id": "3",
+      "brand": "Ford",
+      "model": "Mustang",
+      "year": "1969",
+      "price": "900 PLN"
+    },
+    {
+      "id": "4",
+      "brand": "Ferrari",
+      "model": "California",
+      "year": "2016",
+      "price": "2000 PLN"
+    },
+    {
+      "id": "5",
+      "brand": "Porsche",
+      "model": "911",
+      "year": "2020",
+      "price": "1000 PLN"
+    }
+  ]
+}
