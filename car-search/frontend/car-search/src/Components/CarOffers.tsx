@@ -29,7 +29,7 @@ const CarOffers = ({isHome = false}) => {
                 </h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {offers.map((offer) => (
-                            <CarOffer key={offer.id} offer={offer}/>
+                            <CarOffer offer={offer}/>
                         ))}
                     </div>
             </div>
