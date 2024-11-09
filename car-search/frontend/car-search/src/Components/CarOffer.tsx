@@ -1,6 +1,6 @@
 import {Link} from "react-router-dom"; 
 
-const CarOffer = ({offer}) => {
+const CarOffer = ({offer} : any) => {
     return (
         <div className="bg-white rounded-xl shadow-md relative">
             <div className="p-4">
