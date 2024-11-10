@@ -18,6 +18,9 @@ public class Model
     [MaxLength(50)]
     public string Name { get; set; }
     
+    [Required]
+    public int BasePrice { get; set; }
+    
     [StringLength(4)]
     public string Year { get; set; }
     

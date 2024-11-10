@@ -71,6 +71,9 @@ namespace CarRentalAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ModelID"));
 
+                    b.Property<int>("BasePrice")
+                        .HasColumnType("int");
+
                     b.Property<int>("BrandId")
                         .HasColumnType("int");
 
@@ -89,6 +92,32 @@ namespace CarRentalAPI.Migrations
                     b.HasIndex("BrandId");
 
                     b.ToTable("Models");
+                });
+
+            modelBuilder.Entity("CarRentalAPI.Models.Rent", b =>
+                {
+                    b.Property<int>("RentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RentId"));
+
+                    b.Property<int>("CarId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserEmail")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.HasKey("RentId");
+
+                    b.HasIndex("CarId");
+
+                    b.ToTable("Rents");
                 });
 
             modelBuilder.Entity("CarRentalAPI.Models.Car", b =>
@@ -111,6 +140,17 @@ namespace CarRentalAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("Brand");
+                });
+
+            modelBuilder.Entity("CarRentalAPI.Models.Rent", b =>
+                {
+                    b.HasOne("CarRentalAPI.Models.Car", "Car")
+                        .WithMany()
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Car");
                 });
 
             modelBuilder.Entity("CarRentalAPI.Models.Brand", b =>

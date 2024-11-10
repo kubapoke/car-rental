@@ -21,4 +21,6 @@ public class Car
     public bool IsActive { get; set; }
     
     // add location?
+
+    public ICollection<Rent> Rents;
 }
