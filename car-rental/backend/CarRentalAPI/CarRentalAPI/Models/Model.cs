@@ -7,7 +7,7 @@ public class Model
 {
     [Key]
     [Required]
-    public int ModelID { get; set; }
+    public int ModelId { get; set; }
     
     [ForeignKey("BrandId")]
     [Required]

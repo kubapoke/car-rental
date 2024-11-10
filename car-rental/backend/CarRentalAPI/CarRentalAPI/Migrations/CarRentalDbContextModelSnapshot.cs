@@ -37,6 +37,23 @@ namespace CarRentalAPI.Migrations
                     b.HasKey("BrandId");
 
                     b.ToTable("Brands");
+
+                    b.HasData(
+                        new
+                        {
+                            BrandId = 1,
+                            Name = "Tesla"
+                        },
+                        new
+                        {
+                            BrandId = 2,
+                            Name = "Ford"
+                        },
+                        new
+                        {
+                            BrandId = 3,
+                            Name = "Chevrolet"
+                        });
                 });
 
             modelBuilder.Entity("CarRentalAPI.Models.Car", b =>
@@ -61,15 +78,52 @@ namespace CarRentalAPI.Migrations
                     b.HasIndex("ModelId");
 
                     b.ToTable("Cars");
+
+                    b.HasData(
+                        new
+                        {
+                            CarId = 1,
+                            IsActive = true,
+                            Mileage = 15000,
+                            ModelId = 1
+                        },
+                        new
+                        {
+                            CarId = 2,
+                            IsActive = false,
+                            Mileage = 12000,
+                            ModelId = 1
+                        },
+                        new
+                        {
+                            CarId = 3,
+                            IsActive = true,
+                            Mileage = 5000,
+                            ModelId = 2
+                        },
+                        new
+                        {
+                            CarId = 4,
+                            IsActive = true,
+                            Mileage = 3000,
+                            ModelId = 3
+                        },
+                        new
+                        {
+                            CarId = 5,
+                            IsActive = false,
+                            Mileage = 2500,
+                            ModelId = 4
+                        });
                 });
 
             modelBuilder.Entity("CarRentalAPI.Models.Model", b =>
                 {
-                    b.Property<int>("ModelID")
+                    b.Property<int>("ModelId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ModelID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ModelId"));
 
                     b.Property<int>("BasePrice")
                         .HasColumnType("int");
@@ -87,11 +141,45 @@ namespace CarRentalAPI.Migrations
                         .HasMaxLength(4)
                         .HasColumnType("nvarchar(4)");
 
-                    b.HasKey("ModelID");
+                    b.HasKey("ModelId");
 
                     b.HasIndex("BrandId");
 
                     b.ToTable("Models");
+
+                    b.HasData(
+                        new
+                        {
+                            ModelId = 1,
+                            BasePrice = 1000,
+                            BrandId = 1,
+                            Name = "Model S",
+                            Year = "2024"
+                        },
+                        new
+                        {
+                            ModelId = 2,
+                            BasePrice = 1500,
+                            BrandId = 1,
+                            Name = "Model X",
+                            Year = "2024"
+                        },
+                        new
+                        {
+                            ModelId = 3,
+                            BasePrice = 800,
+                            BrandId = 2,
+                            Name = "Mustang",
+                            Year = "2023"
+                        },
+                        new
+                        {
+                            ModelId = 4,
+                            BasePrice = 900,
+                            BrandId = 3,
+                            Name = "Camaro",
+                            Year = "2023"
+                        });
                 });
 
             modelBuilder.Entity("CarRentalAPI.Models.Rent", b =>
