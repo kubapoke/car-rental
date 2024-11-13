@@ -5,11 +5,11 @@ namespace CarRentalAPI.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CarController : ControllerBase
+    public class CarsController : ControllerBase
     {
         private readonly CarRentalDbContext _context;
 
-        public CarController(CarRentalDbContext context)
+        public CarsController(CarRentalDbContext context)
         {
             _context = context;
         }
