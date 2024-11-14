@@ -14,5 +14,12 @@ namespace CarRentalAPI.Controllers
         {
             _emailSender = emailSender;
         }
+
+        [HttpPost("send-email")]
+        public async Task<IActionResult> SendEmail([FromBody]string recipientEmail)
+        {
+            bool isSuccess = await _emailSender.SendEmailAsync(recipientEmail);
+            return isSuccess ? Ok() : BadRequest();
+        }
     }
 }
