@@ -7,5 +7,13 @@ namespace CarRentalAPI.Controllers
     [ApiController]
     public class RentsController : ControllerBase
     {
+        // Must be Authorize !!!
+        [HttpPost("create-rent")]
+        public async Task<IActionResult> CreateNewRent()
+        {
+
+            return Ok();
+        }
+
     }
 }
