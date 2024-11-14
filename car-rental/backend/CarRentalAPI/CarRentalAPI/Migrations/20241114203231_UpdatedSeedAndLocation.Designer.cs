@@ -4,6 +4,7 @@ using CarRentalAPI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarRentalAPI.Migrations
 {
     [DbContext(typeof(CarRentalDbContext))]
-    partial class CarRentalDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241114203231_UpdatedSeedAndLocation")]
+    partial class UpdatedSeedAndLocation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -370,8 +373,8 @@ namespace CarRentalAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ModelId"));
 
-                    b.Property<decimal>("BasePrice")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("BasePrice")
+                        .HasColumnType("int");
 
                     b.Property<int>("BrandId")
                         .HasColumnType("int");
@@ -395,28 +398,28 @@ namespace CarRentalAPI.Migrations
                         new
                         {
                             ModelId = 1,
-                            BasePrice = 1000m,
+                            BasePrice = 1000,
                             BrandId = 1,
                             Name = "Model S"
                         },
                         new
                         {
                             ModelId = 2,
-                            BasePrice = 1500m,
+                            BasePrice = 1500,
                             BrandId = 1,
                             Name = "Model X"
                         },
                         new
                         {
                             ModelId = 3,
-                            BasePrice = 900m,
+                            BasePrice = 900,
                             BrandId = 1,
                             Name = "Model 3"
                         },
                         new
                         {
                             ModelId = 4,
-                            BasePrice = 800m,
+                            BasePrice = 800,
                             BrandId = 2,
                             Name = "Mustang",
                             Year = "2023"
@@ -424,21 +427,21 @@ namespace CarRentalAPI.Migrations
                         new
                         {
                             ModelId = 5,
-                            BasePrice = 700m,
+                            BasePrice = 700,
                             BrandId = 2,
                             Name = "F-150"
                         },
                         new
                         {
                             ModelId = 6,
-                            BasePrice = 900m,
+                            BasePrice = 900,
                             BrandId = 3,
                             Name = "Camaro"
                         },
                         new
                         {
                             ModelId = 7,
-                            BasePrice = 950m,
+                            BasePrice = 950,
                             BrandId = 3,
                             Name = "Silverado",
                             Year = "2024"
@@ -446,14 +449,14 @@ namespace CarRentalAPI.Migrations
                         new
                         {
                             ModelId = 8,
-                            BasePrice = 950m,
+                            BasePrice = 950,
                             BrandId = 4,
                             Name = "X5"
                         },
                         new
                         {
                             ModelId = 9,
-                            BasePrice = 1050m,
+                            BasePrice = 1050,
                             BrandId = 4,
                             Name = "3 Series",
                             Year = "2023"
@@ -461,28 +464,28 @@ namespace CarRentalAPI.Migrations
                         new
                         {
                             ModelId = 10,
-                            BasePrice = 1000m,
+                            BasePrice = 1000,
                             BrandId = 5,
                             Name = "A4"
                         },
                         new
                         {
                             ModelId = 11,
-                            BasePrice = 1100m,
+                            BasePrice = 1100,
                             BrandId = 5,
                             Name = "A6"
                         },
                         new
                         {
                             ModelId = 12,
-                            BasePrice = 700m,
+                            BasePrice = 700,
                             BrandId = 6,
                             Name = "Corolla"
                         },
                         new
                         {
                             ModelId = 13,
-                            BasePrice = 800m,
+                            BasePrice = 800,
                             BrandId = 6,
                             Name = "Camry",
                             Year = "2023"
@@ -490,14 +493,14 @@ namespace CarRentalAPI.Migrations
                         new
                         {
                             ModelId = 14,
-                            BasePrice = 1300m,
+                            BasePrice = 1300,
                             BrandId = 7,
                             Name = "C-Class"
                         },
                         new
                         {
                             ModelId = 15,
-                            BasePrice = 1500m,
+                            BasePrice = 1500,
                             BrandId = 7,
                             Name = "E-Class",
                             Year = "2024"
@@ -505,14 +508,14 @@ namespace CarRentalAPI.Migrations
                         new
                         {
                             ModelId = 16,
-                            BasePrice = 650m,
+                            BasePrice = 650,
                             BrandId = 8,
                             Name = "Golf"
                         },
                         new
                         {
                             ModelId = 17,
-                            BasePrice = 750m,
+                            BasePrice = 750,
                             BrandId = 8,
                             Name = "Passat",
                             Year = "2023"
@@ -520,14 +523,14 @@ namespace CarRentalAPI.Migrations
                         new
                         {
                             ModelId = 18,
-                            BasePrice = 600m,
+                            BasePrice = 600,
                             BrandId = 9,
                             Name = "Elantra"
                         },
                         new
                         {
                             ModelId = 19,
-                            BasePrice = 750m,
+                            BasePrice = 750,
                             BrandId = 9,
                             Name = "Sonata",
                             Year = "2022"
@@ -535,14 +538,14 @@ namespace CarRentalAPI.Migrations
                         new
                         {
                             ModelId = 20,
-                            BasePrice = 750m,
+                            BasePrice = 750,
                             BrandId = 10,
                             Name = "Altima"
                         },
                         new
                         {
                             ModelId = 21,
-                            BasePrice = 680m,
+                            BasePrice = 680,
                             BrandId = 10,
                             Name = "Sentra",
                             Year = "2023"

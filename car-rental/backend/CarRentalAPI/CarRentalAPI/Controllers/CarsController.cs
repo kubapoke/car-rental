@@ -25,13 +25,13 @@ namespace CarRentalAPI.Controller
 
             // Group by Model and Brand, check if any car is active for each model
             var distinctCarModels = carList
-                .GroupBy(car => new { ModelName = car.Model.Name, BrandName = car.Model.Brand.Name })  // Group by Model and Brand Name
+                .GroupBy(car => new { ModelName = car.Model.Name, BrandName = car.Model.Brand.Name, Location = car.Location })  // Group by Model and Brand Name
                 .Select(group => new 
                 {
                     ModelName = group.Key.ModelName,
                     BrandName = group.Key.BrandName,
-                    IsActive = group.Any(car => car.IsActive) // True if any car of this model is active
-                    // Should also return location
+                    Location = group.Key.Location,
+                    IsActive = group.Any(car => car.IsActive) // True if any car of this model is active in this location
                 })
                 .ToList();
 
