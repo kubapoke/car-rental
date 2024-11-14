@@ -19,7 +19,8 @@ public class Model
     public string Name { get; set; }
     
     [Required]
-    public int BasePrice { get; set; }
+    [Column(TypeName = "decimal(18,2)")]
+    public decimal BasePrice { get; set; }
     
     [StringLength(4)]
     public string? Year { get; set; }
