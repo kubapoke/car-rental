@@ -20,7 +20,8 @@ public class Car
     [Required]
     public bool IsActive { get; set; }
     
-    // add location?
+    [Required]
+    public string Location { get; set; }
 
     public ICollection<Rent> Rents;
 }

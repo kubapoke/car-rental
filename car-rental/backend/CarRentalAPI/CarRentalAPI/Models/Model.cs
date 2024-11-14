@@ -22,7 +22,7 @@ public class Model
     public int BasePrice { get; set; }
     
     [StringLength(4)]
-    public string Year { get; set; }
+    public string? Year { get; set; }
     
     public ICollection<Car> Cars { get; set; }
 }
