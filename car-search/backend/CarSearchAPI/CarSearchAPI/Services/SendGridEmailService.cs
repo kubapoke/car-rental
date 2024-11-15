@@ -1,8 +1,8 @@
-﻿using CarRentalAPI.Abstractions;
+﻿using CarSearchAPI.Abstractions;
 using SendGrid.Helpers.Mail;
 using SendGrid;
 
-namespace CarRentalAPI.Services
+namespace CarSearchAPI.Services
 {
     public class SendGridEmailService : IEmailSender
     {

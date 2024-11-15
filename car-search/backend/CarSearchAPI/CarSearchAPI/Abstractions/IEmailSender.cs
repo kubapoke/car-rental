@@ -1,4 +1,4 @@
-﻿    namespace CarRentalAPI.Abstractions
+﻿namespace CarSearchAPI.Abstractions
 {
     public interface IEmailSender
     {

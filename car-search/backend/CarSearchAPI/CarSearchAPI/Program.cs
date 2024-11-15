@@ -29,6 +29,7 @@ builder.Services.AddDbContext<CarSearchDbContext>(options =>
 
 builder.Services.AddHttpClient();
 
+builder.Services.AddScoped<IEmailSender, SendGridEmailService>();
 builder.Services.AddScoped<IAuthService, GoogleAuthService>();
 builder.Services.AddScoped<SessionTokenManager>();
 

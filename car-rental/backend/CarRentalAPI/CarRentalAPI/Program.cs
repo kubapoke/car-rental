@@ -15,7 +15,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddDbContext<CarRentalDbContext>(options =>
                 options.UseSqlServer(Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING")));
-builder.Services.AddScoped<IEmailSender, SendGridEmailService>();
 builder.Services.AddScoped<IPriceGenerator, PricePerDayToHourGeneratorService>();
 
 var allowedOrigins = Environment.GetEnvironmentVariable("ALLOWED_ORIGINS")?.Split(',');
