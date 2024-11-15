@@ -32,6 +32,11 @@ namespace CarRentalAPI.Controllers
            {
                return BadRequest("Start date must be earlier than end date.");
            }
+           if (startDate < DateTime.Now)
+           {
+               return BadRequest("Start date must be in the future.");
+           }
+           
    
            var carList = await _context.Cars
                .Include(car => car.Model)
