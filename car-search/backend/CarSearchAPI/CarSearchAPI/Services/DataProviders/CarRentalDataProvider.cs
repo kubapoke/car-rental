@@ -1,4 +1,5 @@
 ﻿using CarSearchAPI.Abstractions;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CarSearchAPI.Services.DataProviders
 {
@@ -19,7 +20,15 @@ namespace CarSearchAPI.Services.DataProviders
             var queryString = string.Join("&", parameters.Select(p => $"{p.Key}={p.Value}"));
             
             // Gets the url of the desired endpoint
-            var url = $"http://{Environment.GetEnvironmentVariable("CAR_RENTAL_API_URL")}/api/{endpoint}?{queryString}";
+            string url;
+            if (!queryString.IsNullOrEmpty())
+            {
+                url = $"http://{Environment.GetEnvironmentVariable("CAR_RENTAL_API_URL")}/api/{endpoint}?{queryString}";
+            }
+            else
+            {
+                url = $"http://{Environment.GetEnvironmentVariable("CAR_RENTAL_API_URL")}/api/{endpoint}";
+            }
             
             var response = await client.GetAsync(url);
 
