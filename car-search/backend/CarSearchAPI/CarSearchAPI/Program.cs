@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 using CarSearchAPI.Utilities;
 using CarSearchAPI.Services;
 using CarSearchAPI.Abstractions;
+using CarSearchAPI.Services.DataProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,8 +27,13 @@ builder.Services.AddControllers()
 builder.Services.AddDbContext<CarSearchDbContext>(options =>
                 options.UseSqlServer(Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING"))); // add connection string to your local db to .env
 
+builder.Services.AddHttpClient();
+
 builder.Services.AddScoped<IAuthService, GoogleAuthService>();
 builder.Services.AddScoped<SessionTokenManager>();
+
+// Register external data providers
+builder.Services.AddScoped<IExternalDataProvider, CarRentalDataProvider>();
 
 builder.Services.AddAuthentication(options => // that is instruction, how to check bearer token
     {
