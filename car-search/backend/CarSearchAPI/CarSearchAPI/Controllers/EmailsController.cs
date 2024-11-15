@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using CarSearchAPI.Abstractions;
+using CarSearchAPI.DTOs.CarRental;
 
 namespace CarSearchAPI.Controllers
 {
@@ -16,9 +17,9 @@ namespace CarSearchAPI.Controllers
         }
 
         [HttpPost("send-email")]
-        public async Task<IActionResult> SendEmail([FromBody] string recipientEmail)
+        public async Task<IActionResult> SendEmail([FromBody] OfferDto info)
         {
-            bool isSuccess = await _emailSender.SendEmailAsync(recipientEmail);
+            bool isSuccess = await _emailSender.SendEmailAsync(info);
             return isSuccess ? Ok() : BadRequest();
         }
     }

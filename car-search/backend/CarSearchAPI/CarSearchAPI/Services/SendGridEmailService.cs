@@ -1,20 +1,38 @@
 ﻿using CarSearchAPI.Abstractions;
 using SendGrid.Helpers.Mail;
 using SendGrid;
+using CarSearchAPI.DTOs.CarRental;
 
 namespace CarSearchAPI.Services
 {
     public class SendGridEmailService : IEmailSender
     {
-        public async Task<bool> SendEmailAsync(string recipientEmail)
+        private readonly IConfirmationTokenService _confirmationTokenService;
+
+        public SendGridEmailService(IConfirmationTokenService confirmationTokenService)
+        {
+            _confirmationTokenService = confirmationTokenService;
+        }
+
+        public async Task<bool> SendEmailAsync(OfferDto info)
         {
             var apiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
             var client = new SendGridClient(apiKey);
-            var from = new EmailAddress(Environment.GetEnvironmentVariable("COMPANY_EMAIL"), "SendGridEnjoyer");
-            var subject = "WHAT A PLEASURE TO USE SENDGRID";
-            var to = new EmailAddress(recipientEmail, "Egor");
-            var plainTextContent = "What could be better than sitting with this for 3 hours";
-            var htmlContent = "<strong>What could be better than sitting with this for 3 hours</strong>";
+
+            var from = new EmailAddress(Environment.GetEnvironmentVariable("COMPANY_EMAIL"), "CarSearch");
+            var subject = "Rent confirmation";
+            var to = new EmailAddress(info.Email, info.Email);
+            var plainTextContent = "";
+
+            var token = _confirmationTokenService.GenerateConfirmationToken(info);
+            string myAddress = Environment.GetEnvironmentVariable("MY_ADDRESS");
+            string confirmationLink = myAddress + $"/api/Rents/new-rent-confirm?token={Uri.EscapeDataString(token)}";
+
+            var htmlContent = $"<div>Your rent:" +
+                                  $"From: {info.CompanyName}\n" +  
+                                  $"Price: {info.Price}\n" +
+                                  $"Click here to confirm your rent: {confirmationLink}" + 
+                              $"</div>";
             var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
             var response = await client.SendEmailAsync(msg);
 
