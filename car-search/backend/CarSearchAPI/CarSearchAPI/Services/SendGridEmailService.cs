@@ -26,11 +26,11 @@ namespace CarSearchAPI.Services
 
             var token = _confirmationTokenService.GenerateConfirmationToken(info);
             string myAddress = Environment.GetEnvironmentVariable("MY_ADDRESS");
-            string confirmationLink = myAddress + $"/Confirm?token={Uri.EscapeDataString(token)}";
+            string confirmationLink = myAddress + $"/api/Rents/new-rent-confirm?token={Uri.EscapeDataString(token)}";
 
             var htmlContent = $"<div>Your rent:" +
                                   $"From: {info.CompanyName}\n" +  
-                                  $"Price: {info.Price.ToString()}\n" +
+                                  $"Price: {info.Price}\n" +
                                   $"Click here to confirm your rent: {confirmationLink}" + 
                               $"</div>";
             var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);

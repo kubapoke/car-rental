@@ -8,5 +8,7 @@ namespace CarSearchAPI.Abstractions
         public string GenerateConfirmationToken(OfferDto info);
 
         public ClaimsPrincipal ValidateConfirmationToken(string token);
+
+        public bool ValidateAllClaims(ClaimsPrincipal claimsPrincipal);
     }
 }

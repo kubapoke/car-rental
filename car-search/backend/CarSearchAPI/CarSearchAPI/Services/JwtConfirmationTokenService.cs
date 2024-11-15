@@ -50,5 +50,21 @@ namespace CarSearchAPI.Services
 
             return tokenHandler.ValidateToken(token, validationParameters, out _);
         }
+
+        public bool ValidateAllClaims(ClaimsPrincipal claimsPrincipal)
+        {
+            string email = claimsPrincipal.FindFirst("Email")?.Value;
+            string price = claimsPrincipal.FindFirst("Price")?.Value;
+            string companyName = claimsPrincipal.FindFirst("CompanyName")?.Value;
+            string startDate = claimsPrincipal.FindFirst("StartDate")?.Value;
+            string endDate = claimsPrincipal.FindFirst("EndDate")?.Value;
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(price) || string.IsNullOrEmpty(companyName) ||
+                string.IsNullOrEmpty(startDate) || string.IsNullOrEmpty(endDate))
+            {
+                return false;
+            }
+            return true;
+            
+        }
     }
 }
