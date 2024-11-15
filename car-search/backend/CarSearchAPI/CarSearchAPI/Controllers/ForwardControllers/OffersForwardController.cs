@@ -1,4 +1,5 @@
 ﻿using CarSearchAPI.Abstractions;
+using CarSearchAPI.DTOs.CarRental;
 using CarSearchAPI.DTOs.Users;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;

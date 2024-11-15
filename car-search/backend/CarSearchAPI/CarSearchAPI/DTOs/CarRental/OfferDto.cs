@@ -1,4 +1,4 @@
-﻿namespace CarSearchAPI.DTOs.Users;
+﻿namespace CarSearchAPI.DTOs.CarRental;
 
 public class OfferDto
 {
