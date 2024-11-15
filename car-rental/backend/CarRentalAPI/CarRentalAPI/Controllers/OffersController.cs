@@ -1,6 +1,7 @@
 ﻿using CarRentalAPI.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CarRentalAPI.Controllers
 {
@@ -40,9 +41,9 @@ namespace CarRentalAPI.Controllers
            var offers = carList
                .Where(group =>
                    (group.IsActive)
-                   && (brand == null || group.Model.Brand.Name == brand)
-                   && (model == null || group.Model.Name == model)
-                   && (location == null || group.Location == location))
+                   && (brand.IsNullOrEmpty() || group.Model.Brand.Name == brand)
+                   && (model.IsNullOrEmpty() || group.Model.Name == model)
+                   && (location.IsNullOrEmpty() || group.Location == location))
                .Select(group => new
                {
                    Id = group.CarId,
