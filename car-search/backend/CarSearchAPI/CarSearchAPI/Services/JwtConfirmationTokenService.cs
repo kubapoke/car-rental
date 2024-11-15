@@ -36,7 +36,19 @@ namespace CarSearchAPI.Services
 
         public ClaimsPrincipal ValidateConfirmationToken(string token)
         {
-            return new ClaimsPrincipal();
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_CONFIRMATION_TOKEN_SECRET_KEY"));
+
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key)
+            };
+
+            return tokenHandler.ValidateToken(token, validationParameters, out _);
         }
     }
 }
