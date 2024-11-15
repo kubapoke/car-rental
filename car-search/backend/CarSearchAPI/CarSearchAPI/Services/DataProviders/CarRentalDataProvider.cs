@@ -49,7 +49,8 @@ namespace CarSearchAPI.Services.DataProviders
                 { "brand", parameters.Brand },
                 { "startDate", parameters.StartDate.ToString("o") },
                 { "endDate", parameters.EndDate.ToString("o") },
-                { "location", parameters.Location }
+                { "location", parameters.Location },
+                { "email", parameters.Email },
             };
             
             // this creates an appropriate url
