@@ -1,6 +1,9 @@
-﻿using CarSearchAPI.Abstractions;
+﻿using System.Security.Claims;
+using CarSearchAPI.Abstractions;
 using CarSearchAPI.DTOs.CarRental;
+using CarSearchAPI.DTOs.ForwardingParameters;
 using CarSearchAPI.DTOs.Users;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -18,6 +21,7 @@ namespace CarSearchAPI.Controllers.ForwardControllers
             _dataProviders = dataProviders;
         }
         
+        [Authorize]
         [HttpGet("offer-list")]
         public async Task<IActionResult> OfferList(
         [FromQuery] string? brand,
@@ -26,13 +30,14 @@ namespace CarSearchAPI.Controllers.ForwardControllers
         [FromQuery] DateTime endDate,
         [FromQuery] string? location)
         {
-            var parameters = new Dictionary<string, string>
+            var parameters = new GetOfferListParametersDto()
             {
-                { "brand", brand ?? string.Empty },
-                { "model", model ?? string.Empty },
-                { "startDate", startDate.ToString("yyyy-MM-dd") },
-                { "endDate", endDate.ToString("yyyy-MM-dd") },
-                { "location", location ?? string.Empty }
+                Brand = brand,
+                Model = model,
+                StartDate = startDate,
+                EndDate = endDate,
+                Location = location,
+                Email = User.FindFirst(ClaimTypes.Email)?.Value
             };
 
             var aggregateOffers = new List<OfferDto>();
@@ -41,7 +46,7 @@ namespace CarSearchAPI.Controllers.ForwardControllers
             {
                 try
                 {
-                    var jsonData = await provider.GetDataAsync("Offers/offer-list", parameters);
+                    var jsonData = await provider.GetOfferListAsync(parameters);
                     
                     var offers = JsonConvert.DeserializeObject<List<OfferDto>>(jsonData);
                     aggregateOffers.AddRange(offers);

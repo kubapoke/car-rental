@@ -26,11 +26,20 @@ namespace CarRentalAPI.Controllers
            [FromQuery] string? model,
            [FromQuery] DateTime startDate,
            [FromQuery] DateTime endDate,
-           [FromQuery] string? location)
+           [FromQuery] string? location,
+           [FromQuery] string? email)
        {
            if (startDate > endDate)
            {
                return BadRequest("Start date must be earlier than end date.");
+           }
+           if (startDate < DateTime.Now)
+           {
+               return BadRequest("Start date must be in the future.");
+           }
+           if (email == null)
+           {
+               return BadRequest("User email is required.");
            }
    
            var carList = await _context.Cars
@@ -47,6 +56,7 @@ namespace CarRentalAPI.Controllers
                .Select(group => new
                {
                    Id = group.CarId,
+                   Email = email,
                    Price = _priceGenerator.GeneratePrice(group.Model.BasePrice, startDate, endDate),
                    Conditions = Conditions,
                    CompanyName = CompanyName,
