@@ -1,6 +1,14 @@
-import {Link} from "react-router-dom"; 
+import {Link} from "react-router-dom";
 
-const CarOffer = ({offer} : any) => {
+interface Offer {
+    id: string;
+    year: string;
+    brand: string;
+    model: string;
+    price: string;
+}
+
+const CarOffer = ({offer} : {offer : Offer}) => {
     return (
         <div className="bg-white rounded-xl shadow-md relative">
             <div className="p-4">
