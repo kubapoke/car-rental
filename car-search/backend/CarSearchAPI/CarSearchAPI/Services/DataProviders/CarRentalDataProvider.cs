@@ -19,6 +19,11 @@ namespace CarSearchAPI.Services.DataProviders
             _httpClientFactory = httpClientFactory;
         }
 
+        public string GetProviderName()
+        {
+            return "CarRental";
+        }
+
         public async Task<string> GetCarListAsync()
         {
             var client = _httpClientFactory.CreateClient();

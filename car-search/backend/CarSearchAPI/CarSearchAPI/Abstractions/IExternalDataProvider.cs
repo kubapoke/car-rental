@@ -9,4 +9,5 @@ public interface IExternalDataProvider
     public Task<string> GetCarListAsync();
     public Task<string> GetOfferListAsync(GetOfferListParametersDto parameters);
     public Task<bool> CreateNewRent(ClaimsPrincipal claimsPrincipal);
+    public string GetProviderName();
 }
