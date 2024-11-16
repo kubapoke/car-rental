@@ -41,11 +41,11 @@ namespace CarSearchAPI.Controllers
             }
 
             var payload = await GoogleJsonWebSignature.ValidateAsync(idToken); // information extracted from token
-            var user = await _context.applicationUsers.FirstOrDefaultAsync(u => u.email == payload.Email); // check is user exist in the database
+            var user = await _context.applicationUsers.FirstOrDefaultAsync(u => u.Email == payload.Email); // check is user exist in the database
 
             if (user != null)
             {
-                var jwtToken = _sessionTokenManager.GenerateJwtToken(user.email, false); // create normal token for old user
+                var jwtToken = _sessionTokenManager.GenerateJwtToken(user.Email, false); // create normal token for old user
                 return Ok(new { jwtToken, isNewUser = false });
             }
             else
@@ -70,16 +70,16 @@ namespace CarSearchAPI.Controllers
             if (!ModelState.IsValid) { return BadRequest(ModelState); }
 
             
-            var user = await _context.applicationUsers.FirstOrDefaultAsync(u => u.email == email); // double check is user in database
+            var user = await _context.applicationUsers.FirstOrDefaultAsync(u => u.Email == email); // double check is user in database
             if (user == null)
             {
                 user = new ApplicationUser
                 {
-                    email = email,
-                    name = userInfo.name,
-                    surname = userInfo.surname,
-                    birthDate = userInfo.birthDate,
-                    licenceDate = userInfo.licenceDate
+                    Email = email,
+                    Name = userInfo.name,
+                    Surname = userInfo.surname,
+                    BirthDate = userInfo.birthDate,
+                    LicenceDate = userInfo.licenceDate
                 };
 
                 // adding user to the database

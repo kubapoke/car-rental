@@ -2,7 +2,7 @@
 
 namespace CarSearchAPI.DTOs.CarRental
 {
-    public class NewRentDto
+    public class NewRentalRentDto
     {
         public int CarId { get; set; }
         public string Email { get; set; }

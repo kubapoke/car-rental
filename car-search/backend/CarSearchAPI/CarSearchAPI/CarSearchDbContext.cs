@@ -8,5 +8,7 @@ namespace CarSearchAPI
         public CarSearchDbContext(DbContextOptions<CarSearchDbContext> options) : base(options) { }
 
         public DbSet<ApplicationUser> applicationUsers {  get; set; }
+
+        public DbSet<Rent> rents { get; set; }
     }
 }

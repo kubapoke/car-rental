@@ -7,21 +7,21 @@ namespace CarSearchAPI.Models
         [Key] // this will tell EF that it is PK
         [EmailAddress]
         [Required]
-        public string email { get; set; }
+        public string Email { get; set; }
 
         [Required]
         [MaxLength(50)]
-        public string name { get; set; }
+        public string Name { get; set; }
 
         [Required]
         [MaxLength(50)]
-        public string surname { get; set; }
+        public string Surname { get; set; }
 
         [Required]
-        public DateOnly birthDate { get; set; }
+        public DateOnly BirthDate { get; set; }
 
         [Required]
-        public DateOnly licenceDate { get; set; }
+        public DateOnly LicenceDate { get; set; }
 
         
         // we will add the location and other properties in the future (when we will now more about them)

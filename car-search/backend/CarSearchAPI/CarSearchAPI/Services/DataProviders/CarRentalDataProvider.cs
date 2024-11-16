@@ -83,7 +83,7 @@ namespace CarSearchAPI.Services.DataProviders
             string startDate = claimsPrincipal.FindFirst("StartDate")?.Value;
             string endDate = claimsPrincipal.FindFirst("EndDate")?.Value;
 
-            NewRentDto newRentDto = new NewRentDto
+            NewRentalRentDto newRentDto = new NewRentalRentDto
             {
                 CarId = int.Parse(carId),
                 Email = email,
@@ -114,6 +114,6 @@ namespace CarSearchAPI.Services.DataProviders
             var errorMessage = $"Error fetching data from {endpoint} at Car Rental API. StatusCode: {response.StatusCode}, ReasonPhrase: {response.ReasonPhrase}";
             throw new HttpRequestException(errorMessage);
         }
-        }
+        
     }
 }

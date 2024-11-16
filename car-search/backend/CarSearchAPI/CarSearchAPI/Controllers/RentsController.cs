@@ -25,8 +25,11 @@ namespace CarSearchAPI.Controllers
             try
             {
                 var claimsPrincipal = _confirmationTokenService.ValidateConfirmationToken(token);
+                
                 if (!_confirmationTokenService.ValidateAllClaims(claimsPrincipal)) { return BadRequest("Invalid token"); }
                 
+                
+
                 return Ok();
             }
             catch (SecurityTokenExpiredException)
