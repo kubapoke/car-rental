@@ -1,4 +1,5 @@
 ﻿using CarRentalAPI.Abstractions;
+using CarRentalAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -55,7 +56,9 @@ namespace CarRentalAPI.Controllers
                    && (location.IsNullOrEmpty() || group.Location == location))
                .Select(group => new
                {
-                   Id = group.CarId,
+                   CarId = group.CarId,
+                   Brand = group.Model.Brand.Name,
+                   Model = group.Model.Name,
                    Email = email,
                    Price = _priceGenerator.GeneratePrice(group.Model.BasePrice, startDate, endDate),
                    Conditions = Conditions,
