@@ -16,7 +16,7 @@ namespace CarSearchAPI.Services
 
             var claims = new[]
             {
-                new Claim("CarId", info.Id.ToString()), // !!!!!!!! don't forget to verify is it CarId !!!!! 
+                new Claim("CarId", info.CarId.ToString()),
                 new Claim("Email", info.Email),
                 new Claim("Price", info.Price.ToString()),
                 new Claim("CompanyName", info.CompanyName),

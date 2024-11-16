@@ -30,7 +30,7 @@ namespace CarSearchAPI.Services
 
             var htmlContent = $"<ul>Your rent:" +
                                   $"<li>From: {info.CompanyName}</li>" +
-                                  $"<li>Your car: this is model name, which we currently don't have</li>" +
+                                  $"<li>Your car: {info.Brand} {info.Model}</li>" +
                                   $"<li>Price: {info.Price}</li>" +
                                   $"<li>Rent starts: {info.StartDate}</li>" +
                                   $"<li>Rent ends: {info.EndDate}</li>" +                                   
