@@ -2,7 +2,9 @@
 
 public class OfferDto
 {
-    public int Id { get; set; }
+    public int CarId { get; set; }
+    public string Brand { get; set; }
+    public string Model { get; set; }
     public string Email { get; set; }
     public decimal Price { get; set; }
     public string Conditions { get; set; }
