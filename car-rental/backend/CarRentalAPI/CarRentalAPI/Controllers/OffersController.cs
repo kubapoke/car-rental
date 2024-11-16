@@ -64,6 +64,7 @@ namespace CarRentalAPI.Controllers
                    CompanyName = CompanyName,
                    StartDate = startDate,
                    EndDate = endDate,
+                   Email = email
                })
                .ToList();
            

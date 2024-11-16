@@ -3,21 +3,25 @@ import {FaArrowLeft, FaMapMarker} from "react-icons/fa";
 import notFoundPage from "./NotFoundPage.tsx";
 
 interface OfferPageProps {
-    rentCar: (offerId: string) => void;
+    rentCar: (offerId: number) => void;
 }
 
 interface Offer {
-    id: string;
-    year: string;
+    carId: number;
     brand: string;
     model: string;
-    price: string;
+    email: string;
+    price: number;
+    conditions: string;
+    companyName: string;
+    startDate: string;
+    endDate: string;
 }
 
 const OfferPage = ({rentCar}: OfferPageProps) => {
     const offer = useLoaderData() as Offer;
     
-    const onRentClick = (offerId: string) => {
+    const onRentClick = (offerId: number) => {
         rentCar(offerId);
     }
 
@@ -47,7 +51,6 @@ const OfferPage = ({rentCar}: OfferPageProps) => {
                             <div
                                 className="bg-white p-6 rounded-lg shadow-md text-center md:text-left"
                             >
-                                <div className="text-gray-500 mb-4">{offer.year}</div>
                                 <h1 className="text-3xl font-bold mb-4">
                                     {offer.brand} {offer.model}
                                 </h1>
@@ -77,7 +80,7 @@ const OfferPage = ({rentCar}: OfferPageProps) => {
 
                         <div className="bg-white p-6 rounded-lg shadow-md mt-6">
                             <h3 className="text-xl font-bold mb-6">Actions</h3>
-                            <button onClick={() => onRentClick(offer.id)}
+                            <button onClick={() => onRentClick(offer.carId)}
                                     className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-full max-w-lg focus:outline-none focus:shadow-outline mt-4 block"
                             >
                                 Rent this car

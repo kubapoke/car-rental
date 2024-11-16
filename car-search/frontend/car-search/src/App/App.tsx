@@ -16,7 +16,7 @@ import NewUserForm from "../Pages/NewUserForm.tsx";
 
 function App() {
     
-    const rentCar = (id: string) => {
+    const rentCar = (id: number) => {
         console.log('Request for car id: ', id);
         toast.success("Request for car rental sent successfully!");
     }
