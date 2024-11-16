@@ -1,7 +1,9 @@
 ﻿using CarSearchAPI.Abstractions;
+using CarSearchAPI.DTOs.CarRental;
 using CarSearchAPI.DTOs.ForwardingParameters;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 namespace CarSearchAPI.Services.DataProviders
 {
@@ -67,6 +69,20 @@ namespace CarSearchAPI.Services.DataProviders
             {
                 throw new Exception($"Error fetching data from {endpoint} at Car Rental API");
             }
+        }
+
+        public async Task<bool> CreateNewRent(ClaimsPrincipal claimsPrincipal)
+        {
+            string carId = claimsPrincipal.FindFirst("CarId")?.Value;
+            string email = claimsPrincipal.FindFirst("Email")?.Value;
+            string price = claimsPrincipal.FindFirst("Price")?.Value;
+            // string companyName = claimsPrincipal.FindFirst("CompanyName")?.Value; // change into carsearch/don't need this
+            string startDate = claimsPrincipal.FindFirst("StartDate")?.Value;
+            string endDate = claimsPrincipal.FindFirst("EndDate")?.Value;
+
+
+
+            return false;
         }
     }
 }
