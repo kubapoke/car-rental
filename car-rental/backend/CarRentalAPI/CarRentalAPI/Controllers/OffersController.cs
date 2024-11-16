@@ -58,8 +58,7 @@ namespace CarRentalAPI.Controllers
                {
                    CarId = group.CarId,
                    Brand = group.Model.Brand.Name,
-                   Model = group.Model.Name,
-                   Email = email,
+                   Model = group.Model.Year == null ? group.Model.Name : group.Model.Name + " " + group.Model.Year,
                    Price = _priceGenerator.GeneratePrice(group.Model.BasePrice, startDate, endDate),
                    Conditions = Conditions,
                    CompanyName = CompanyName,
