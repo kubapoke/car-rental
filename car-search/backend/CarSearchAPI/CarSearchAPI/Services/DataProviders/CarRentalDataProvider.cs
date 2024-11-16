@@ -4,6 +4,8 @@ using CarSearchAPI.DTOs.ForwardingParameters;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
+using System.Text;
+using System.Text.Json;
 
 namespace CarSearchAPI.Services.DataProviders
 {
@@ -73,16 +75,45 @@ namespace CarSearchAPI.Services.DataProviders
 
         public async Task<bool> CreateNewRent(ClaimsPrincipal claimsPrincipal)
         {
+            var client = _httpClientFactory.CreateClient();
+
             string carId = claimsPrincipal.FindFirst("CarId")?.Value;
             string email = claimsPrincipal.FindFirst("Email")?.Value;
             string price = claimsPrincipal.FindFirst("Price")?.Value;
-            // string companyName = claimsPrincipal.FindFirst("CompanyName")?.Value; // change into carsearch/don't need this
             string startDate = claimsPrincipal.FindFirst("StartDate")?.Value;
             string endDate = claimsPrincipal.FindFirst("EndDate")?.Value;
 
+            NewRentDto newRentDto = new NewRentDto
+            {
+                CarId = int.Parse(carId),
+                Email = email,
+                Price = decimal.Parse(price),
+                StartDate = DateTime.Parse(startDate),
+                EndDate = DateTime.Parse(endDate)
+            };
 
+            var carRentalApiUrl = Environment.GetEnvironmentVariable("CAR_RENTAL_API_URL")
+                          ?? throw new InvalidOperationException("CAR_RENTAL_API_URL is not set.");
+            const string endpoint = "/api/Rents/create-new-rent";
 
-            return false;
+            var jsonContent = new StringContent(
+                JsonSerializer.Serialize(newRentDto),
+                Encoding.UTF8,
+                "application/json"
+            );
+
+            var url = $"{carRentalApiUrl}{endpoint}";
+
+            var response = await client.PostAsync(url, jsonContent);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+
+            var errorMessage = $"Error fetching data from {endpoint} at Car Rental API. StatusCode: {response.StatusCode}, ReasonPhrase: {response.ReasonPhrase}";
+            throw new HttpRequestException(errorMessage);
+        }
         }
     }
 }
