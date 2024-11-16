@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 namespace CarSearchAPI.Controllers
 {
@@ -25,7 +26,13 @@ namespace CarSearchAPI.Controllers
             {
                 var claimsPrincipal = _confirmationTokenService.ValidateConfirmationToken(token);
                 if (!_confirmationTokenService.ValidateAllClaims(claimsPrincipal)) { return BadRequest("Invalid token"); }
+                string carId = claimsPrincipal.FindFirst("CarId")?.Value;
                 string email = claimsPrincipal.FindFirst("Email")?.Value;
+                string price = claimsPrincipal.FindFirst("Price")?.Value;
+                string companyName = claimsPrincipal.FindFirst("CompanyName")?.Value; // change into carsearch/don't need this
+                string startDate = claimsPrincipal.FindFirst("StartDate")?.Value;
+                string endDate = claimsPrincipal.FindFirst("EndDate")?.Value;
+
                 Console.WriteLine("Hello" +  email);
                 return Ok();
             }

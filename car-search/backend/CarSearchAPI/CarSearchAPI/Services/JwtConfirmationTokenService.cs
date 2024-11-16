@@ -16,6 +16,7 @@ namespace CarSearchAPI.Services
 
             var claims = new[]
             {
+                new Claim("CarId", info.Id.ToString()), // !!!!!!!! don't forget to verify is it CarId !!!!! 
                 new Claim("Email", info.Email),
                 new Claim("Price", info.Price.ToString()),
                 new Claim("CompanyName", info.CompanyName),
@@ -53,13 +54,14 @@ namespace CarSearchAPI.Services
 
         public bool ValidateAllClaims(ClaimsPrincipal claimsPrincipal)
         {
+            string carId = claimsPrincipal.FindFirst("CarId")?.Value;
             string email = claimsPrincipal.FindFirst("Email")?.Value;
             string price = claimsPrincipal.FindFirst("Price")?.Value;
             string companyName = claimsPrincipal.FindFirst("CompanyName")?.Value;
             string startDate = claimsPrincipal.FindFirst("StartDate")?.Value;
             string endDate = claimsPrincipal.FindFirst("EndDate")?.Value;
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(price) || string.IsNullOrEmpty(companyName) ||
-                string.IsNullOrEmpty(startDate) || string.IsNullOrEmpty(endDate))
+                string.IsNullOrEmpty(startDate) || string.IsNullOrEmpty(endDate) || string.IsNullOrEmpty(carId))
             {
                 return false;
             }
