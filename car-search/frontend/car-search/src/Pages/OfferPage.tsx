@@ -1,23 +1,34 @@
-import {Link, useLoaderData} from "react-router-dom";
+import {Link, LoaderFunctionArgs, useLoaderData} from "react-router-dom";
 import {FaArrowLeft, FaMapMarker} from "react-icons/fa";
+import notFoundPage from "./NotFoundPage.tsx";
 
 interface OfferPageProps {
-    rentCar: (offerId: string) => void;
+    rentCar: (offerId: number) => void;
 }
 
 interface Offer {
-    id: string;
-    year: number;
+    carId: number;
     brand: string;
     model: string;
+    email: string;
     price: number;
+    conditions: string;
+    companyName: string;
+    startDate: string;
+    endDate: string;
 }
 
 const OfferPage = ({rentCar}: OfferPageProps) => {
     const offer = useLoaderData() as Offer;
     
-    const onRentClick = (offerId: string) => {
+    const onRentClick = (offerId: number) => {
         rentCar(offerId);
+    }
+
+    if (!offer) {
+        return (
+            notFoundPage()
+        );
     }
     
     return (
@@ -40,7 +51,6 @@ const OfferPage = ({rentCar}: OfferPageProps) => {
                             <div
                                 className="bg-white p-6 rounded-lg shadow-md text-center md:text-left"
                             >
-                                <div className="text-gray-500 mb-4">{offer.year}</div>
                                 <h1 className="text-3xl font-bold mb-4">
                                     {offer.brand} {offer.model}
                                 </h1>
@@ -70,7 +80,7 @@ const OfferPage = ({rentCar}: OfferPageProps) => {
 
                         <div className="bg-white p-6 rounded-lg shadow-md mt-6">
                             <h3 className="text-xl font-bold mb-6">Actions</h3>
-                            <button onClick={() => onRentClick(offer.id)}
+                            <button onClick={() => onRentClick(offer.carId)}
                                     className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-full max-w-lg focus:outline-none focus:shadow-outline mt-4 block"
                             >
                                 Rent this car
@@ -84,11 +94,19 @@ const OfferPage = ({rentCar}: OfferPageProps) => {
     );
 };
 
-// wczytywanie danych przez Data Loader 
-const offerLoader = async ({params}: { params: { id: string } }) => {
-    const res = await fetch(`/api/cars/${params.id}`);
-    const data = await res.json();
-    return data;
-}
+// loading data through a data loader
+const offerLoader = async ({ params }: LoaderFunctionArgs) => {
+    const { id } = params; // `id` is inferred as `string | undefined`
+    if (!id) {
+        throw new Response("Offer ID is missing", { status: 400 });
+    }
+
+    const response = await fetch(`/api/cars/${id}`);
+    if (!response.ok) {
+        throw new Response("Offer not found", { status: response.status });
+    }
+
+    return response.json();
+};
 
 export {OfferPage as default, offerLoader};
