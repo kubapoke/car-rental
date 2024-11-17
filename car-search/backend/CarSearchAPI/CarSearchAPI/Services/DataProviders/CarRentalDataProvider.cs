@@ -1,6 +1,9 @@
 ﻿using CarSearchAPI.Abstractions;
 using CarSearchAPI.DTOs.CarRental;
+using CarSearchAPI.DTOs.CarSearch;
 using CarSearchAPI.DTOs.ForwardingParameters;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
@@ -78,7 +81,7 @@ namespace CarSearchAPI.Services.DataProviders
             }
         }
 
-        public async Task<bool> CreateNewRent(ClaimsPrincipal claimsPrincipal)
+        public async Task<NewSearchRentDto> CreateNewRentAsync(ClaimsPrincipal claimsPrincipal)
         {
             var client = _httpClientFactory.CreateClient();
 
@@ -113,7 +116,7 @@ namespace CarSearchAPI.Services.DataProviders
 
             if (response.IsSuccessStatusCode)
             {
-                return true;
+                return new NewSearchRentDto();
             }
 
             var errorMessage = $"Error fetching data from {endpoint} at Car Rental API. StatusCode: {response.StatusCode}, ReasonPhrase: {response.ReasonPhrase}";
