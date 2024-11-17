@@ -98,7 +98,7 @@ const SearchBar = () => {
 
                 {/* Start Date Picker */}
                 <input
-                    type="datetime-local"
+                    type="date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
                     className="border border-gray-300 rounded-lg p-2 mb-2 md:mb-0 md:mr-2 w-full md:w-1/3"
@@ -106,7 +106,7 @@ const SearchBar = () => {
 
                 {/* End Date Picker */}
                 <input
-                    type="datetime-local"
+                    type="date"
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
                     className="border border-gray-300 rounded-lg p-2 mb-2 md:mb-0 md:mr-2 w-full md:w-1/3"

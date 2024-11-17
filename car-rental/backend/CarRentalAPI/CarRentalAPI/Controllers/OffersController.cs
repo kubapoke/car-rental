@@ -34,7 +34,7 @@ namespace CarRentalAPI.Controllers
            {
                return BadRequest("Start date must be earlier than end date.");
            }
-           if (startDate < DateTime.Now)
+           if (startDate.Date < DateTime.Now.Date)
            {
                return BadRequest("Start date must be in the future.");
            }
