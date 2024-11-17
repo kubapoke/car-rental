@@ -23,25 +23,20 @@ namespace CarRentalAPI.Controllers
         {
             // TODO: User.Email == email          
 
-            Console.WriteLine(offerInfo.Email);
 
-            //int status = 0;
-            //if (offerInfo.StartDate.CompareTo(DateOnly.FromDateTime(DateTime.Today)) >= 0)
-            //{
-            //    status = 1;
-            //}
+            int status = 0;
 
-            //var newRent = new Rent
-            //{
-            //    CarId = offerInfo.CarId,
-            //    UserEmail = offerInfo.Email,
-            //    RentStart = offerInfo.StartDate,
-            //    RentEnd = offerInfo.EndDate,
-            //    Status = status
-            //};
+            var newRent = new Rent
+            {
+                CarId = offerInfo.CarId,
+                UserEmail = offerInfo.Email,
+                RentStart = offerInfo.StartDate,
+                RentEnd = offerInfo.EndDate,
+                Status = status
+            };
 
-            //await _context.Rents.AddAsync(newRent);
-            //await _context.SaveChangesAsync();
+            await _context.Rents.AddAsync(newRent);
+            await _context.SaveChangesAsync();
             return Ok();
         }
 

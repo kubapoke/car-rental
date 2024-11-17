@@ -114,8 +114,6 @@ namespace CarSearchAPI.Services.DataProviders
 
             var url = $"{carRentalApiUrl}{endpoint}";
 
-            url = "http://localhost:5237/api/Rents/create-new-rent";
-
             var response = await client.PostAsync(url, jsonContent);
 
             if (response.IsSuccessStatusCode)
