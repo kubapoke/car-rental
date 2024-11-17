@@ -104,6 +104,8 @@ namespace CarSearchAPI.Services.DataProviders
                           ?? throw new InvalidOperationException("CAR_RENTAL_API_URL is not set.");
             const string endpoint = "/api/Rents/create-new-rent";
 
+            Console.WriteLine($"Serialized Payload: {JsonSerializer.Serialize(newRentDto)}");
+
             var jsonContent = new StringContent(
                 JsonSerializer.Serialize(newRentDto),
                 Encoding.UTF8,
@@ -111,6 +113,8 @@ namespace CarSearchAPI.Services.DataProviders
             );
 
             var url = $"{carRentalApiUrl}{endpoint}";
+
+            url = "http://localhost:5237/api/Rents/create-new-rent";
 
             var response = await client.PostAsync(url, jsonContent);
 

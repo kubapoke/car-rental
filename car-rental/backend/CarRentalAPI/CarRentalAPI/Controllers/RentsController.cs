@@ -18,27 +18,30 @@ namespace CarRentalAPI.Controllers
         }
 
         // Must be Authorize !!!
-        [HttpPost("create-rent")]
+        [HttpPost("create-new-rent")]
         public async Task<IActionResult> CreateNewRent([FromBody] OfferInfoForNewRentDto offerInfo)
         {
-            // TODO: User.Email == email
+            // TODO: User.Email == email          
 
-            int status = 0;            
-            if (offerInfo.StartDate.CompareTo(DateOnly.FromDateTime(DateTime.Today)) >= 0)
-            {
-                status = 1;
-            }
+            Console.WriteLine(offerInfo.Email);
 
-            var newRent = new Rent
-            {
-                CarId = offerInfo.CarId,
-                UserEmail = offerInfo.Email,
-                RentStart = offerInfo.StartDate,
-                RentEnd = offerInfo.EndDate,
-                Status = status
-            };
-            await _context.Rents.AddAsync(newRent);
-            await _context.SaveChangesAsync();
+            //int status = 0;
+            //if (offerInfo.StartDate.CompareTo(DateOnly.FromDateTime(DateTime.Today)) >= 0)
+            //{
+            //    status = 1;
+            //}
+
+            //var newRent = new Rent
+            //{
+            //    CarId = offerInfo.CarId,
+            //    UserEmail = offerInfo.Email,
+            //    RentStart = offerInfo.StartDate,
+            //    RentEnd = offerInfo.EndDate,
+            //    Status = status
+            //};
+
+            //await _context.Rents.AddAsync(newRent);
+            //await _context.SaveChangesAsync();
             return Ok();
         }
 
