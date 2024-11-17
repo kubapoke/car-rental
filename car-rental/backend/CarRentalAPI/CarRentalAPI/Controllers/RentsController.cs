@@ -1,7 +1,9 @@
 ﻿using CarRentalAPI.DTOs.Offers;
+using CarRentalAPI.DTOs.CarSearch;
 using CarRentalAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarRentalAPI.Controllers
 {
@@ -22,7 +24,8 @@ namespace CarRentalAPI.Controllers
         public async Task<IActionResult> CreateNewRent([FromBody] OfferInfoForNewRentDto offerInfo)
         {
             // TODO: User.Email == email          
-
+            Car rentedCar = await _context.Cars.FirstOrDefaultAsync(c => c.CarId == offerInfo.CarId);
+            if (rentedCar == null) { return BadRequest("Car does not exist in database");  }
 
             int status = 0;
 
@@ -37,7 +40,16 @@ namespace CarRentalAPI.Controllers
 
             await _context.Rents.AddAsync(newRent);
             await _context.SaveChangesAsync();
-            return Ok();
+
+            NewSearchRentDto newSearchRentDto = new NewSearchRentDto();
+            newSearchRentDto.Brand = rentedCar.Model.Brand.Name;
+            newSearchRentDto.Model = rentedCar.Model.Name;
+            newSearchRentDto.Email = offerInfo.Email;
+            newSearchRentDto.StartDate = offerInfo.StartDate;
+            newSearchRentDto.EndDate = offerInfo.EndDate;
+
+
+            return Ok(newSearchRentDto);
         }
 
     }
