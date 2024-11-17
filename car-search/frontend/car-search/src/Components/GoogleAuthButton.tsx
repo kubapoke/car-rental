@@ -1,10 +1,8 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {jwtDecode} from 'jwt-decode'
-import { GoogleOAuthProvider, GoogleLogin, googleLogout } from '@react-oauth/google'
+import {GoogleOAuthProvider, GoogleLogin, googleLogout, CredentialResponse} from '@react-oauth/google'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-
-declare const google: any;
 
 interface GoogleUser {
     email: string;
@@ -15,8 +13,23 @@ const GoogleAuthButton: React.FC = () => {
     const navigate = useNavigate();
     const clientId = import.meta.env.VITE_CLIENT_ID_FOR_OATH;
 
+    useEffect(() => {
+        const existingToken = sessionStorage.getItem('authToken');
+        if (existingToken) {
+            try {
+                const decodedUser = jwtDecode<GoogleUser>(existingToken);
+                setUser({
+                    email: decodedUser.email, // Decode email from token
+                });
+            } catch (error) {
+                console.error("Error decoding token:", error);
+                sessionStorage.removeItem('authToken'); // Remove invalid token
+            }
+        }
+    }, []);
+
     // logic for successful GoogleLogin. response: answer from google. response.credential: google identity token
-    const handleCredentialResponse = async (response: any) => {
+    const handleCredentialResponse = async (response: CredentialResponse) => {
 
         const url = `${import.meta.env.VITE_SERVER_URL}/api/Auth/google-signin`; // url of API
 
@@ -29,7 +42,7 @@ const GoogleAuthButton: React.FC = () => {
             },
         });
 
-        if (backEndResponse.status == 200) {
+        if (backEndResponse.status == 200 && response.credential) {
             const decodedUser = jwtDecode<GoogleUser>(response.credential); // get user information from Google
             setUser({
                 email: decodedUser.email, // this is part mostly for UI representation of logged in user
