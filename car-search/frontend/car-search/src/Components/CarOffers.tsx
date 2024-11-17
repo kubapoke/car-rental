@@ -13,7 +13,7 @@ interface Offer {
     endDate: string;
 }
 
-const CarOffers = () => {
+const CarOffers = ({isHome} : {isHome : boolean}) => {
     const [offers, setOffers] = useState<Offer[]>([]);
 
     useEffect(() => {
@@ -41,6 +41,9 @@ const CarOffers = () => {
 
         fetchOffers();
     }, []);
+
+    // Limit offers to 3 if isHome is true
+    const displayedOffers = isHome ? offers.slice(0, 3) : offers;
     
     return (
         <section className="bg-blue-50 px-4 py-10">
@@ -49,7 +52,7 @@ const CarOffers = () => {
                     You might like:
                 </h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {offers.map((offer) => (
+                        {displayedOffers.map((offer) => (
                             <CarOffer key={offer.carId} offer={offer}/>
                         ))}
                     </div>

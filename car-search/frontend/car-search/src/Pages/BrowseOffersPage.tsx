@@ -5,7 +5,7 @@ const BrowseOffersPage = () => {
     return (
         <>
             <SearchBar/>
-            <CarOffers/>
+            <CarOffers isHome={false}/>
         </>
     );
 };
