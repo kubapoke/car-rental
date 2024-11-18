@@ -1,15 +1,9 @@
 import SearchBar from "../Components/SearchBar.tsx";
 import CarOffers from "../Components/CarOffers.tsx";
-import {useState} from "react";
+import {useFilters} from "../Context/FiltersContext.tsx";
 
 const BrowseOffersPage = () => {
-    const [filters, setFilters] = useState({
-        selectedBrand: '',
-        selectedModel: '',
-        selectedLocation: '',
-        startDate: '',
-        endDate: '',
-    });
+    const {filters, setFilters} = useFilters();
 
     return (
         <>

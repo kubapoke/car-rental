@@ -1,5 +1,6 @@
 import {useState, useEffect, FormEvent} from 'react';
 import { FaSearch } from 'react-icons/fa';
+import {useFilters} from "../Context/FiltersContext.tsx";
 
 interface Car{
     modelName: string;
@@ -21,15 +22,17 @@ interface SearchBarProps {
 }
 
 const SearchBar = ({updateFilters} : SearchBarProps) => {
+    const filters  = useFilters().filters;
+
     const [brands, setBrands] = useState<string[]>([]);
     const [models, setModels] = useState<string[]>([]);
     const [locations, setLocations] = useState<string[]>([]);
 
-    const [selectedBrand, setSelectedBrand] = useState<string>('');
-    const [selectedModel, setSelectedModel] = useState<string>('');
-    const [selectedLocation, setSelectedLocation] = useState<string>('');
-    const [startDate, setStartDate] = useState<string>('');
-    const [endDate, setEndDate] = useState<string>('');
+    const [selectedBrand, setSelectedBrand] = useState<string>(filters.selectedBrand);
+    const [selectedModel, setSelectedModel] = useState<string>(filters.selectedModel);
+    const [selectedLocation, setSelectedLocation] = useState<string>(filters.selectedLocation);
+    const [startDate, setStartDate] = useState<string>(filters.startDate);
+    const [endDate, setEndDate] = useState<string>(filters.endDate);
 
     useEffect(() => {
         // Fetch the car list data
