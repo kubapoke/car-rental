@@ -22,7 +22,7 @@ public class Rent
     public int Status { get; set; }
 
     [Required]
-    public DateOnly RentStart { get; set; }
+    public DateTime RentStart { get; set; }
     
-    public DateOnly? RentEnd { get; set; }
+    public DateTime? RentEnd { get; set; }
 }

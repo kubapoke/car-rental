@@ -46,23 +46,23 @@ namespace CarSearchAPI.Controllers
                 
                 var results = await activeProvider.CreateNewRentAsync(claimsPrincipal);
 
-                //Rent newRent = new Rent()
-                //{
-                //    UserEmail = results.Email,
-                //    Brand = results.Brand,
-                //    Model = results.Model,
-                //    StartDate = results.StartDate,
-                //    EndDate = results.EndDate
-                //};
+                Rent newRent = new Rent()
+                {
+                    UserEmail = results.Email,
+                    Brand = results.Brand,
+                    Model = results.Model,
+                    StartDate = results.StartDate,
+                    EndDate = results.EndDate
+                };
 
-                //_context.rents.Add(newRent);
-                //await _context.SaveChangesAsync();
+                _context.rents.Add(newRent);
+                await _context.SaveChangesAsync();
 
                 return Ok();
             }
             catch (SecurityTokenExpiredException)
             {
-                return BadRequest("Toke has expired");
+                return BadRequest("Token has expired");
             }
             catch (Exception)
             {
