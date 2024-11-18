@@ -13,7 +13,15 @@ interface Offer {
     endDate: string;
 }
 
-const CarOffers = ({isHome} : {isHome : boolean}) => {
+interface CarOffersProps {
+    selectedBrand: string;
+    selectedModel: string;
+    selectedLocation: string;
+    startDate: string;
+    endDate: string;
+}
+
+const CarOffers = ({isHome, filters} : {isHome : boolean, filters : CarOffersProps}) => {
     const [offers, setOffers] = useState<Offer[]>([]);
 
     useEffect(() => {
@@ -27,7 +35,16 @@ const CarOffers = ({isHome} : {isHome : boolean}) => {
                 ...(token && { 'Authorization': `Bearer ${token}` }), // Add the Authorization header if the token exists
             };
 
-            const apiUrl = `${import.meta.env.VITE_SERVER_URL}/api/OffersForward/offer-list?startDate=2025-12-18&endDate=2025-12-19`
+            const { selectedBrand, selectedModel, selectedLocation, startDate, endDate } = filters;
+            const queryParams = new URLSearchParams();
+
+            if (selectedBrand) queryParams.append('brand', selectedBrand);
+            if (selectedModel) queryParams.append('model', selectedModel);
+            if (selectedLocation) queryParams.append('location', selectedLocation);
+            if (startDate) queryParams.append('startDate', startDate);
+            if (endDate) queryParams.append('endDate', endDate);
+
+            const apiUrl = `${import.meta.env.VITE_SERVER_URL}/api/OffersForward/offer-list?${queryParams.toString()}`;
 
             try {
                 const res = await fetch(apiUrl, {method: 'GET', headers: headers});
@@ -40,7 +57,7 @@ const CarOffers = ({isHome} : {isHome : boolean}) => {
         }
 
         fetchOffers();
-    }, []);
+    }, [filters]);
 
     // Limit offers to 3 if isHome is true
     const displayedOffers = isHome ? offers.slice(0, 3) : offers;

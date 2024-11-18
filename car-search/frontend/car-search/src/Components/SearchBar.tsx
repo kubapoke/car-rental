@@ -8,7 +8,19 @@ interface Car{
     isActive: boolean;
 }
 
-const SearchBar = () => {
+interface Filters {
+    selectedBrand: string;
+    selectedModel: string;
+    selectedLocation: string;
+    startDate: string;
+    endDate: string;
+}
+
+interface SearchBarProps {
+    updateFilters: (filters: Filters) => void;
+}
+
+const SearchBar = ({updateFilters} : SearchBarProps) => {
     const [brands, setBrands] = useState<string[]>([]);
     const [models, setModels] = useState<string[]>([]);
     const [locations, setLocations] = useState<string[]>([]);
@@ -45,7 +57,14 @@ const SearchBar = () => {
     const handleSubmit = (e : FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log({ selectedBrand, selectedModel, selectedLocation, startDate, endDate });
-        // You can submit the form or do something with the selected filters here.
+
+        updateFilters({
+            selectedBrand,
+            selectedModel,
+            selectedLocation,
+            startDate,
+            endDate
+        })
     };
 
     return (
