@@ -118,7 +118,8 @@ namespace CarSearchAPI.Services.DataProviders
 
             if (response.IsSuccessStatusCode)
             {
-                return new NewSearchRentDto();
+                NewSearchRentDto newSearchRentDto = await response.Content.ReadFromJsonAsync<NewSearchRentDto>();
+                return newSearchRentDto;
             }
 
             var errorMessage = $"Error fetching data from {endpoint} at Car Rental API. StatusCode: {response.StatusCode}, ReasonPhrase: {response.ReasonPhrase}";

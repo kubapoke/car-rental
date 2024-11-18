@@ -24,8 +24,12 @@ namespace CarRentalAPI.Controllers
         public async Task<IActionResult> CreateNewRent([FromBody] OfferInfoForNewRentDto offerInfo)
         {
             // TODO: User.Email == email          
-            Car rentedCar = await _context.Cars.FirstOrDefaultAsync(c => c.CarId == offerInfo.CarId);
+            Car rentedCar = await _context.Cars
+                .Include(c => c.Model)
+                .ThenInclude(m => m.Brand)
+                .FirstOrDefaultAsync(c => c.CarId == offerInfo.CarId);
             if (rentedCar == null) { return BadRequest("Car does not exist in database");  }
+            
 
             int status = 0;
 

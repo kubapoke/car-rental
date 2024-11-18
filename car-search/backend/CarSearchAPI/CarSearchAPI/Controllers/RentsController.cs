@@ -62,7 +62,7 @@ namespace CarSearchAPI.Controllers
             }
             catch (SecurityTokenExpiredException)
             {
-                return BadRequest("Toke has expired");
+                return BadRequest("Token has expired");
             }
             catch (Exception)
             {
