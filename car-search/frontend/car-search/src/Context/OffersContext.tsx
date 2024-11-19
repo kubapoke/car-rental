@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 
-interface Offer {
+export interface Offer {
     carId: number;
     brand: string;
     model: string;
