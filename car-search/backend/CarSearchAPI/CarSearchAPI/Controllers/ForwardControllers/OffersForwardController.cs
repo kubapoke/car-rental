@@ -21,7 +21,7 @@ namespace CarSearchAPI.Controllers.ForwardControllers
             _dataProviders = dataProviders;
         }
         
-        [Authorize]
+        [Authorize(Policy = "LegitUser")]
         [HttpGet("offer-list")]
         public async Task<IActionResult> OfferList(
         [FromQuery] string? brand,

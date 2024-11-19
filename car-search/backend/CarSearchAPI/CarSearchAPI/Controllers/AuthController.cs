@@ -55,7 +55,7 @@ namespace CarSearchAPI.Controllers
             }
         }
 
-        [Authorize] // only users with appropriate bearer token can use this method
+        [Authorize(Policy = "ProtoUser")] // only users with appropriate bearer token can use this method
         [HttpPost("complete-registration")]
         // create new user, based on the information from NewUserForm from front-end, information will be transformed from json to NewUserDto
         public async Task<IActionResult> CompleteRegistration([FromBody] NewUserInfoDto userInfo)
