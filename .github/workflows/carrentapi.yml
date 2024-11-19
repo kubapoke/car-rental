@@ -29,6 +29,12 @@ jobs:
           echo "ALLOWED_ORIGINS=${{ secrets.RENTALAPI_ALLOWED_ORIGINS }}" > .env
           echo "DATABASE_CONNECTION_STRING=${{ secrets.RENTALAPI_DATABASE_CONNECTION_STRING }}" >> .env
 
+      - name: Debug `.env` file placement
+        run: |
+          echo "Checking .env file placement..."
+          dir car-rental/backend/CarRentalAPI/CarRentalAPI
+          dir car-search/backend/CarSearchAPI/CarSearchAPI
+
       - name: Build with dotnet
         run: dotnet build car-rental/backend/CarRentalAPI --configuration Release
 

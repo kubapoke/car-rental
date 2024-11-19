@@ -32,6 +32,12 @@ jobs:
           echo "JWT_CONFIRMATION_TOKEN_SECRET_KEY=${{ secrets.SEARCHAPI_JWT_CONFIRMATION_TOKEN_SECRET_KEY }}" >> .env
           echo "MY_ADDRESS=${{ secrets.SEARCHAPI_MY_ADDRESS }}" >> .env
 
+      - name: Debug `.env` file placement
+        run: |
+          echo "Checking .env file placement..."
+          dir car-rental/backend/CarRentalAPI/CarRentalAPI
+          dir car-search/backend/CarSearchAPI/CarSearchAPI
+
       - name: Build with dotnet
         run: dotnet build car-search/backend/CarSearchAPI --configuration Release
 
