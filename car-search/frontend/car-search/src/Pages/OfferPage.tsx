@@ -1,13 +1,10 @@
-import {Link, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {FaArrowLeft, FaMapMarker} from "react-icons/fa";
 import notFoundPage from "./NotFoundPage.tsx";
-import {useOffers} from "../Context/OffersContext.tsx";
+import {useOffers, Offer} from "../Context/OffersContext.tsx";
 
-interface OfferPageProps {
-    rentCar: (offerId: number) => void;
-}
-
-const OfferPage = ({rentCar}: OfferPageProps) => {
+const OfferPage = () => {
+    const navigate = useNavigate();
     const { id } = useParams();
     if (!id) {
         throw new Response("Offer ID is missing", { status: 400 });
@@ -23,8 +20,26 @@ const OfferPage = ({rentCar}: OfferPageProps) => {
         throw new Response("Offer not found", { status: 404 });
     }
     
-    const onRentClick = (offerId: number) => {
-        rentCar(offerId);
+    const onRentClick = async (offer: Offer) => {
+        // rentCar(offer);
+        const token = sessionStorage.getItem('authToken');
+        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/Emails/send-email`, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`, // this is required when we use [Authorize] api's
+            },
+            body: JSON.stringify(offer)
+        });
+        if (!response.ok) {
+            console.log("Rent failed");
+            throw new Error('Failed to rent');
+        } else {
+            console.log("Hello");
+            navigate('/');
+            // you need to check email
+        }
+
     }
 
     if (!offer) {
@@ -82,7 +97,7 @@ const OfferPage = ({rentCar}: OfferPageProps) => {
 
                         <div className="bg-white p-6 rounded-lg shadow-md mt-6">
                             <h3 className="text-xl font-bold mb-6">Actions</h3>
-                            <button onClick={() => onRentClick(offer.carId)}
+                            <button onClick={() => onRentClick(offer)}
                                     className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-full max-w-lg focus:outline-none focus:shadow-outline mt-4 block"
                             >
                                 Rent this car
