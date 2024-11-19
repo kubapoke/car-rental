@@ -13,7 +13,7 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-    if: github.ref == 'refs/heads/development' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/fix/deployment'
+    if: github.ref == 'refs/heads/development' || github.ref == 'refs/heads/main'
 
     steps:
       - uses: actions/checkout@v4
