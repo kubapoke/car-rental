@@ -67,6 +67,9 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_391FFE1FFACC4024ACBD0D511E01A2B4 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_20574EF43DE540898AD4C2F77D7812D8 }}
 
+      - name: List directory contents for debugging
+        run: dir car-rental\backend\CarRentalAPI\CarRentalAPI
+
       - name: Run database migrations
         run: |
           dotnet tool uninstall --global dotnet-ef || echo "dotnet-ef not found"
