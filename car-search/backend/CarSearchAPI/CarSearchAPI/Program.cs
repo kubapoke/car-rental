@@ -8,6 +8,8 @@ using CarSearchAPI.Utilities;
 using CarSearchAPI.Services;
 using CarSearchAPI.Abstractions;
 using CarSearchAPI.Services.DataProviders;
+using System.Security.Cryptography;
+using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,6 +55,12 @@ builder.Services.AddAuthentication(options => // that is instruction, how to che
             ValidateLifetime = true
         };
     });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ProtoUser", policy => policy.RequireClaim(JwtRegisteredClaimNames.Email).RequireClaim("ProtoUser"));
+    options.AddPolicy("LegitUser", policy => policy.RequireClaim(JwtRegisteredClaimNames.Email).RequireClaim("LegitUser"));
+});
 
 var allowedOrigins = Environment.GetEnvironmentVariable("ALLOWED_ORIGINS")?.Split(',');
 
