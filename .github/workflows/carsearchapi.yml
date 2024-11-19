@@ -69,7 +69,8 @@ jobs:
 
       - name: Run database migrations
         run: |
-          dotnet tool install --global dotnet-ef
+          dotnet tool uninstall --global dotnet-ef || echo "dotnet-ef not found"
+          dotnet tool install --global dotnet-ef --version 8.*
           dotnet ef database update --project car-search/backend/CarSearchAPI/CarSearchAPI/CarSearchAPI.csproj
         env:
           ConnectionStrings__DefaultConnection: ${{ secrets.SEARCHAPI_DATABASE_CONNECTION_STRING }}
