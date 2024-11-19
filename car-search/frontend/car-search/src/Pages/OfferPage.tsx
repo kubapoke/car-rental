@@ -1,25 +1,27 @@
-import {Link, LoaderFunctionArgs, useLoaderData} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {FaArrowLeft, FaMapMarker} from "react-icons/fa";
 import notFoundPage from "./NotFoundPage.tsx";
+import {useOffers} from "../Context/OffersContext.tsx";
 
 interface OfferPageProps {
     rentCar: (offerId: number) => void;
 }
 
-interface Offer {
-    carId: number;
-    brand: string;
-    model: string;
-    email: string;
-    price: number;
-    conditions: string;
-    companyName: string;
-    startDate: string;
-    endDate: string;
-}
-
 const OfferPage = ({rentCar}: OfferPageProps) => {
-    const offer = useLoaderData() as Offer;
+    const { id } = useParams();
+    if (!id) {
+        throw new Response("Offer ID is missing", { status: 400 });
+    }
+
+    // get offers from the context
+    const { offers } = useOffers();
+
+    // find appropriate offer
+    const offer = offers.find((offer) => offer.carId === Number(id));
+
+    if (!offer) {
+        throw new Response("Offer not found", { status: 404 });
+    }
     
     const onRentClick = (offerId: number) => {
         rentCar(offerId);
@@ -94,19 +96,4 @@ const OfferPage = ({rentCar}: OfferPageProps) => {
     );
 };
 
-// loading data through a data loader
-const offerLoader = async ({ params }: LoaderFunctionArgs) => {
-    const { id } = params; // `id` is inferred as `string | undefined`
-    if (!id) {
-        throw new Response("Offer ID is missing", { status: 400 });
-    }
-
-    const response = await fetch(`/api/cars/${id}`);
-    if (!response.ok) {
-        throw new Response("Offer not found", { status: response.status });
-    }
-
-    return response.json();
-};
-
-export {OfferPage as default, offerLoader};
+export {OfferPage as default};

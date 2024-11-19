@@ -45,7 +45,7 @@ const CarOffers = ({isHome} : {isHome : boolean}) => {
         }
 
         fetchOffers();
-    }, [filters]);
+    }, [filters, setOffers]);
 
     // Limit offers to 3 if isHome is true
     const displayedOffers = isHome ? offers.slice(0, 3) : offers;
