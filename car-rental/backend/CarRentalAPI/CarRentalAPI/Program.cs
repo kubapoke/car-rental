@@ -1,5 +1,7 @@
 using CarRentalAPI;
 using Microsoft.EntityFrameworkCore;
+using CarRentalAPI.Services;
+using CarRentalAPI.Abstractions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddDbContext<CarRentalDbContext>(options =>
                 options.UseSqlServer(Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING")));
+builder.Services.AddScoped<IPriceGenerator, PricePerDayToHourGeneratorService>();
 
 var allowedOrigins = Environment.GetEnvironmentVariable("ALLOWED_ORIGINS")?.Split(',');
 

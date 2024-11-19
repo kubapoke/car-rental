@@ -24,28 +24,72 @@ namespace CarSearchAPI.Migrations
 
             modelBuilder.Entity("CarSearchAPI.Models.ApplicationUser", b =>
                 {
-                    b.Property<string>("email")
+                    b.Property<string>("Email")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateOnly>("birthDate")
+                    b.Property<DateOnly>("BirthDate")
                         .HasColumnType("date");
 
-                    b.Property<DateOnly>("licenceDate")
+                    b.Property<DateOnly>("LicenceDate")
                         .HasColumnType("date");
 
-                    b.Property<string>("name")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("surname")
+                    b.Property<string>("Surname")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("email");
+                    b.HasKey("Email");
 
                     b.ToTable("applicationUsers");
+                });
+
+            modelBuilder.Entity("CarSearchAPI.Models.Rent", b =>
+                {
+                    b.Property<int>("RentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RentId"));
+
+                    b.Property<string>("Brand")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Model")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("RentId");
+
+                    b.HasIndex("UserEmail");
+
+                    b.ToTable("rents");
+                });
+
+            modelBuilder.Entity("CarSearchAPI.Models.Rent", b =>
+                {
+                    b.HasOne("CarSearchAPI.Models.ApplicationUser", "RentUser")
+                        .WithMany()
+                        .HasForeignKey("UserEmail")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RentUser");
                 });
 #pragma warning restore 612, 618
         }

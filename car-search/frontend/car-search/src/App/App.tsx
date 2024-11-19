@@ -12,11 +12,13 @@ import BrowseOffersPage from "../Pages/BrowseOffersPage.tsx";
 import OfferPage from "../Pages/OfferPage.tsx";
 import {toast} from 'react-toastify';
 import NewUserForm from "../Pages/NewUserForm.tsx";
+import {FiltersProvider} from "../Context/FiltersContext.tsx";
+import {OffersProvider} from "../Context/OffersContext.tsx";
 
 
 function App() {
     
-    const rentCar = (id: string) => {
+    const rentCar = (id: number) => {
         console.log('Request for car id: ', id);
         toast.success("Request for car rental sent successfully!");
     }
@@ -33,7 +35,13 @@ function App() {
       )
     );
   
-  return <RouterProvider router={router}/>
+  return(
+      <FiltersProvider>
+          <OffersProvider>
+              <RouterProvider router={router}/>
+          </OffersProvider>
+      </FiltersProvider>
+  );
 }
 
 export default App
