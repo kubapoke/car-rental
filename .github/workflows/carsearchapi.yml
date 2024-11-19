@@ -36,7 +36,7 @@ jobs:
         run: |
           dotnet tool install --global dotnet-ef --version 8.*
           dotnet tool restore
-          dotnet ef --project car-search/backend/CarSearchAPI/CarSearchAPI/CarSearchAPI,csproj
+          dotnet ef --project car-search/backend/CarSearchAPI/CarSearchAPI/CarSearchAPI.csproj database update
         env:
           ConnectionStrings__DefaultConnection: ${{ secrets.SEARCHAPI_DATABASE_CONNECTION_STRING }}
 
