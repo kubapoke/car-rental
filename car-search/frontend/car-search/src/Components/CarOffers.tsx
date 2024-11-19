@@ -1,28 +1,11 @@
-import {useState, useEffect} from "react";
+import {useEffect} from "react";
 import CarOffer from './CarOffer.tsx'
+import {useOffers} from "../Context/OffersContext.tsx";
+import {useFilters} from "../Context/FiltersContext.tsx";
 
-interface Offer {
-    carId: number;
-    brand: string;
-    model: string;
-    email: string;
-    price: number;
-    conditions: string;
-    companyName: string;
-    startDate: string;
-    endDate: string;
-}
-
-interface CarOffersProps {
-    selectedBrand: string;
-    selectedModel: string;
-    selectedLocation: string;
-    startDate: string;
-    endDate: string;
-}
-
-const CarOffers = ({isHome, filters} : {isHome : boolean, filters : CarOffersProps}) => {
-    const [offers, setOffers] = useState<Offer[]>([]);
+const CarOffers = ({isHome} : {isHome : boolean}) => {
+    const {offers, setOffers} = useOffers();
+    const filters = useFilters().filters;
 
     useEffect(() => {
         const fetchOffers = async () => {
@@ -35,7 +18,12 @@ const CarOffers = ({isHome, filters} : {isHome : boolean, filters : CarOffersPro
                 ...(token && { 'Authorization': `Bearer ${token}` }), // Add the Authorization header if the token exists
             };
 
-            const { selectedBrand, selectedModel, selectedLocation, startDate, endDate } = filters;
+            const selectedBrand = filters.selectedBrand;
+            const selectedModel = filters.selectedModel;
+            const selectedLocation = filters.selectedLocation;
+            const startDate = filters.startDate;
+            const endDate = filters.endDate;
+
             const queryParams = new URLSearchParams();
 
             if (selectedBrand) queryParams.append('brand', selectedBrand);

@@ -13,6 +13,7 @@ import OfferPage, {offerLoader} from "../Pages/OfferPage.tsx";
 import {toast} from 'react-toastify';
 import NewUserForm from "../Pages/NewUserForm.tsx";
 import {FiltersProvider} from "../Context/FiltersContext.tsx";
+import {OffersProvider} from "../Context/OffersContext.tsx";
 
 
 function App() {
@@ -36,7 +37,9 @@ function App() {
   
   return(
       <FiltersProvider>
-        <RouterProvider router={router}/>
+          <OffersProvider>
+              <RouterProvider router={router}/>
+          </OffersProvider>
       </FiltersProvider>
   );
 }

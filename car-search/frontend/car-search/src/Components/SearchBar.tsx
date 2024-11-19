@@ -9,20 +9,8 @@ interface Car{
     isActive: boolean;
 }
 
-interface Filters {
-    selectedBrand: string;
-    selectedModel: string;
-    selectedLocation: string;
-    startDate: string;
-    endDate: string;
-}
-
-interface SearchBarProps {
-    updateFilters: (filters: Filters) => void;
-}
-
-const SearchBar = ({updateFilters} : SearchBarProps) => {
-    const filters  = useFilters().filters;
+const SearchBar = () => {
+    const {filters, setFilters}  = useFilters();
 
     const [brands, setBrands] = useState<string[]>([]);
     const [models, setModels] = useState<string[]>([]);
@@ -61,7 +49,7 @@ const SearchBar = ({updateFilters} : SearchBarProps) => {
         e.preventDefault();
         console.log({ selectedBrand, selectedModel, selectedLocation, startDate, endDate });
 
-        updateFilters({
+        setFilters({
             selectedBrand,
             selectedModel,
             selectedLocation,
