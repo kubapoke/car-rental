@@ -29,6 +29,10 @@ jobs:
           echo "ALLOWED_ORIGINS=${{ secrets.RENTALAPI_ALLOWED_ORIGINS }}" > .env
           echo "DATABASE_CONNECTION_STRING=${{ secrets.RENTALAPI_DATABASE_CONNECTION_STRING }}" >> .env
 
+      - name: Verify .env file creation
+        run: |
+          cat car-rental/backend/CarRentalAPI/CarRentalAPI/.env
+
       - name: Build with dotnet
         run: dotnet build car-rental/backend/CarRentalAPI --configuration Release
 
@@ -65,7 +69,11 @@ jobs:
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_D2DBAAAE1F7B4852928C575796831D20 }}
 
       - name: List directory contents for debugging
-        run: dir car-rental\backend\CarRentalAPI\CarRentalAPI
+        run: |
+          dir car-rental
+          dir car-rental\backend
+          dir car-rental\backend\CarRentalAPI
+          dir car-rental\backend\CarRentalAPI\CarRentalAPI      
 
       - name: Run database migrations
         run: |
