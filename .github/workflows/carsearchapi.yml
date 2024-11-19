@@ -73,16 +73,16 @@ jobs:
 
       - name: List directory contents for debugging
         run: |
-          dir car-search
-          dir car-search\backend
-          dir car-search\backend\CarSearchAPI
-          dir car-search\backend\CarSearchAPI\CarSearchAPI     
+          dir D:\a\car-rental\car-search
+          dir D:\a\car-rental\car-search\backend
+          dir D:\a\car-rental\car-search\backend\CarSearchAPI
+          dir D:\a\car-rental\car-search\backend\CarSearchAPI\CarSearchAPI     
 
       - name: Run database migrations
         run: |
           dotnet tool uninstall --global dotnet-ef || echo "dotnet-ef not found"
           dotnet tool install --global dotnet-ef --version 8.*
-          dotnet ef database update --project car-search/backend/CarSearchAPI/CarSearchAPI/CarSearchAPI.csproj
+          dotnet ef database update --project D:\a\car-rental\car-search\backend\CarSearchAPI\CarSearchAPI\CarSearchAPI.csproj
         env:
           ConnectionStrings__DefaultConnection: ${{ secrets.SEARCHAPI_DATABASE_CONNECTION_STRING }}
 
