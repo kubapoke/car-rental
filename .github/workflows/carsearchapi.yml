@@ -32,6 +32,10 @@ jobs:
           echo "JWT_CONFIRMATION_TOKEN_SECRET_KEY=${{ secrets.SEARCHAPI_JWT_CONFIRMATION_TOKEN_SECRET_KEY }}" >> .env
           echo "MY_ADDRESS=${{ secrets.SEARCHAPI_MY_ADDRESS }}" >> .env
 
+      - name: Verify .env file creation
+        run: |
+          cat car-search/backend/CarSearchAPI/CarSearchAPI/.env
+
       - name: Build with dotnet
         run: dotnet build car-search/backend/CarSearchAPI --configuration Release
 
@@ -68,7 +72,11 @@ jobs:
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_20574EF43DE540898AD4C2F77D7812D8 }}
 
       - name: List directory contents for debugging
-        run: dir car-rental\backend\CarRentalAPI\CarRentalAPI
+        run: |
+          dir car-search
+          dir car-search\backend
+          dir car-search\backend\CarSearchAPI
+          dir car-search\backend\CarSearchAPI\CarSearchAPI     
 
       - name: Run database migrations
         run: |
