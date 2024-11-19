@@ -1,0 +1,26 @@
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using CarSearchAPI.Abstractions;
+using CarSearchAPI.DTOs.CarRental;
+
+namespace CarSearchAPI.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class EmailsController : ControllerBase
+    {
+        private readonly IEmailSender _emailSender;
+
+        public EmailsController(IEmailSender emailSender)
+        {
+            _emailSender = emailSender;
+        }
+
+        [HttpPost("send-email")]
+        public async Task<IActionResult> SendEmail([FromBody] OfferDto info)
+        {
+            bool isSuccess = await _emailSender.SendEmailAsync(info);
+            return isSuccess ? Ok() : BadRequest();
+        }
+    }
+}

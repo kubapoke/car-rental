@@ -1,5 +1,13 @@
 using CarSearchAPI;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.Text.Json.Serialization;
+using CarSearchAPI.Utilities;
+using CarSearchAPI.Services;
+using CarSearchAPI.Abstractions;
+using CarSearchAPI.Services.DataProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,9 +18,41 @@ DotNetEnv.Env.Load();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>  // this will add instruction of how to serialize/deserialize different datatypes (not sure of how it works) 
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
+    });
 builder.Services.AddDbContext<CarSearchDbContext>(options =>
-                options.UseSqlServer(Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING")));
+                options.UseSqlServer(Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING"))); // add connection string to your local db to .env
+
+builder.Services.AddHttpClient();
+
+builder.Services.AddScoped<IEmailSender, SendGridEmailService>();
+builder.Services.AddScoped<IConfirmationTokenService, JwtConfirmationTokenService>();
+builder.Services.AddScoped<IAuthService, GoogleAuthService>();
+builder.Services.AddScoped<SessionTokenManager>();
+
+// Register external data providers
+builder.Services.AddScoped<IExternalDataProvider, CarRentalDataProvider>();
+
+builder.Services.AddAuthentication(options => // that is instruction, how to check bearer token
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters // we check only using secret key, write secret key to .env (usually 256 bit key)
+        {
+            ValidateAudience = false,
+            ValidateIssuer = false,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_TOKEN_SECRET_KEY"))),
+            ValidateLifetime = true
+        };
+    });
 
 var allowedOrigins = Environment.GetEnvironmentVariable("ALLOWED_ORIGINS")?.Split(',');
 
