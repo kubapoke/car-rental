@@ -14,7 +14,8 @@ import NewUserForm from "../Pages/NewUserForm.tsx";
 import {FiltersProvider} from "../Context/FiltersContext.tsx";
 import {OffersProvider} from "../Context/OffersContext.tsx";
 import RentConfirmationPage from "../Pages/RentConfirmationPage.tsx";
-
+import UserRentsPage from "../Pages/UserRentsPage.tsx";
+import {RentsProvider} from "../Context/RentsContext.tsx";
 
 function App() {
     const router = createBrowserRouter(
@@ -25,6 +26,7 @@ function App() {
               <Route path='/new-user-form' element={<NewUserForm/>}/>
               <Route path='/offers/:id' element={<OfferPage/>}/>
               <Route path='/offers/rent-confirmation' element={<RentConfirmationPage/>}/>
+              <Route path="/user-rents" element={<UserRentsPage/>}/>
               <Route path="*" element={<NotFoundPage/>}/>
           </Route>
       )
@@ -33,7 +35,9 @@ function App() {
   return(
       <FiltersProvider>
           <OffersProvider>
-              <RouterProvider router={router}/>
+              <RentsProvider>
+                  <RouterProvider router={router}/>
+              </RentsProvider>
           </OffersProvider>
       </FiltersProvider>
   );
