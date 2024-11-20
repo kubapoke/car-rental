@@ -32,6 +32,14 @@ jobs:
           echo "JWT_CONFIRMATION_TOKEN_SECRET_KEY=${{ secrets.SEARCHAPI_JWT_CONFIRMATION_TOKEN_SECRET_KEY }}" >> .env
           echo "MY_ADDRESS=${{ secrets.SEARCHAPI_MY_ADDRESS }}" >> .env
 
+      - name: Update database
+        run: |
+          dotnet tool install --global dotnet-ef --version 8.*
+          dotnet tool restore
+          dotnet ef --project car-search/backend/CarSearchAPI/CarSearchAPI/CarSearchAPI.csproj database update
+        env:
+          ConnectionStrings__DefaultConnection: ${{ secrets.SEARCHAPI_DATABASE_CONNECTION_STRING }}
+
       - name: Build with dotnet
         run: dotnet build car-search/backend/CarSearchAPI --configuration Release
 
@@ -66,13 +74,6 @@ jobs:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_5DA27A1EC070421EAC9CFE9A5DD9B63D }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_391FFE1FFACC4024ACBD0D511E01A2B4 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_20574EF43DE540898AD4C2F77D7812D8 }}
-
-      - name: Run database migrations
-        run: |
-          dotnet tool install --global dotnet-ef
-          dotnet ef database update --project car-search/backend/CarSearchAPI/CarSearchAPI/CarSearchAPI.csproj
-        env:
-          ConnectionStrings__DefaultConnection: ${{ secrets.SEARCHAPI_DATABASE_CONNECTION_STRING }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
