@@ -11,7 +11,7 @@ const CarOffer = ({offer} : {offer : Offer}) => {
                     <h3 className="text-xl font-bold">{offer.brand} {offer.model}</h3>
                 </div>
 
-                <div className="text-orange-700 mb-4 flex align-left justify-left md:justify-start">
+                <div className="text-orange-700 mb-4 flex align-start justify-start md:justify-start">
                     <FaMapMarker className="mr-2"/>
                     <p>{offer.location}</p>
                 </div>
