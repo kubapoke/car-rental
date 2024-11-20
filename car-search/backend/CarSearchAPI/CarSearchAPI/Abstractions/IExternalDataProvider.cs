@@ -12,4 +12,5 @@ public interface IExternalDataProvider
     public Task<string> GetOfferListAsync(GetOfferListParametersDto parameters);
     public Task<NewSearchRentDto> CreateNewRentAsync(ClaimsPrincipal claimsPrincipal);
     public string GetProviderName();
+
 }

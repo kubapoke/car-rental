@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
@@ -17,9 +19,12 @@ namespace CarSearchAPI.Services.DataProviders
         // This will get data from an appropriate endpoint (using FromQuery parameters!) from CarRentalAPI
         private readonly IHttpClientFactory _httpClientFactory;
 
+        private readonly string _accessToken;
+
         public CarRentalDataProvider(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
+            _accessToken = GenerateAcessToken();
         }
 
         public string GetProviderName()
@@ -30,6 +35,7 @@ namespace CarSearchAPI.Services.DataProviders
         public async Task<string> GetCarListAsync()
         {
             var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
             
             var carRentalApiUrl = Environment.GetEnvironmentVariable("CAR_RENTAL_API_URL");
             var endpoint = "/api/Cars/car-list";
@@ -51,7 +57,8 @@ namespace CarSearchAPI.Services.DataProviders
         public async Task<string> GetOfferListAsync(GetOfferListParametersDto parameters)
         {
             var client = _httpClientFactory.CreateClient();
-            
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+
             var carRentalApiUrl = Environment.GetEnvironmentVariable("CAR_RENTAL_API_URL");
             var endpoint = "/api/Offers/offer-list";
             
@@ -84,6 +91,7 @@ namespace CarSearchAPI.Services.DataProviders
         public async Task<NewSearchRentDto> CreateNewRentAsync(ClaimsPrincipal claimsPrincipal)
         {
             var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
 
             string carId = claimsPrincipal.FindFirst("CarId")?.Value;
             string email = claimsPrincipal.FindFirst("Email")?.Value;
@@ -126,5 +134,19 @@ namespace CarSearchAPI.Services.DataProviders
             throw new HttpRequestException(errorMessage);
         }
         
+        private string GenerateAcessToken()
+        {
+            var tokenHandelr = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("CAR_RENTAL_SECRET_KEY"));            
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                Expires = DateTime.UtcNow.AddMinutes(60)
+            };
+            var token = tokenHandelr.CreateToken(tokenDescriptor);
+
+            return tokenHandelr.WriteToken(token);
+        }
     }
 }
