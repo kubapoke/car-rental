@@ -49,7 +49,7 @@ const GoogleAuthButton: React.FC = () => {
             });
             const { jwtToken, isNewUser } = await backEndResponse.data;
             if (isNewUser) {
-                sessionStorage.setItem('tmpToken', jwtToken); // store token in sessionStorage of browser
+                sessionStorage.setItem('authToken', jwtToken); // store token in sessionStorage of browser
                 console.log("New user logged In");
                 navigate("/new-user-form");
             } else {
