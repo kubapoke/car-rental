@@ -30,6 +30,7 @@ namespace CarSearchAPI.Controllers.ForwardControllers
         [FromQuery] DateTime endDate,
         [FromQuery] string? location)
         {
+
             var parameters = new GetOfferListParametersDto()
             {
                 Brand = brand,

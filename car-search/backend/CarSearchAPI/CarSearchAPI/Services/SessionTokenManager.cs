@@ -20,13 +20,13 @@ namespace CarSearchAPI.Services
             double expirationMinutes; // that is time, in which token will be valid
             if (isTemporary)
             {
-                Claim protoUserClaim = new Claim("ProtoUser", "");
+                Claim protoUserClaim = new Claim("ProtoUserClaim", "1");
                 claims.Add(protoUserClaim);
                 expirationMinutes = 10;
             }
             else
             {
-                Claim legitUserClaim = new Claim("LegitUser", "");
+                Claim legitUserClaim = new Claim("LegitUserClaim", "1");
                 claims.Add(legitUserClaim);
                 expirationMinutes = 60;
             }

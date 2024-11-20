@@ -58,8 +58,8 @@ builder.Services.AddAuthentication(options => // that is instruction, how to che
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("ProtoUser", policy => policy.RequireClaim(JwtRegisteredClaimNames.Email).RequireClaim("ProtoUser"));
-    options.AddPolicy("LegitUser", policy => policy.RequireClaim(JwtRegisteredClaimNames.Email).RequireClaim("LegitUser"));
+    options.AddPolicy("ProtoUser", policy => policy.RequireClaim("ProtoUserClaim"));
+    options.AddPolicy("LegitUser", policy => policy.RequireClaim("LegitUserClaim"));
 });
 
 var allowedOrigins = Environment.GetEnvironmentVariable("ALLOWED_ORIGINS")?.Split(',');
