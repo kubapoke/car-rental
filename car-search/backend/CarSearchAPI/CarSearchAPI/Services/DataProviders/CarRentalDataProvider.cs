@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
@@ -34,6 +35,7 @@ namespace CarSearchAPI.Services.DataProviders
         public async Task<string> GetCarListAsync()
         {
             var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
             
             var carRentalApiUrl = Environment.GetEnvironmentVariable("CAR_RENTAL_API_URL");
             var endpoint = "/api/Cars/car-list";
@@ -55,7 +57,8 @@ namespace CarSearchAPI.Services.DataProviders
         public async Task<string> GetOfferListAsync(GetOfferListParametersDto parameters)
         {
             var client = _httpClientFactory.CreateClient();
-            
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+
             var carRentalApiUrl = Environment.GetEnvironmentVariable("CAR_RENTAL_API_URL");
             var endpoint = "/api/Offers/offer-list";
             
@@ -88,6 +91,7 @@ namespace CarSearchAPI.Services.DataProviders
         public async Task<NewSearchRentDto> CreateNewRentAsync(ClaimsPrincipal claimsPrincipal)
         {
             var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
 
             string carId = claimsPrincipal.FindFirst("CarId")?.Value;
             string email = claimsPrincipal.FindFirst("Email")?.Value;
