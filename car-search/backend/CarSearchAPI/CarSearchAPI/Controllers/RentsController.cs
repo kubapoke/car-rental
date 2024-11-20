@@ -44,7 +44,7 @@ namespace CarSearchAPI.Controllers
                 
                 if (activeProvider == null) { return BadRequest("Invalid provider name"); }
                 
-                var results = await activeProvider.CreateNewRentAsync(claimsPrincipal);
+                var results = await activeProvider.CreateNewRentAsync(claimsPrincipal);                
 
                 Rent newRent = new Rent()
                 {
@@ -66,7 +66,7 @@ namespace CarSearchAPI.Controllers
             }
             catch (Exception)
             {
-                return BadRequest("Invalid token");
+                return BadRequest("Invalid token, this message may be showing, because you already confirmed your rent.");
             }
            
         }
