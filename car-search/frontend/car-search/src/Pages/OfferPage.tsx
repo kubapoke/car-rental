@@ -2,6 +2,7 @@ import {Link, useNavigate, useParams} from "react-router-dom";
 import {FaArrowLeft, FaMapMarker} from "react-icons/fa";
 import notFoundPage from "./NotFoundPage.tsx";
 import {useOffers, Offer} from "../Context/OffersContext.tsx";
+import {calculateDaysBetweenDates} from "../Components/CarOffer.tsx";
 
 const OfferPage = () => {
     const navigate = useNavigate();
@@ -71,12 +72,9 @@ const OfferPage = () => {
                                 <h1 className="text-3xl font-bold mb-4">
                                     {offer.brand} {offer.model}
                                 </h1>
-                                <div
-                                    className="text-gray-500 mb-4 flex align-middle justify-center md:justify-start"
-                                >
-                                    <FaMapMarker
-                                        className="mr-2"/>
-                                    <p className="text-orange-700">Warsaw</p>
+                                <div className="text-orange-700 mb-4 flex align-left justify-left md:justify-start">
+                                    <FaMapMarker className="mr-2"/>
+                                    <p>{offer.location}</p>
                                 </div>
                             </div>
 
@@ -86,12 +84,12 @@ const OfferPage = () => {
                                 </h3>
 
                                 <p className="mb-4">
-                                    bla bla bla bla bla bla bla bla bla bla
+                                    {offer.companyName} to polska firma rodzinna, która z pokolenia na pokolenie dostarcza najwyższej jakości usługi.
                                 </p>
 
                                 <h3 className="text-indigo-800 text-lg font-bold mb-2">Price</h3>
 
-                                <p className="mb-4">{offer.price}/ Day</p>
+                                <p className="mb-4">{offer.price} PLN Total, {Math.round(offer.price /calculateDaysBetweenDates(offer.endDate, offer.startDate))} PLN / Day</p>
                             </div>
                         </main>
 
