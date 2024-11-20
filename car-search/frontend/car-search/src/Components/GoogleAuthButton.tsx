@@ -3,6 +3,7 @@ import {jwtDecode} from 'jwt-decode'
 import {GoogleOAuthProvider, GoogleLogin, googleLogout, CredentialResponse} from '@react-oauth/google'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import ProfileIcon from "./ProfileIcon.tsx";
 
 interface GoogleUser {
     email: string;
@@ -49,7 +50,7 @@ const GoogleAuthButton: React.FC = () => {
             });
             const { jwtToken, isNewUser } = await backEndResponse.data;
             if (isNewUser) {
-                sessionStorage.setItem('tmpToken', jwtToken); // store token in sessionStorage of browser
+                sessionStorage.setItem('authToken', jwtToken); // store token in sessionStorage of browser
                 console.log("New user logged In");
                 navigate("/new-user-form");
             } else {
@@ -76,10 +77,7 @@ const GoogleAuthButton: React.FC = () => {
         <GoogleOAuthProvider clientId={clientId}>
             <div>
                 {user ? (
-                    <div>
-                        <h3>Welcome {user.email}</h3>
-                        <button onClick={logout}>Logout</button>
-                    </div>
+                    <ProfileIcon email={user.email} logout={logout}/>
                 ) : (
                     <GoogleLogin
                         onSuccess={(credentialResponse) => handleCredentialResponse(credentialResponse)}

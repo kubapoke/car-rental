@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using CarSearchAPI.Abstractions;
 using CarSearchAPI.DTOs.CarRental;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CarSearchAPI.Controllers
 {
@@ -16,6 +17,7 @@ namespace CarSearchAPI.Controllers
             _emailSender = emailSender;
         }
 
+        [Authorize(Policy = "LegitUser")]
         [HttpPost("send-email")]
         public async Task<IActionResult> SendEmail([FromBody] OfferDto info)
         {

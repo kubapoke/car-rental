@@ -21,7 +21,7 @@ namespace CarSearchAPI.Controllers.ForwardControllers
             _dataProviders = dataProviders;
         }
         
-        [Authorize]
+        [Authorize(Policy = "LegitUser")]
         [HttpGet("offer-list")]
         public async Task<IActionResult> OfferList(
         [FromQuery] string? brand,
@@ -30,6 +30,7 @@ namespace CarSearchAPI.Controllers.ForwardControllers
         [FromQuery] DateTime endDate,
         [FromQuery] string? location)
         {
+
             var parameters = new GetOfferListParametersDto()
             {
                 Brand = brand,
@@ -46,9 +47,8 @@ namespace CarSearchAPI.Controllers.ForwardControllers
             {
                 try
                 {
-                    var jsonData = await provider.GetOfferListAsync(parameters);
+                    var offers = await provider.GetOfferListAsync(parameters);
                     
-                    var offers = JsonConvert.DeserializeObject<List<OfferDto>>(jsonData);
                     aggregateOffers.AddRange(offers);
                 }
                 catch (Exception ex)

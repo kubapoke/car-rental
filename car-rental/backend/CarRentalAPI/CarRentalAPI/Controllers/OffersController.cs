@@ -1,11 +1,13 @@
 ﻿using CarRentalAPI.Abstractions;
 using CarRentalAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CarRentalAPI.Controllers
 {
+   [Authorize]
    [Route("api/[controller]")]
    [ApiController]
    public class OffersController : ControllerBase
@@ -62,6 +64,7 @@ namespace CarRentalAPI.Controllers
                    Price = _priceGenerator.GeneratePrice(group.Model.BasePrice, startDate, endDate),
                    Conditions = Conditions,
                    CompanyName = CompanyName,
+                   Location = group.Location,
                    StartDate = startDate,
                    EndDate = endDate,
                    Email = email

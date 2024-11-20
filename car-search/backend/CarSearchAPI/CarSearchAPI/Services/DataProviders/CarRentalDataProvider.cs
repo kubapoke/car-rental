@@ -6,9 +6,13 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
-using System.Text.Json;
+using CarSearchAPI.DTOs.Users;
+using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace CarSearchAPI.Services.DataProviders
 {
@@ -17,9 +21,12 @@ namespace CarSearchAPI.Services.DataProviders
         // This will get data from an appropriate endpoint (using FromQuery parameters!) from CarRentalAPI
         private readonly IHttpClientFactory _httpClientFactory;
 
+        private readonly string _accessToken;
+
         public CarRentalDataProvider(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
+            _accessToken = GenerateAcessToken();
         }
 
         public string GetProviderName()
@@ -27,9 +34,10 @@ namespace CarSearchAPI.Services.DataProviders
             return "CarRental";
         }
 
-        public async Task<string> GetCarListAsync()
+        public async Task<List<CarDto>> GetCarListAsync()
         {
             var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
             
             var carRentalApiUrl = Environment.GetEnvironmentVariable("CAR_RENTAL_API_URL");
             var endpoint = "/api/Cars/car-list";
@@ -40,7 +48,9 @@ namespace CarSearchAPI.Services.DataProviders
             
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadAsStringAsync();
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var cars = JsonConvert.DeserializeObject<List<CarDto>>(responseContent);
+                return cars;
             }
             else
             {
@@ -48,10 +58,11 @@ namespace CarSearchAPI.Services.DataProviders
             }
         }
 
-        public async Task<string> GetOfferListAsync(GetOfferListParametersDto parameters)
+        public async Task<List<OfferDto>> GetOfferListAsync(GetOfferListParametersDto parameters)
         {
             var client = _httpClientFactory.CreateClient();
-            
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+
             var carRentalApiUrl = Environment.GetEnvironmentVariable("CAR_RENTAL_API_URL");
             var endpoint = "/api/Offers/offer-list";
             
@@ -73,7 +84,9 @@ namespace CarSearchAPI.Services.DataProviders
             
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadAsStringAsync();
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var offers = JsonConvert.DeserializeObject<List<OfferDto>>(responseContent);
+                return offers;
             }
             else
             {
@@ -84,6 +97,7 @@ namespace CarSearchAPI.Services.DataProviders
         public async Task<NewSearchRentDto> CreateNewRentAsync(ClaimsPrincipal claimsPrincipal)
         {
             var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
 
             string carId = claimsPrincipal.FindFirst("CarId")?.Value;
             string email = claimsPrincipal.FindFirst("Email")?.Value;
@@ -126,5 +140,19 @@ namespace CarSearchAPI.Services.DataProviders
             throw new HttpRequestException(errorMessage);
         }
         
+        private string GenerateAcessToken()
+        {
+            var tokenHandelr = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("CAR_RENTAL_SECRET_KEY"));            
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                Expires = DateTime.UtcNow.AddMinutes(60)
+            };
+            var token = tokenHandelr.CreateToken(tokenDescriptor);
+
+            return tokenHandelr.WriteToken(token);
+        }
     }
 }

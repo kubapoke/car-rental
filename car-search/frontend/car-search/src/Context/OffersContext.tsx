@@ -7,6 +7,7 @@ export interface Offer {
     email: string;
     price: number;
     conditions: string;
+    location: string;
     companyName: string;
     startDate: string;
     endDate: string;
