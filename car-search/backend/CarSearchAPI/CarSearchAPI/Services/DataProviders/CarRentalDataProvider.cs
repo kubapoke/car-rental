@@ -10,7 +10,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
-using System.Text.Json;
+using CarSearchAPI.DTOs.Users;
+using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace CarSearchAPI.Services.DataProviders
 {
@@ -32,7 +34,7 @@ namespace CarSearchAPI.Services.DataProviders
             return "CarRental";
         }
 
-        public async Task<string> GetCarListAsync()
+        public async Task<List<CarDto>> GetCarListAsync()
         {
             var client = _httpClientFactory.CreateClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
@@ -46,7 +48,9 @@ namespace CarSearchAPI.Services.DataProviders
             
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadAsStringAsync();
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var cars = JsonConvert.DeserializeObject<List<CarDto>>(responseContent);
+                return cars;
             }
             else
             {
@@ -54,7 +58,7 @@ namespace CarSearchAPI.Services.DataProviders
             }
         }
 
-        public async Task<string> GetOfferListAsync(GetOfferListParametersDto parameters)
+        public async Task<List<OfferDto>> GetOfferListAsync(GetOfferListParametersDto parameters)
         {
             var client = _httpClientFactory.CreateClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
@@ -80,7 +84,9 @@ namespace CarSearchAPI.Services.DataProviders
             
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadAsStringAsync();
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var offers = JsonConvert.DeserializeObject<List<OfferDto>>(responseContent);
+                return offers;
             }
             else
             {
