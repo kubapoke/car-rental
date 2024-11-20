@@ -42,6 +42,17 @@ namespace CarRentalAPI.Controllers
                 Status = status
             };
 
+            var existingRent = await _context.Rents
+                .FirstOrDefaultAsync(r =>
+                    r.CarId == offerInfo.CarId &&
+                    r.RentStart == offerInfo.StartDate &&
+                    r.RentEnd == offerInfo.EndDate);
+
+            if (existingRent != null)
+            {
+                return BadRequest("Rent is already created");
+            }
+
             await _context.Rents.AddAsync(newRent);
             await _context.SaveChangesAsync();
 
