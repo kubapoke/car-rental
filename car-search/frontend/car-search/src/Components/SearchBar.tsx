@@ -12,6 +12,7 @@ interface Car{
 const SearchBar = () => {
     const {filters, setFilters}  = useFilters();
 
+    const [carData, setCarData] = useState<Car[]>([]);
     const [brands, setBrands] = useState<string[]>([]);
     const [models, setModels] = useState<string[]>([]);
     const [locations, setLocations] = useState<string[]>([]);
@@ -29,13 +30,13 @@ const SearchBar = () => {
                 const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/CarsForward/car-list`);
                 const data: Car[] = await response.json();
 
-                // Extract unique brands, models, and locations from the data
+                setCarData(data);
+
+                // Extract unique brands and locations from the data
                 const brands = [...new Set(data.map(car => car.brandName))];
-                const models = [...new Set(data.map(car => car.modelName))];
                 const locations = [...new Set(data.map(car => car.location))];
 
                 setBrands(brands);
-                setModels(models);
                 setLocations(locations);
             } catch (error) {
                 console.error('Error fetching car list:', error);
@@ -44,6 +45,33 @@ const SearchBar = () => {
 
         fetchData();
     }, []);
+
+    useEffect(() => {
+        // update models based on selected brand
+       if(selectedBrand) {
+           const filteredModels = carData
+               .filter(car => car.brandName === selectedBrand)
+               .map(car => car.modelName);
+
+           setModels([...new Set(filteredModels)]);
+
+           if (!filteredModels.includes(selectedModel)) {
+               setSelectedModel('');
+           }
+       } else {
+            setModels([...new Set(carData.map(car => car.modelName))]);
+       }
+    }, [selectedBrand, carData, selectedModel]);
+
+    const handleModelChange = (model: string) => {
+        setSelectedModel(model);
+
+        // set brand to brand of selected model
+        const associatedBrand = carData.find(car => car.modelName === model)?.brandName;
+        if(associatedBrand){
+            setSelectedBrand(associatedBrand);
+        }
+    }
 
     const handleSubmit = (e : FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -81,7 +109,7 @@ const SearchBar = () => {
                 {/* Model Dropdown */}
                 <select
                     value={selectedModel}
-                    onChange={(e) => setSelectedModel(e.target.value)}
+                    onChange={(e) => handleModelChange(e.target.value)}
                     className="border border-gray-300 rounded-lg p-2 mb-2 md:mb-0 md:mr-2 w-full md:w-1/3"
                 >
                     <option value="">Select Model</option>
