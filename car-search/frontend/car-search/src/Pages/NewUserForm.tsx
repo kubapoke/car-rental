@@ -14,7 +14,7 @@ const NewUserForm: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const token = sessionStorage.getItem('tmpToken'); // get our token to access [Authorize] api
+            const token = sessionStorage.getItem('authToken'); // get our token to access [Authorize] api
             const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/Auth/complete-registration`, {
                 method: 'POST',
                 headers: {
@@ -27,8 +27,9 @@ const NewUserForm: React.FC = () => {
                 throw new Error('Failed to complete registration');
             }
             const data = await response.json();
-            sessionStorage.removeItem('tmpToken'); // remove our temporary token
-            sessionStorage.setItem('authToken', data.jwtToken); // add main token
+            console.log(data.sessionToken);
+            sessionStorage.removeItem('authToken'); // remove our temporary token
+            sessionStorage.setItem('authToken', data.sessionToken); // add main token
             navigate('/');
 
         } catch (error) {
