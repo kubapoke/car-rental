@@ -4,9 +4,11 @@ using CarRentalAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CarRentalAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class RentsController : ControllerBase
@@ -19,7 +21,7 @@ namespace CarRentalAPI.Controllers
             _context = context;
         }
 
-        // Must be Authorize !!!
+
         [HttpPost("create-new-rent")]
         public async Task<IActionResult> CreateNewRent([FromBody] OfferInfoForNewRentDto offerInfo)
         {

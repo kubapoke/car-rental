@@ -1,11 +1,13 @@
 ﻿using CarRentalAPI.Abstractions;
 using CarRentalAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CarRentalAPI.Controllers
 {
+   [Authorize]
    [Route("api/[controller]")]
    [ApiController]
    public class OffersController : ControllerBase
