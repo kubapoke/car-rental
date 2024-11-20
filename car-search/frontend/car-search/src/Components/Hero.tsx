@@ -11,7 +11,7 @@ const Hero = () => {
                         Rent your dream car today!
                     </h1>
                     <p className="my-4 text-xl text-white">
-                        You choose the car. We worry about everything else.
+                        Just choose the car. Let us take care of everything else.
                     </p>
                 </div>
             </div>

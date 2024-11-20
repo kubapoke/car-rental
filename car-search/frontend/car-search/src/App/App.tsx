@@ -13,6 +13,7 @@ import OfferPage from "../Pages/OfferPage.tsx";
 import NewUserForm from "../Pages/NewUserForm.tsx";
 import {FiltersProvider} from "../Context/FiltersContext.tsx";
 import {OffersProvider} from "../Context/OffersContext.tsx";
+import RentConfirmationPage from "../Pages/RentConfirmationPage.tsx";
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
               <Route path='/offers' element={<BrowseOffersPage/>}/>
               <Route path='/new-user-form' element={<NewUserForm/>}/>
               <Route path='/offers/:id' element={<OfferPage/>}/>
+              <Route path='/offers/rent-confirmation' element={<RentConfirmationPage/>}/>
               <Route path="*" element={<NotFoundPage/>}/>
           </Route>
       )
