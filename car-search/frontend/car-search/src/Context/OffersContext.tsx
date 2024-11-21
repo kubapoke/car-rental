@@ -16,13 +16,23 @@ export interface Offer {
 interface OffersContextProps {
     offers: Offer[];
     setOffers: React.Dispatch<React.SetStateAction<Offer[]>>;
-    fetchOffers: (filters: Record<string, string>) => Promise<void>;
+    fetchOffers: (filters: Record<string, string>, page?: number, pageSize?: number) => Promise<void>;
+    page: number;
+    pageSize: number;
+    totalOffers: number;
+    pageCount: number;
+    setPage: React.Dispatch<React.SetStateAction<number>>;
+    setPageSize: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const OffersContext = createContext<OffersContextProps | undefined>(undefined);
 
 export const OffersProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [offers, setOffers] = useState<Offer[]>([]);
+    const [page, setPage] = useState(0);
+    const [pageSize, setPageSize] = useState(6);
+    const [totalOffers, setTotalOffers] = useState(0);
+    const [pageCount, setPageCount] = useState(0);
 
     // fetch offers based on filters
     const fetchOffers = async (filters: Record<string, string>) => {
@@ -37,15 +47,30 @@ export const OffersProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
         try {
             const res = await fetch(apiUrl, { method: 'GET', headers });
-            const data: Offer[] = await res.json();
-            setOffers(data);
+            const data = await res.json();
+            setOffers(data.offers);
+            setPage(data.page);
+            setPageSize(data.pageSize);
+            setTotalOffers(data.totalOffers);
+            setPageCount(data.pageCount);
         } catch (error) {
             console.error('Error fetching offers:', error);
         }
     };
 
     return (
-        <OffersContext.Provider value={{ offers, setOffers, fetchOffers }}>
+        <OffersContext.Provider
+            value={{
+                offers,
+                setOffers,
+                page,
+                pageSize,
+                totalOffers,
+                pageCount,
+                setPage,
+                setPageSize,
+                fetchOffers,
+            }}>
             {children}
         </OffersContext.Provider>
     );

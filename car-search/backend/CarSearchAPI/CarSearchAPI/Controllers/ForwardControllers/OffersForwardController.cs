@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using CarSearchAPI.Abstractions;
 using CarSearchAPI.DTOs.CarRental;
+using CarSearchAPI.DTOs.CarSearch;
 using CarSearchAPI.DTOs.ForwardingParameters;
 using CarSearchAPI.DTOs.Users;
 using Microsoft.AspNetCore.Authorization;
@@ -45,6 +46,7 @@ namespace CarSearchAPI.Controllers.ForwardControllers
             };
 
             var aggregateOffers = new List<OfferDto>();
+            var offerPage = new OfferPageDto();
 
             foreach (var provider in _dataProviders)
             {
@@ -60,33 +62,29 @@ namespace CarSearchAPI.Controllers.ForwardControllers
                 }
             }
             
-            // handle paging logic
-            if (pageSize is > 0 || page is >= 0)
+            int pageInt = Math.Max(page ?? 0, 0);
+            int pageSizeInt = Math.Max(pageSize ?? 6, 1);
+
+            if (page == null && pageSize == null)
             {
-                int pageInt, pageSizeInt;
-
-                if (page is null or < 0)
-                    pageInt = 0;
-                else
-                    pageInt = (int)page;
-
-                if (pageSize is null or <= 0)
-                    pageSizeInt = 6;
-                else
-                    pageSizeInt = (int)pageSize;
-                
-                int startIndex = pageInt * pageSizeInt, count = pageSizeInt;
-
-                if (startIndex < aggregateOffers.Count)
-                {
-                    if(count > aggregateOffers.Count - startIndex)
-                        count = aggregateOffers.Count - startIndex;
-                    
-                    aggregateOffers = aggregateOffers.GetRange(startIndex, count);
-                }
+                pageInt = 0;
+                pageSizeInt = aggregateOffers.Count;
             }
             
-            return Ok(aggregateOffers);
+            offerPage.TotalOffers = aggregateOffers.Count;
+            offerPage.PageCount = Math.Max(1, (int)Math.Ceiling((double)aggregateOffers.Count / pageSizeInt));
+            
+            // apply paging
+            aggregateOffers = aggregateOffers
+                .Skip(pageInt * pageSizeInt)
+                .Take(pageSizeInt)
+                .ToList();
+            
+            offerPage.Page = pageInt;
+            offerPage.PageSize = aggregateOffers.Count;
+            offerPage.Offers = aggregateOffers;
+            
+            return Ok(offerPage);
         }
     }
 }

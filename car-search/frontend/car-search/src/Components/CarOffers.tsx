@@ -4,48 +4,18 @@ import {useOffers} from "../Context/OffersContext.tsx";
 import {useFilters} from "../Context/FiltersContext.tsx";
 
 const CarOffers = ({isHome} : {isHome : boolean}) => {
-    const {offers, setOffers} = useOffers();
+    const {offers, fetchOffers} = useOffers();
     const filters = useFilters().filters;
 
     useEffect(() => {
-        const fetchOffers = async () => {
-            // Retrieve the authToken from session storage
-            const token = sessionStorage.getItem('authToken'); // or use sessionStorage.getItem('jwt_token')
-
-            // If the token is present, add it to the Authorization header
-            const headers = {
-                'Content-Type': 'application/json',
-                ...(token && { 'Authorization': `Bearer ${token}` }), // Add the Authorization header if the token exists
-            };
-
-            const selectedBrand = filters.selectedBrand;
-            const selectedModel = filters.selectedModel;
-            const selectedLocation = filters.selectedLocation;
-            const startDate = filters.startDate;
-            const endDate = filters.endDate;
-
-            const queryParams = new URLSearchParams();
-
-            if (selectedBrand) queryParams.append('brand', selectedBrand);
-            if (selectedModel) queryParams.append('model', selectedModel);
-            if (selectedLocation) queryParams.append('location', selectedLocation);
-            if (startDate) queryParams.append('startDate', startDate);
-            if (endDate) queryParams.append('endDate', endDate);
-
-            const apiUrl = `${import.meta.env.VITE_SERVER_URL}/api/OffersForward/offer-list?${queryParams.toString()}`;
-
-            try {
-                const res = await fetch(apiUrl, {method: 'GET', headers: headers});
-                const data = await res.json();
-                setOffers(data);
-            }
-            catch (error){
-                console.log('Error fetching data', error);
-            }
-        }
-
-        fetchOffers();
-    }, [filters, setOffers]);
+        fetchOffers({
+            brand: filters.selectedBrand || '',
+            model: filters.selectedModel || '',
+            location: filters.selectedLocation || '',
+            startDate: filters.startDate || '',
+            endDate: filters.endDate || '',
+        })
+    }, [filters, fetchOffers]);
 
     // Limit offers to 3 if isHome is true
     const displayedOffers = isHome ? offers.slice(0, 3) : offers;
