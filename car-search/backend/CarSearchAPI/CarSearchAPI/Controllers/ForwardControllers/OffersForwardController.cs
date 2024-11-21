@@ -6,6 +6,7 @@ using CarSearchAPI.DTOs.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Exception = System.Exception;
 
 namespace CarSearchAPI.Controllers.ForwardControllers
 {
@@ -28,7 +29,9 @@ namespace CarSearchAPI.Controllers.ForwardControllers
         [FromQuery] string? model,
         [FromQuery] DateTime startDate,
         [FromQuery] DateTime endDate,
-        [FromQuery] string? location)
+        [FromQuery] string? location,
+        [FromQuery] int? page,
+        [FromQuery] int? pageSize)
         {
 
             var parameters = new GetOfferListParametersDto()
@@ -54,6 +57,32 @@ namespace CarSearchAPI.Controllers.ForwardControllers
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error fetching data from provider: {ex.Message}");
+                }
+            }
+            
+            // handle paging logic
+            if (pageSize is > 0 || page is >= 0)
+            {
+                int pageInt, pageSizeInt;
+
+                if (page is null or < 0)
+                    pageInt = 0;
+                else
+                    pageInt = (int)page;
+
+                if (pageSize is null or <= 0)
+                    pageSizeInt = 6;
+                else
+                    pageSizeInt = (int)pageSize;
+                
+                int startIndex = pageInt * pageSizeInt, count = pageSizeInt;
+
+                if (startIndex < aggregateOffers.Count)
+                {
+                    if(count > aggregateOffers.Count - startIndex)
+                        count = aggregateOffers.Count - startIndex;
+                    
+                    aggregateOffers = aggregateOffers.GetRange(startIndex, count);
                 }
             }
             
