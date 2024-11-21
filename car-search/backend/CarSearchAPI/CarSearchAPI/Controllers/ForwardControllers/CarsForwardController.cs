@@ -29,9 +29,8 @@ namespace CarSearchAPI.Controllers.ForwardControllers
             {
                 try
                 {
-                    var jsonData = await provider.GetCarListAsync();
+                    var cars = await provider.GetCarListAsync();
                     
-                    var cars = JsonConvert.DeserializeObject<List<CarDto>>(jsonData);
                     aggregateCars.AddRange(cars);
                 }
                 catch (Exception ex)

@@ -4,9 +4,11 @@ using CarRentalAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CarRentalAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class RentsController : ControllerBase
@@ -19,7 +21,7 @@ namespace CarRentalAPI.Controllers
             _context = context;
         }
 
-        // Must be Authorize !!!
+
         [HttpPost("create-new-rent")]
         public async Task<IActionResult> CreateNewRent([FromBody] OfferInfoForNewRentDto offerInfo)
         {
@@ -41,6 +43,17 @@ namespace CarRentalAPI.Controllers
                 RentEnd = offerInfo.EndDate,
                 Status = status
             };
+
+            var existingRent = await _context.Rents
+                .FirstOrDefaultAsync(r =>
+                    r.CarId == offerInfo.CarId &&
+                    r.RentStart == offerInfo.StartDate &&
+                    r.RentEnd == offerInfo.EndDate);
+
+            if (existingRent != null)
+            {
+                return BadRequest("Rent is already created");
+            }
 
             await _context.Rents.AddAsync(newRent);
             await _context.SaveChangesAsync();

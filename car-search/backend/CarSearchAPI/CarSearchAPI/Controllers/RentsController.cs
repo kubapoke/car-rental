@@ -1,7 +1,10 @@
 ﻿using CarSearchAPI.Abstractions;
+using CarSearchAPI.DTOs.Rents;
 using CarSearchAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 
@@ -44,7 +47,7 @@ namespace CarSearchAPI.Controllers
                 
                 if (activeProvider == null) { return BadRequest("Invalid provider name"); }
                 
-                var results = await activeProvider.CreateNewRentAsync(claimsPrincipal);
+                var results = await activeProvider.CreateNewRentAsync(claimsPrincipal);                
 
                 Rent newRent = new Rent()
                 {
@@ -66,9 +69,34 @@ namespace CarSearchAPI.Controllers
             }
             catch (Exception)
             {
-                return BadRequest("Invalid token");
+                return BadRequest("Invalid token, this message may be showing, because you already confirmed your rent.");
             }
            
+        }
+
+        [Authorize]
+        [HttpGet("get-user-rents")]
+        public async Task<IActionResult> GetUserRents()
+        {
+            var email = User.Claims.FirstOrDefault(c => ClaimTypes.Email == c.Type)?.Value;
+            if (email == null)
+            {
+                return Unauthorized("You are not logged in");
+            }
+            var rentList = await _context.rents.Where(r => r.UserEmail == email).ToListAsync(); 
+            List<RentInfoDto> rentInfoList = new List<RentInfoDto>();
+            foreach (Rent rent in rentList)
+            {
+                RentInfoDto rentInfoDto = new RentInfoDto()
+                {
+                    Brand = rent.Brand,
+                    Model = rent.Model,
+                    StartDate = rent.StartDate,
+                    EndDate = rent.EndDate
+                };
+                rentInfoList.Add(rentInfoDto);
+            }
+            return Ok(rentInfoList);
         }
     }
 }

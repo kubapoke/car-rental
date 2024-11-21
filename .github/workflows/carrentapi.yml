@@ -29,6 +29,14 @@ jobs:
           echo "ALLOWED_ORIGINS=${{ secrets.RENTALAPI_ALLOWED_ORIGINS }}" > .env
           echo "DATABASE_CONNECTION_STRING=${{ secrets.RENTALAPI_DATABASE_CONNECTION_STRING }}" >> .env
 
+      - name: Update database
+        run: |
+          dotnet tool install --global dotnet-ef --version 8.*
+          dotnet tool restore
+          dotnet ef --project car-rental/backend/CarRentalAPI/CarRentalAPI/CarRentalAPI.csproj database update
+        env:
+          ConnectionStrings__DefaultConnection: ${{ secrets.SEARCHAPI_DATABASE_CONNECTION_STRING }}
+
       - name: Build with dotnet
         run: dotnet build car-rental/backend/CarRentalAPI --configuration Release
 
@@ -63,13 +71,6 @@ jobs:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_7682ECE7E38E420B9A2792F48DC92B52 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_6166A5C7588645BB93AF144AE0D65CD0 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_D2DBAAAE1F7B4852928C575796831D20 }}
-
-      - name: Run database migrations
-        run: |
-          dotnet tool install --global dotnet-ef
-          dotnet ef database update --project car-rental/backend/CarRentalAPI/CarRentalAPI/CarRentalAPI.csproj
-        env:
-          ConnectionStrings__DefaultConnection: ${{ secrets.RENTALAPI_DATABASE_CONNECTION_STRING }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp

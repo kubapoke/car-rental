@@ -47,9 +47,8 @@ namespace CarSearchAPI.Controllers.ForwardControllers
             {
                 try
                 {
-                    var jsonData = await provider.GetOfferListAsync(parameters);
+                    var offers = await provider.GetOfferListAsync(parameters);
                     
-                    var offers = JsonConvert.DeserializeObject<List<OfferDto>>(jsonData);
                     aggregateOffers.AddRange(offers);
                 }
                 catch (Exception ex)
