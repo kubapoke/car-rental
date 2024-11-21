@@ -13,9 +13,9 @@ const UserRentTile = ({rent}: { rent: Rent }) => {
                 <div className="border border-gray-100 mb-5"></div>
 
                 <div className="text-xl">
-                    <h4 className="text-bold">Wypożyczono:</h4>
-                    <p>od {rent.startDate.slice(0,10)}</p>
-                    <p>do {rent.endDate.slice(0,10)}</p>
+                    <h4 className="text-bold">Rented:</h4>
+                    <p>from {rent.startDate.slice(0,10)}</p>
+                    <p>to {rent.endDate.slice(0,10)}</p>
                 </div>
             </div>
         </div>
