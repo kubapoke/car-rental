@@ -1,8 +1,10 @@
 import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
+import {useAuth} from "../Context/AuthContext.tsx";
 
 
 const NewUserForm: React.FC = () => {
+    const {setIsLoggedIn} = useAuth()
     const [formData, setFormData] = useState({name: "", surname: "", birthDate: "", licenseDate: ""});
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
@@ -30,6 +32,7 @@ const NewUserForm: React.FC = () => {
             console.log(data.sessionToken);
             sessionStorage.removeItem('authToken'); // remove our temporary token
             sessionStorage.setItem('authToken', data.sessionToken); // add main token
+            setIsLoggedIn(true);
             navigate('/');
 
         } catch {
