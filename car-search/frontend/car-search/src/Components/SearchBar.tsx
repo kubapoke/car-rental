@@ -3,6 +3,7 @@ import { FaSearch } from 'react-icons/fa';
 import {useFilters} from "../Context/FiltersContext.tsx";
 import LoginModal from "./LoginModal.tsx";
 import {useAuth} from "../Context/AuthContext.tsx";
+import {useNavigate} from "react-router-dom";
 
 interface Car{
     modelName: string;
@@ -14,6 +15,7 @@ interface Car{
 const SearchBar = () => {
     const {filters, setFilters}  = useFilters();
     const {isLoggedIn} = useAuth();
+    const navigate = useNavigate();
 
     const [carData, setCarData] = useState<Car[]>([]);
     const [brands, setBrands] = useState<string[]>([]);
@@ -93,6 +95,8 @@ const SearchBar = () => {
             startDate,
             endDate
         })
+
+        navigate("/offers");
     };
 
     return (
