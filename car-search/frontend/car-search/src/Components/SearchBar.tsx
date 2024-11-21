@@ -1,6 +1,8 @@
 import {useState, useEffect, FormEvent} from 'react';
 import { FaSearch } from 'react-icons/fa';
 import {useFilters} from "../Context/FiltersContext.tsx";
+import LoginModal from "./LoginModal.tsx";
+import {useAuth} from "../Context/AuthContext.tsx";
 
 interface Car{
     modelName: string;
@@ -11,6 +13,7 @@ interface Car{
 
 const SearchBar = () => {
     const {filters, setFilters}  = useFilters();
+    const {isLoggedIn} = useAuth();
 
     const [carData, setCarData] = useState<Car[]>([]);
     const [brands, setBrands] = useState<string[]>([]);
@@ -22,6 +25,8 @@ const SearchBar = () => {
     const [selectedLocation, setSelectedLocation] = useState<string>(filters.selectedLocation);
     const [startDate, setStartDate] = useState<string>(filters.startDate);
     const [endDate, setEndDate] = useState<string>(filters.endDate);
+
+    const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
 
     useEffect(() => {
         // Fetch the car list data
@@ -75,7 +80,11 @@ const SearchBar = () => {
 
     const handleSubmit = (e : FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log({ selectedBrand, selectedModel, selectedLocation, startDate, endDate });
+
+        if(!isLoggedIn) {
+            setShowLoginModal(true);
+            return;
+        }
 
         setFilters({
             selectedBrand,
@@ -87,78 +96,85 @@ const SearchBar = () => {
     };
 
     return (
-        <form
-            className="flex flex-col md:flex-row items-center p-4 bg-white rounded-lg shadow-md"
-            onSubmit={handleSubmit}
-        >
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-between">
-                {/* Brand Dropdown */}
-                <select
-                    value={selectedBrand}
-                    onChange={(e) => setSelectedBrand(e.target.value)}
-                    className="border border-gray-300 rounded-lg p-2 mb-2 md:mb-0 md:mr-2 w-full md:w-1/3"
-                >
-                    <option value="">Select Brand</option>
-                    {brands.map((brand) => (
-                        <option key={brand} value={brand}>
-                            {brand}
-                        </option>
-                    ))}
-                </select>
+        <>
+            <form
+                className="flex flex-col md:flex-row items-center p-4 bg-white rounded-lg shadow-md"
+                onSubmit={handleSubmit}
+            >
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-between">
+                    {/* Brand Dropdown */}
+                    <select
+                        value={selectedBrand}
+                        onChange={(e) => setSelectedBrand(e.target.value)}
+                        className="border border-gray-300 rounded-lg p-2 mb-2 md:mb-0 md:mr-2 w-full md:w-1/3"
+                    >
+                        <option value="">Select Brand</option>
+                        {brands.map((brand) => (
+                            <option key={brand} value={brand}>
+                                {brand}
+                            </option>
+                        ))}
+                    </select>
 
-                {/* Model Dropdown */}
-                <select
-                    value={selectedModel}
-                    onChange={(e) => handleModelChange(e.target.value)}
-                    className="border border-gray-300 rounded-lg p-2 mb-2 md:mb-0 md:mr-2 w-full md:w-1/3"
-                >
-                    <option value="">Select Model</option>
-                    {models.map((model) => (
-                        <option key={model} value={model}>
-                            {model}
-                        </option>
-                    ))}
-                </select>
+                    {/* Model Dropdown */}
+                    <select
+                        value={selectedModel}
+                        onChange={(e) => handleModelChange(e.target.value)}
+                        className="border border-gray-300 rounded-lg p-2 mb-2 md:mb-0 md:mr-2 w-full md:w-1/3"
+                    >
+                        <option value="">Select Model</option>
+                        {models.map((model) => (
+                            <option key={model} value={model}>
+                                {model}
+                            </option>
+                        ))}
+                    </select>
 
-                {/* Location Dropdown */}
-                <select
-                    value={selectedLocation}
-                    onChange={(e) => setSelectedLocation(e.target.value)}
-                    className="border border-gray-300 rounded-lg p-2 mb-2 md:mb-0 md:mr-2 w-full md:w-1/3"
-                >
-                    <option value="">Select Location</option>
-                    {locations.map((location) => (
-                        <option key={location} value={location}>
-                            {location}
-                        </option>
-                    ))}
-                </select>
+                    {/* Location Dropdown */}
+                    <select
+                        value={selectedLocation}
+                        onChange={(e) => setSelectedLocation(e.target.value)}
+                        className="border border-gray-300 rounded-lg p-2 mb-2 md:mb-0 md:mr-2 w-full md:w-1/3"
+                    >
+                        <option value="">Select Location</option>
+                        {locations.map((location) => (
+                            <option key={location} value={location}>
+                                {location}
+                            </option>
+                        ))}
+                    </select>
 
-                {/* Start Date Picker */}
-                <input
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    className="border border-gray-300 rounded-lg p-2 mb-2 md:mb-0 md:mr-2 w-full md:w-1/3"
-                />
+                    {/* Start Date Picker */}
+                    <input
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        className="border border-gray-300 rounded-lg p-2 mb-2 md:mb-0 md:mr-2 w-full md:w-1/3"
+                    />
 
-                {/* End Date Picker */}
-                <input
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    className="border border-gray-300 rounded-lg p-2 mb-2 md:mb-0 md:mr-2 w-full md:w-1/3"
-                />
+                    {/* End Date Picker */}
+                    <input
+                        type="date"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        className="border border-gray-300 rounded-lg p-2 mb-2 md:mb-0 md:mr-2 w-full md:w-1/3"
+                    />
 
-                {/* Search Button */}
-                <button
-                    type="submit"
-                    className="bg-blue-500 text-white rounded-lg p-2 mt-2 md:mt-0 md:ml-2"
-                >
-                    <FaSearch className={'inline text-lg mb-1'} /> Search
-                </button>
-            </div>
-        </form>
+                    {/* Search Button */}
+                    <button
+                        type="submit"
+                        className="bg-blue-500 text-white rounded-lg p-2 mt-2 md:mt-0 md:ml-2"
+                    >
+                        <FaSearch className={'inline text-lg mb-1'} /> Search
+                    </button>
+                </div>
+            </form>
+            { showLoginModal && (
+                <LoginModal
+                    onClose={() => setShowLoginModal(false)}
+                    onLoginSuccess={() => setShowLoginModal(false)}
+                />) }
+        </>
     );
 };
 

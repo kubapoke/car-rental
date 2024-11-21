@@ -16,6 +16,7 @@ import {OffersProvider} from "../Context/OffersContext.tsx";
 import RentConfirmationPage from "../Pages/RentConfirmationPage.tsx";
 import UserRentsPage from "../Pages/UserRentsPage.tsx";
 import {RentsProvider} from "../Context/RentsContext.tsx";
+import {AuthProvider} from "../Context/AuthContext.tsx";
 
 function App() {
     const router = createBrowserRouter(
@@ -33,13 +34,15 @@ function App() {
     );
   
   return(
-      <FiltersProvider>
-          <OffersProvider>
-              <RentsProvider>
-                  <RouterProvider router={router}/>
-              </RentsProvider>
-          </OffersProvider>
-      </FiltersProvider>
+      <AuthProvider>
+          <FiltersProvider>
+              <OffersProvider>
+                  <RentsProvider>
+                      <RouterProvider router={router}/>
+                  </RentsProvider>
+              </OffersProvider>
+          </FiltersProvider>
+      </AuthProvider>
   );
 }
 

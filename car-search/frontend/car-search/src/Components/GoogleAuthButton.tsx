@@ -4,30 +4,36 @@ import {GoogleOAuthProvider, GoogleLogin, googleLogout, CredentialResponse} from
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import ProfileIcon from "./ProfileIcon.tsx";
+import {useAuth} from "../Context/AuthContext.tsx";
 
 interface GoogleUser {
     email: string;
 }
 
-const GoogleAuthButton: React.FC = () => {
+const GoogleAuthButton: React.FC<{ onLoginSuccess?: () => void; onLoginRedirect?: () => void }> = ({ onLoginSuccess, onLoginRedirect }) => {
+    const { isLoggedIn, setIsLoggedIn } = useAuth();
     const [user, setUser] = useState<GoogleUser | null>(null);
     const navigate = useNavigate();
     const clientId = import.meta.env.VITE_CLIENT_ID_FOR_OATH;
 
     useEffect(() => {
-        const existingToken = sessionStorage.getItem('authToken');
-        if (existingToken) {
-            try {
-                const decodedUser = jwtDecode<GoogleUser>(existingToken);
-                setUser({
-                    email: decodedUser.email, // Decode email from token
-                });
-            } catch (error) {
-                console.error("Error decoding token:", error);
-                sessionStorage.removeItem('authToken'); // Remove invalid token
+        if(isLoggedIn)
+        {
+            const existingToken = sessionStorage.getItem('authToken');
+            if (existingToken) {
+                try {
+                    const decodedUser = jwtDecode<GoogleUser>(existingToken);
+                    setUser({
+                        email: decodedUser.email, // Decode email from token
+                    });
+                } catch (error) {
+                    console.error("Error decoding token:", error);
+                    sessionStorage.removeItem('authToken'); // Remove invalid token
+                    setIsLoggedIn(false);
+                }
             }
         }
-    }, []);
+    }, [isLoggedIn, setIsLoggedIn]);
 
     // logic for successful GoogleLogin. response: answer from google. response.credential: google identity token
     const handleCredentialResponse = async (response: CredentialResponse) => {
@@ -50,14 +56,24 @@ const GoogleAuthButton: React.FC = () => {
             });
             const { jwtToken, isNewUser } = await backEndResponse.data;
             if (isNewUser) {
+                if (onLoginRedirect) {
+                    onLoginRedirect();
+                }
+
                 sessionStorage.setItem('authToken', jwtToken); // store token in sessionStorage of browser
                 console.log("New user logged In");
+                setIsLoggedIn(false);
+
                 navigate("/new-user-form");
             } else {
                 sessionStorage.setItem('authToken', jwtToken); // store token in sessionStorage of browser
                 console.log("Old user logged In");
-            }
+                setIsLoggedIn(true);
 
+                if (onLoginSuccess) {
+                    onLoginSuccess();
+                }
+            }
         } else {
             // some error message here
         }
@@ -69,6 +85,7 @@ const GoogleAuthButton: React.FC = () => {
         setUser(null);
         sessionStorage.removeItem('tmpToken');
         sessionStorage.removeItem('authToken');
+        setIsLoggedIn(false);
         navigate("/");
         console.log("Logged Out");
     }
