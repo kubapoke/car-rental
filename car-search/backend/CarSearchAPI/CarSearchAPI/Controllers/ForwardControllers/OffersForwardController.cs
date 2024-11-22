@@ -1,11 +1,13 @@
 ﻿using System.Security.Claims;
 using CarSearchAPI.Abstractions;
 using CarSearchAPI.DTOs.CarRental;
+using CarSearchAPI.DTOs.CarSearch;
 using CarSearchAPI.DTOs.ForwardingParameters;
 using CarSearchAPI.DTOs.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Exception = System.Exception;
 
 namespace CarSearchAPI.Controllers.ForwardControllers
 {
@@ -28,7 +30,9 @@ namespace CarSearchAPI.Controllers.ForwardControllers
         [FromQuery] string? model,
         [FromQuery] DateTime startDate,
         [FromQuery] DateTime endDate,
-        [FromQuery] string? location)
+        [FromQuery] string? location,
+        [FromQuery] int? page,
+        [FromQuery] int? pageSize)
         {
 
             var parameters = new GetOfferListParametersDto()
@@ -42,6 +46,7 @@ namespace CarSearchAPI.Controllers.ForwardControllers
             };
 
             var aggregateOffers = new List<OfferDto>();
+            var offerPage = new OfferPageDto();
 
             foreach (var provider in _dataProviders)
             {
@@ -57,7 +62,29 @@ namespace CarSearchAPI.Controllers.ForwardControllers
                 }
             }
             
-            return Ok(aggregateOffers);
+            int pageInt = Math.Max(page ?? 0, 0);
+            int pageSizeInt = Math.Max(pageSize ?? 6, 1);
+
+            if (page == null && pageSize == null)
+            {
+                pageInt = 0;
+                pageSizeInt = aggregateOffers.Count;
+            }
+            
+            offerPage.TotalOffers = aggregateOffers.Count;
+            offerPage.PageCount = Math.Max(1, (int)Math.Ceiling((double)aggregateOffers.Count / pageSizeInt));
+            
+            // apply paging
+            aggregateOffers = aggregateOffers
+                .Skip(pageInt * pageSizeInt)
+                .Take(pageSizeInt)
+                .ToList();
+            
+            offerPage.Page = pageInt;
+            offerPage.PageSize = aggregateOffers.Count;
+            offerPage.Offers = aggregateOffers;
+            
+            return Ok(offerPage);
         }
     }
 }

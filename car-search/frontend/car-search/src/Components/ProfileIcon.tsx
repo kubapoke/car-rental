@@ -2,6 +2,7 @@ import {FaUser} from "react-icons/fa";
 import React, {useEffect, useRef} from "react";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
+import {useOffers} from "../Context/OffersContext.tsx";
 
 
 interface ProfileIconProps
@@ -19,6 +20,7 @@ const ProfileIcon:React.FC<ProfileIconProps> = ({email, logout} : {email : strin
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };
+    const {setOffers} = useOffers();
 
     const closeMenu = () => {
         setIsMenuOpen(false);
@@ -31,6 +33,7 @@ const ProfileIcon:React.FC<ProfileIconProps> = ({email, logout} : {email : strin
 
     const handleLogoutClick = () => {
         setIsMenuOpen(false);
+        setOffers([]);
         logout();
     };
 
