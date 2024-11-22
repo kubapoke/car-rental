@@ -2,9 +2,16 @@ import {useEffect} from "react";
 import CarOffer from './CarOffer.tsx'
 import {useOffers} from "../Context/OffersContext.tsx";
 import {useFilters} from "../Context/FiltersContext.tsx";
+import Pagination from "./Pagination.tsx";
 
 const CarOffers = ({isHome} : {isHome : boolean}) => {
-    const {offers, fetchOffers} = useOffers();
+    const {
+        offers,
+        page,
+        pageCount,
+        setPage,
+        fetchOffers,
+    } = useOffers();
     const filters = useFilters().filters;
 
     useEffect(() => {
@@ -14,8 +21,12 @@ const CarOffers = ({isHome} : {isHome : boolean}) => {
             location: filters.selectedLocation || '',
             startDate: filters.startDate || '',
             endDate: filters.endDate || '',
-        })
-    }, [filters, fetchOffers]);
+        }, isHome ? 0 : page)
+    }, [filters, fetchOffers, page, isHome]);
+
+    const handlePageChange = (newPage: number) => {
+        setPage(newPage); // Update the page in context
+    };
 
     // Limit offers to 3 if isHome is true
     const displayedOffers = isHome ? offers.slice(0, 3) : offers;
@@ -47,6 +58,14 @@ const CarOffers = ({isHome} : {isHome : boolean}) => {
                             <CarOffer key={offer.carId} offer={offer}/>
                         ))}
                     </div>
+
+                {!isHome && pageCount > 1 && (
+                    <Pagination
+                        currentPage={page}
+                        pageCount={pageCount}
+                        onPageChange={handlePageChange}
+                    />
+                )}
             </div>
         </section>
     );

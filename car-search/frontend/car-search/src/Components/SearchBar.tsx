@@ -4,6 +4,7 @@ import {useFilters} from "../Context/FiltersContext.tsx";
 import LoginModal from "./LoginModal.tsx";
 import {useAuth} from "../Context/AuthContext.tsx";
 import {useNavigate} from "react-router-dom";
+import {useOffers} from "../Context/OffersContext.tsx";
 
 interface Car{
     modelName: string;
@@ -15,6 +16,7 @@ interface Car{
 const SearchBar = () => {
     const {filters, setFilters}  = useFilters();
     const {isLoggedIn} = useAuth();
+    const {setPage} = useOffers();
     const navigate = useNavigate();
 
     const [carData, setCarData] = useState<Car[]>([]);
@@ -87,6 +89,8 @@ const SearchBar = () => {
             setShowLoginModal(true);
             return;
         }
+
+        setPage(0);
 
         setFilters({
             selectedBrand,
