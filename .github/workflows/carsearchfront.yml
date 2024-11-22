@@ -5,6 +5,8 @@ on:
     branches:
       - development
       - main
+    paths:
+      - 'car-search/frontend/**'
   workflow_dispatch:
 
 jobs:

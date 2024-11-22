@@ -5,6 +5,8 @@ on:
     branches:
       - development  # Trigger build on development for testing changes
       - main         # Trigger build and deploy on main for production
+    paths:
+      - 'car-search/backend/**'
   workflow_dispatch:
 
 jobs:
