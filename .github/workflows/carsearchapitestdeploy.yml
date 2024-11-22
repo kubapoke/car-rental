@@ -1,18 +1,11 @@
-name: Build and deploy Car Search API
+name: Test build and deployment of Car Search API
 
 on:
-  push:
-    branches:
-      - development  # Trigger build on development for testing changes
-      - main         # Trigger build and deploy on main for production
-    paths:
-      - 'car-search/backend/**'
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
-    if: github.ref == 'refs/heads/development' || github.ref == 'refs/heads/main'
 
     steps:
       - uses: actions/checkout@v4
@@ -58,7 +51,7 @@ jobs:
   deploy:
     runs-on: windows-latest
     needs: build
-    if: github.ref == 'refs/heads/main'  # Only run deployment if push is on main
+
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
@@ -70,7 +63,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: .net-app
-      
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
