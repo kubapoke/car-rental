@@ -1,12 +1,6 @@
-name: Build and deploy Car Search user application
+name: Test build and deployment of Car Search user application
 
 on:
-  push:
-    branches:
-      - development
-      - main
-    paths:
-      - 'car-search/frontend/**'
   workflow_dispatch:
 
 jobs:
@@ -47,7 +41,6 @@ jobs:
           path: car-search/frontend/car-search/dist.zip
 
   deploy:
-    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     needs: build
     environment:
