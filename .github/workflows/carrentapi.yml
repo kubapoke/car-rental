@@ -1,7 +1,4 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy ASP.Net Core app to Azure Web App - carrentapi
+name: Build and deploy Car Rent API
 
 on:
   push:
@@ -28,6 +25,7 @@ jobs:
         run: |
           echo "ALLOWED_ORIGINS=${{ secrets.RENTALAPI_ALLOWED_ORIGINS }}" > .env
           echo "DATABASE_CONNECTION_STRING=${{ secrets.RENTALAPI_DATABASE_CONNECTION_STRING }}" >> .env
+          echo "CAR_RENTAL_SECRET_KEY=${{ secrets.RENTALAPI_CAR_RENTAL_SECRET_KEY }}" >> .env
 
       - name: Update database
         run: |

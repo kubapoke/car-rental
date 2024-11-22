@@ -1,4 +1,4 @@
-name: Build and deploy ASP.Net Core app to Azure Web App - carsearchapi
+name: Build and deploy Car Search API
 
 on:
   push:
@@ -31,6 +31,7 @@ jobs:
           echo "COMPANY_EMAIL=${{ secrets.SEARCHAPI_COMPANY_EMAIL }}" >> .env
           echo "JWT_CONFIRMATION_TOKEN_SECRET_KEY=${{ secrets.SEARCHAPI_JWT_CONFIRMATION_TOKEN_SECRET_KEY }}" >> .env
           echo "MY_ADDRESS=${{ secrets.SEARCHAPI_MY_ADDRESS }}" >> .env
+          echo "CAR_RENTAL_SECRET_KEY=${{ secrets.SEARCHAPI_CAR_RENTAL_SECRET_KEY }}" >> .env
 
       - name: Update database
         run: |
