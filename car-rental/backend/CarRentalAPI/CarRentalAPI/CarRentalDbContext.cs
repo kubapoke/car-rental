@@ -11,7 +11,8 @@ namespace CarRentalAPI
         public DbSet<Model> Models { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Rent> Rents { get; set; }
-        
+        public DbSet<Manager> Managers { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
