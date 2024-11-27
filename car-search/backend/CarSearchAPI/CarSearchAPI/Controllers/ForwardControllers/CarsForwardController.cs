@@ -1,8 +1,12 @@
 ﻿using CarSearchAPI.Abstractions;
+using CarSearchAPI.DTOs.CarRental;
+using CarSearchAPI.DTOs.CarSearch;
+using CarSearchAPI.DTOs.ForwardingParameters;
 using CarSearchAPI.DTOs.Users;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace CarSearchAPI.Controllers.ForwardControllers
 {
