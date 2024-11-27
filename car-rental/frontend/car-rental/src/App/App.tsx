@@ -3,7 +3,7 @@ import '../Styles/index.css'
 function App() {
   return (
     <>
-      <h2>Hello world!</h2>
+      <h2 className="text-white">Hello world!</h2>
     </>
   )
 }
