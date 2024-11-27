@@ -1,10 +1,17 @@
 import '../Styles/index.css'
+import {createBrowserRouter, createRoutesFromElements, Route, RouterProvider} from "react-router-dom";
+import MainLayout from "../Layouts/MainLayout.tsx";
 
 function App() {
+    const router = createBrowserRouter(
+        createRoutesFromElements(
+            <Route path="/" element={<MainLayout/>}>
+                
+            </Route>
+        )
+    );
   return (
-    <>
-      <h2 className="text-white">Hello world!</h2>
-    </>
+      <RouterProvider router={router}/>
   )
 }
 
