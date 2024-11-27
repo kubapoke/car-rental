@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "../Components/Navbar.tsx";
 
-const MainLayout = () => {
+const LoggedInLayout = () => {
     return (
         <>
             <Navbar/>
@@ -10,4 +10,4 @@ const MainLayout = () => {
     );
 };
 
-export default MainLayout;
+export default LoggedInLayout;
