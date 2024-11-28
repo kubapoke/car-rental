@@ -19,6 +19,8 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<CarRentalDbContext>(options =>
                 options.UseSqlServer(Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING")));
 builder.Services.AddScoped<IPriceGenerator, PricePerDayToHourGeneratorService>();
+builder.Services.AddScoped<PasswordHasher>();
+builder.Services.AddScoped<SessionTokenManager>();
 
 builder.Services.AddAuthentication(options => // that is instruction, how to check bearer token
 {
