@@ -31,19 +31,27 @@ const LogInButton: React.FC<{ onLoginSuccess?: () => void; onLoginRedirect?: () 
     }, [isLoggedIn, setIsLoggedIn]);
 
     const handleLogIn = async () => {
-
         navigate("/log-in-page");
     }
+    const handleLogOut = async () => {
+        setUser(null);
+        sessionStorage.removeItem('authToken');
+        setIsLoggedIn(false);
+        navigate("/");
+        console.log("Logged Out");
+
+    }
+
 
     return (
         <div>
             {user ? (
                 <div>
                     <div>Hello {user.UserName}</div>
-                    <button onClick={ () => {}}>Log Out</button>
+                    <button onClick={ () => {handleLogOut()}}>Log Out</button>
                 </div>
             ) : (
-                <button onClick={() => {handleLogIn()} } type="button">Log In!</button>
+                <button onClick={() => {handleLogIn()} } type="button">Log In</button>
             )}
         </div>
     )
