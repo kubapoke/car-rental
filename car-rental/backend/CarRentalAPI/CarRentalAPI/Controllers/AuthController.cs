@@ -38,7 +38,7 @@ namespace CarRentalAPI.Controllers
             }
 
             var jwtToken = _sessionTokenManager.GenerateJwtToken(manager.UserName);
-            return Ok(jwtToken);
+            return Ok(new { jwtToken });
         }
 
         [HttpPost("get-hash-salt")]
