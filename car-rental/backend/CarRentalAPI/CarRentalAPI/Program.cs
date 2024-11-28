@@ -39,6 +39,12 @@ builder.Services.AddAuthentication(options => // that is instruction, how to che
         };
     });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Manager", policy => policy.RequireClaim("UserName"));
+    options.AddPolicy("Backend", policy => policy.RequireClaim("Backend"));
+});
+
 var allowedOrigins = Environment.GetEnvironmentVariable("ALLOWED_ORIGINS")?.Split(',');
 
 if(allowedOrigins != null)

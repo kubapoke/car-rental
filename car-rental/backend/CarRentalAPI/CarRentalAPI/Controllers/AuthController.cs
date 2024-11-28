@@ -1,4 +1,5 @@
-﻿using CarRentalAPI.Models;
+﻿using CarRentalAPI.DTOs.Authentication;
+using CarRentalAPI.Models;
 using CarRentalAPI.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,22 +23,29 @@ namespace CarRentalAPI.Controllers
         }
 
         [HttpPost("log-in")]
-        public async Task<IActionResult> LogIn([FromBody] string userName, string providedPassword)
+        public async Task<IActionResult> LogIn([FromBody] UserNamePasswordDto credentials)
         {
-            var manager = await _context.Managers.FirstOrDefaultAsync(manager => manager.UserName == userName);
+            var manager = await _context.Managers.FirstOrDefaultAsync(manager => manager.UserName == credentials.UserName);
 
             if (manager == null)
             {
                 return Unauthorized("Your provided wrong username or password!");
             }
 
-            if (!_passwordHasher.VerifyPassword(providedPassword, manager.PasswordHash, manager.Salt))
+            if (!_passwordHasher.VerifyPassword(credentials.Password, manager.PasswordHash, manager.Salt))
             {
                 return Unauthorized("Your provided wrong username or password!");
             }
 
             var jwtToken = _sessionTokenManager.GenerateJwtToken(manager.UserName);
             return Ok(jwtToken);
+        }
+
+        [HttpPost("get-hash-salt")]
+        public async Task<IActionResult> GetHashSalt([FromBody]string password)
+        {
+            (string hash, string salt) = _passwordHasher.HashPassowrd(password);
+            return Ok(new {hash, salt});
         }
 
         

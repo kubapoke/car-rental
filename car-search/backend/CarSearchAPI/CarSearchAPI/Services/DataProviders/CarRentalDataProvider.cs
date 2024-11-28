@@ -143,10 +143,13 @@ namespace CarSearchAPI.Services.DataProviders
         private string GenerateAcessToken()
         {
             var tokenHandelr = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("CAR_RENTAL_SECRET_KEY"));            
-
+            var key = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("CAR_RENTAL_SECRET_KEY"));
+            List<Claim> claims = new List<Claim>();
+            Claim backendClaim = new Claim("Backend", "1");
+            claims.Add(backendClaim);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
+                Subject = new ClaimsIdentity(claims),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
                 Expires = DateTime.UtcNow.AddMinutes(60)
             };
