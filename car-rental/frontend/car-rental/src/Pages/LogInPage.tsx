@@ -56,11 +56,12 @@ const LogInForm: React.FC = () => {
                 <div className="form-group">
                     <label className="block text-sm font-medium text-gray-700">Password:</label>
                     <input
-                        type="text"
+                        type="password"
                         name="Password"
                         value={formData.Password}
                         onChange={handleChange}
                         required
+                        autoComplete="off"
                         className="mt-1 p-2 w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                 </div>
