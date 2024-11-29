@@ -19,6 +19,8 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<CarRentalDbContext>(options =>
                 options.UseSqlServer(Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING")));
 builder.Services.AddScoped<IPriceGenerator, PricePerDayToHourGeneratorService>();
+builder.Services.AddScoped<PasswordHasher>();
+builder.Services.AddScoped<SessionTokenManager>();
 
 builder.Services.AddAuthentication(options => // that is instruction, how to check bearer token
 {
@@ -36,6 +38,12 @@ builder.Services.AddAuthentication(options => // that is instruction, how to che
             ValidateLifetime = false
         };
     });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Manager", policy => policy.RequireClaim("UserName"));
+    options.AddPolicy("Backend", policy => policy.RequireClaim("Backend"));
+});
 
 var allowedOrigins = Environment.GetEnvironmentVariable("ALLOWED_ORIGINS")?.Split(',');
 

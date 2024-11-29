@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace CarRentalAPI.Controllers
 {
-   [Authorize]
+   [Authorize(Policy = "Backend")]
    [Route("api/[controller]")]
    [ApiController]
    public class OffersController : ControllerBase

@@ -12,7 +12,7 @@ namespace CarSearchAPI.Services
         // this create bearer tokens
         public string GenerateJwtToken(string email, bool isTemporary)
         {
-            var tokenHandelr = new JwtSecurityTokenHandler();
+            var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_TOKEN_SECRET_KEY"));
             List<Claim> claims = new List<Claim>();
             Claim emailClaim = new Claim(JwtRegisteredClaimNames.Email, email);
@@ -36,10 +36,10 @@ namespace CarSearchAPI.Services
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature), // add key
                 Expires = DateTime.UtcNow.AddMinutes(expirationMinutes) // add time
             };
-            var token = tokenHandelr.CreateToken(tokenDescriptor);
+            var token = tokenHandler.CreateToken(tokenDescriptor);
 
 
-            return tokenHandelr.WriteToken(token);
+            return tokenHandler.WriteToken(token);
         }
 
     }
