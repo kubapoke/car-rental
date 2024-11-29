@@ -11,7 +11,7 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({children}) => {
     const [isLoggedIn, setIsLoggedIn] = useState(!!sessionStorage.getItem("authToken"));
 
     return (
-        <AuthContext.Provider value={{isLoggedIn, setIsLoggedIn}}>
+        <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
             {children}
         </AuthContext.Provider>
     )

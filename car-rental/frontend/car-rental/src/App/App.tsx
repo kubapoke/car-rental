@@ -1,31 +1,35 @@
-import '../Styles/index.css'
-import {
-    Route,
-    createBrowserRouter,
-    createRoutesFromElements,
-    RouterProvider
-} from 'react-router-dom';
-import NewUserForm from "../Pages/LogInPage.tsx"
-import MainLayout from "../Layout/MainLayout.tsx";
-import HomePage from "../Pages/HomePage.tsx";
-import {AuthProvider} from "../Context/AuthContext.tsx";
+import '../Styles/index.css';
+import {createBrowserRouter, createRoutesFromElements, RouterProvider, Navigate, Route} from 'react-router-dom';
+import { AuthProvider, useAuth } from "../Context/AuthContext.tsx";  // Zaimportuj AuthProvider
+import LogInPage from "../Pages/LogInPage.tsx";
+import CockpitPage from "../Pages/CockpitPage.tsx";
+import LoggedInLayout from "../Layouts/LoggedInLayout.tsx";
 
 function App() {
+    return (
+        <AuthProvider>  {/* Umieść AuthProvider wokół całej aplikacji */}
+            <MainRouter />
+        </AuthProvider>
+    );
+}
+
+function MainRouter() {
+    const { isLoggedIn } = useAuth();
+
     const router = createBrowserRouter(
         createRoutesFromElements(
-            <Route path="/" element={<MainLayout/>}>
-                <Route index element={<HomePage/>}/>
-                <Route path='/log-in-page' element={<NewUserForm/>}/>
-            </Route>
+            <>
+                <Route index element={<Navigate to="/log-in" replace />} />
+                <Route path="*" element={<Navigate to={isLoggedIn ? "/logged-in/cockpit" : "/log-in"} replace />} />
+                <Route path="/log-in" element={<LogInPage />} />
+                <Route path="/logged-in" element={<LoggedInLayout />}>
+                    <Route path="cockpit" element={<CockpitPage />} />
+                </Route>
+            </>
         )
     );
 
-  return (
-
-      <AuthProvider>
-          <RouterProvider router={router}/>
-      </AuthProvider>
-  )
+    return <RouterProvider router={router} />;
 }
 
 export default App
