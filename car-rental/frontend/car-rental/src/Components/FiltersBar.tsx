@@ -34,8 +34,6 @@ const FiltersBar = () => {
             selectedRentStatus: selectedRentStatus,
             selectedLocation: selectedLocation
         })
-        
-        console.log(filters)
     };
     
     
