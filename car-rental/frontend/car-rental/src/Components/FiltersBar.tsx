@@ -1,38 +1,53 @@
 import {FormEvent, useEffect, useState} from "react";
 import {FaSearch} from "react-icons/fa";
 import {rentStatus, useFilters} from "../Context/FiltersContext.tsx";
+import {Rent} from "../Context/RentsContext.tsx";
 
 const FiltersBar = () => {
     const {filters, setFilters} = useFilters();
-
-    const [locations, setLocations] = useState<string[]>([]);
+    const [rentsData, setRentsData] = useState<Rent[]>([]);
+    
     
     const [selectedRentStatus, setSelectedRentStatus] = useState<rentStatus>(filters.selectedRentStatus);
-    const [selectedLocation, setSelectedLocation] = useState<string>(filters.selectedLocation);
 
     useEffect(() => {
         // Fetch the rent list data
         const fetchData = async () => {
+            console.log("fetching data")
+
+            const token = sessionStorage.getItem('authToken');
+            const headers = {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` }),
+            };
+            
+            const query = new URLSearchParams({
+                rentStatus: filters.selectedRentStatus,
+            }).toString();
+
+            const apiUrl = `${import.meta.env.VITE_SERVER_URL}/api/Rents/get-rents?${query}`;
             try {
-                //TODO: acctualy implement this
+                const response = await fetch(apiUrl, {method: 'GET', headers: headers});
+                const data: Rent[] = await response.json();
                 
-                const locations = ["Warsaw", "Bydgoszcz"];
+                console.log("hello");
                 
-                setLocations(locations);
+                setRentsData(data);
+
+                console.log('Rentals:', data);
             } catch (error) {
                 console.error('Error fetching car list:', error);
             }
         };
 
         fetchData();
-    }, []);
+    }, [filters]);
     
     const handleSubmit = (e : FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         setFilters({
             selectedRentStatus: selectedRentStatus,
-            selectedLocation: selectedLocation
         })
     };
     
@@ -54,20 +69,6 @@ const FiltersBar = () => {
                         {Object.values(rentStatus).map((status) => (
                             <option key={status} value={status}>
                                 {status}
-                            </option>
-                        ))}
-                    </select>
-
-                    {/* Location Dropdown */}
-                    <select
-                        value={selectedLocation}
-                        onChange={(e) => setSelectedLocation(e.target.value)}
-                        className="border border-gray-300 rounded-lg p-2 mb-2 md:mb-0 md:mr-2 w-full md:w-1/3"
-                    >
-                        <option value="">Select Location</option>
-                        {locations.map((location) => (
-                            <option key={location} value={location}>
-                                {location}
                             </option>
                         ))}
                     </select>

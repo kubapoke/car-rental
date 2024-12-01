@@ -2,11 +2,12 @@ import {createContext, ReactNode, useContext, useState} from "react";
 
 export enum rentStatus {
     Active = "Active",
-    ReadyToReturn = "Ready to return"
+    ReadyToReturn = "ReadyToReturn",
+    Returned = "Returned"
 }
+
 interface Filters {
     selectedRentStatus: rentStatus;
-    selectedLocation: string;
 }
 
 interface FiltersContextValue {
@@ -19,7 +20,6 @@ const FiltersContext = createContext<FiltersContextValue | undefined>(undefined)
 export const FiltersProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [filters, setFilters] = useState<Filters>({
         selectedRentStatus: rentStatus.Active,
-        selectedLocation: '',
     });
 
     return (

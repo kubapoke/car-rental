@@ -7,8 +7,7 @@ export interface Rent {
     model: string,
     startDate: string,
     endDate: string,
-    status: rentStatus,
-    startLocation: string // location in which the car was rented
+    status: rentStatus
 }
 
 
@@ -26,18 +25,28 @@ export const RentsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     
     // fetch offers based on filters
     const fetchRents = async () => {
-        try {
-            const query = new URLSearchParams({
-                Status: filters.selectedRentStatus,
-                'Car.Location': filters.selectedLocation,
-            }).toString();
+        console.log("fetching rents")
+        
+        const token = sessionStorage.getItem('authToken');
+        const headers = {
+            'Content-Type': 'application/json',
+            ...(token && { Authorization: `Bearer ${token}` }),
+        };
 
-            const response = await fetch(`/api/rentals?${query}`);
+        const query = new URLSearchParams({
+            Status: filters.selectedRentStatus,
+        }).toString();
+        
+        const apiUrl = `${import.meta.env.VITE_SERVER_URL}/api/rentals?${query}`;
+        
+        try {
+            const response = await fetch(apiUrl, {method: 'GET', headers: headers});
             if (!response.ok) {
                 throw new Error('Failed to fetch rentals');
             }
 
-            const data = await response.json();
+            const data : Rent[] = await response.json();
+            setRents(data);
             console.log('Rentals:', data);
         } catch (error) {
             console.error('Error fetching rentals:', error);

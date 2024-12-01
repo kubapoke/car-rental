@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace CarRentalAPI.Controllers
 {
-    [Authorize(Policy = "Backend")]
+    //[Authorize(Policy = "Backend")]
     [Route("api/[controller]")]
     [ApiController]
     public class RentsController : ControllerBase
@@ -33,7 +33,7 @@ namespace CarRentalAPI.Controllers
             if (rentedCar == null) { return BadRequest("Car does not exist in database");  }
             
 
-            int status = 0;
+            RentStatus status = 0;
 
             var newRent = new Rent
             {
@@ -68,6 +68,15 @@ namespace CarRentalAPI.Controllers
 
             return Ok(newSearchRentDto);
         }
-
+        
+        [HttpGet("get-rents")]
+        public async Task<IActionResult> GetRents([FromQuery] RentStatus? rentStatus)
+        {
+            var rents = await _context.Rents
+                .Include(r => r.Car)
+                .FirstOrDefaultAsync(r => r.Status == rentStatus);
+            
+            return Ok(rents);
+        }
     }
 }
