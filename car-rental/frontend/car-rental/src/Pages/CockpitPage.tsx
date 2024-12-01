@@ -1,8 +1,12 @@
+import FiltersBar from "../Components/FiltersBar.tsx";
+import CarRents from "../Components/CarRents.tsx";
+
 const CockpitPage = () => {
     return (
-        <div>
-            CockpitPage
-        </div>
+        <>
+            <FiltersBar/>
+            <CarRents/>
+        </>
     );
 };
 
