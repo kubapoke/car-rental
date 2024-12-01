@@ -5,7 +5,7 @@ import {Rent} from "../Context/RentsContext.tsx";
 
 const FiltersBar = () => {
     const {filters, setFilters} = useFilters();
-    const [rentsData, setRentsData] = useState<Rent[]>([]);
+    const [, setRentsData] = useState<Rent[]>([]);
     
     
     const [selectedRentStatus, setSelectedRentStatus] = useState<rentStatus>(filters.selectedRentStatus);
