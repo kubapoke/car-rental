@@ -7,8 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 
 namespace CarRentalAPI.Controllers
-{
-    //[Authorize(Policy = "Backend")]
+{    
     [Route("api/[controller]")]
     [ApiController]
     public class RentsController : ControllerBase
@@ -21,7 +20,7 @@ namespace CarRentalAPI.Controllers
             _context = context;
         }
 
-
+        [Authorize(Policy = "Backend")]
         [HttpPost("create-new-rent")]
         public async Task<IActionResult> CreateNewRent([FromBody] OfferInfoForNewRentDto offerInfo)
         {
@@ -68,7 +67,8 @@ namespace CarRentalAPI.Controllers
 
             return Ok(newSearchRentDto);
         }
-        
+
+        [Authorize(Policy = "Manager")]
         [HttpGet("get-rents")]
         public async Task<IActionResult> GetRents([FromQuery] RentStatus? rentStatus)
         {
