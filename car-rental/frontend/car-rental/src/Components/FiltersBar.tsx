@@ -1,11 +1,14 @@
 import {FormEvent, useEffect, useState} from "react";
 import {FaSearch} from "react-icons/fa";
+import {rentStatus, useFilters} from "../Context/FiltersContext.tsx";
 
-const CarStatuses = ["Active", "Ready to return"];
 const FiltersBar = () => {
-    const [carStatus, setCarStatus] = useState<string>();
-    const [selectedLocation, setSelectedLocation] = useState<string>();
+    const {filters, setFilters} = useFilters();
+
     const [locations, setLocations] = useState<string[]>([]);
+    
+    const [selectedRentStatus, setSelectedRentStatus] = useState<rentStatus>(filters.selectedRentStatus);
+    const [selectedLocation, setSelectedLocation] = useState<string>(filters.selectedLocation);
 
     useEffect(() => {
         // Fetch the rent list data
@@ -26,7 +29,13 @@ const FiltersBar = () => {
     
     const handleSubmit = (e : FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(e)
+
+        setFilters({
+            selectedRentStatus: selectedRentStatus,
+            selectedLocation: selectedLocation
+        })
+        
+        console.log(filters)
     };
     
     
@@ -39,14 +48,14 @@ const FiltersBar = () => {
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-between">
                     {/* Brand Dropdown */}
                     <select
-                        value={carStatus}
-                        onChange={(e) => setCarStatus(e.target.value)}
+                        value={selectedRentStatus}
+                        onChange={(e) => setSelectedRentStatus(e.target.value as rentStatus)}
                         className="border border-gray-300 rounded-lg p-2 mb-2 md:mb-0 md:mr-2 w-full md:w-1/3"
                     >
                         <option value="">Select Status</option>
-                        {CarStatuses.map((brand) => (
-                            <option key={brand} value={brand}>
-                                {brand}
+                        {Object.values(rentStatus).map((status) => (
+                            <option key={status} value={status}>
+                                {status}
                             </option>
                         ))}
                     </select>
