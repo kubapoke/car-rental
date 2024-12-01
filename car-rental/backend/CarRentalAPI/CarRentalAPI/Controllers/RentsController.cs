@@ -9,6 +9,7 @@ using Azure.Storage.Blobs;
 using EllipticCurve.Utils;
 using Azure.Storage.Blobs.Specialized;
 using CarRentalAPI.DTOs.Rents;
+using CarRentalAPI.Abstractions;
 
 namespace CarRentalAPI.Controllers
 {    
@@ -18,10 +19,12 @@ namespace CarRentalAPI.Controllers
     {
 
         private readonly CarRentalDbContext _context;
+        private readonly IStorageManager _storageManager;
 
-        public RentsController(CarRentalDbContext context) 
+        public RentsController(CarRentalDbContext context, IStorageManager storageManager) 
         {
             _context = context;
+            _storageManager = storageManager;
         }
 
         [Authorize(Policy = "Backend")]
