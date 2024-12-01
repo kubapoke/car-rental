@@ -32,4 +32,8 @@ public class Rent
     public DateTime RentStart { get; set; }
     
     public DateTime? RentEnd { get; set; }
+
+    [MaxLength(1024)]
+    public string? Description { get; set; }
+    public string? ImageUri {  get; set; }
 }

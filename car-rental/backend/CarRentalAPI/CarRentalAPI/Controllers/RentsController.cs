@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using Azure.Storage.Blobs;
+using EllipticCurve.Utils;
+using Azure.Storage.Blobs.Specialized;
 
 namespace CarRentalAPI.Controllers
 {    
@@ -78,5 +81,14 @@ namespace CarRentalAPI.Controllers
             
             return Ok(rents);
         }
+
+        [HttpPost("close-rent")]
+        public async Task<IActionResult> CloseRent([FromForm]string info)
+        {
+            
+            return Ok();
+        }
+
+
     }
 }
