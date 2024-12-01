@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Azure.Storage.Blobs;
 using EllipticCurve.Utils;
 using Azure.Storage.Blobs.Specialized;
+using CarRentalAPI.DTOs.Rents;
 
 namespace CarRentalAPI.Controllers
 {    
@@ -35,7 +36,7 @@ namespace CarRentalAPI.Controllers
             if (rentedCar == null) { return BadRequest("Car does not exist in database");  }
             
 
-            RentStatus status = 0;
+            RentStatus status = RentStatus.Active;
 
             var newRent = new Rent
             {
@@ -83,9 +84,26 @@ namespace CarRentalAPI.Controllers
         }
 
         [HttpPost("close-rent")]
-        public async Task<IActionResult> CloseRent([FromForm]string info)
+        public async Task<IActionResult> CloseRent([FromForm]CloseRentDto closeInfo) 
         {
+            var rent = await _context.Rents.FirstOrDefaultAsync(r => r.RentId == closeInfo.Id);
+            if (rent == null) 
+            {
+                return BadRequest("There is no such rent.");
+            }
+            else if (rent.Status == RentStatus.Active)
+            {
+                return BadRequest("This is rent is not ready to be closed.");
+            }
+            else if (rent.Status == RentStatus.Returned)
+            {
+                return BadRequest("This is rent is already closed.");
+            }
+
             
+            // rent.Description = closeInfo.Description;
+            // _context.Update(rent);
+
             return Ok();
         }
 
