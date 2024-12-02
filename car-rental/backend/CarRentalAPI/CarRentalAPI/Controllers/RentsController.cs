@@ -74,7 +74,8 @@ namespace CarRentalAPI.Controllers
         {
             var rents = await _context.Rents
                 .Include(r => r.Car)
-                .FirstOrDefaultAsync(r => r.Status == rentStatus);
+                .Where(r => r.Status == rentStatus)
+                .ToListAsync();
             
             return Ok(rents);
         }
