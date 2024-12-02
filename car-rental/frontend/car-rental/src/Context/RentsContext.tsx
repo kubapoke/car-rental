@@ -47,23 +47,20 @@ export const RentsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         try {
             const response = await fetch(apiUrl, {method: 'GET', headers: headers});
             const data = await response.json();
-
-            console.log("here") 
-            console.log(typeof data)
-
+            
             if (Array.isArray(data)) {
-                const rents: Rent[] = data.map((item) => ({
+                const rents: Rent[] = data.map((item) =>  ({
                     car: {
                         model: {
-                            name: item?.car?.model?.name || "",
+                            name: item?.modelName || "",
                             brand: {
-                                name: item?.car?.model?.brand?.name || "",
+                                name: item?.brandName || "",
                             },
                         },
                     },
                     rentStart: item?.rentStart || "",
                     rentEnd: item?.rentEnd || "",
-                    status: item?.status || "",
+                    status: item?.status || filters.selectedRentStatus, //TODO: cheated here a little bit
                 }));
                 
                 setRents(rents);
@@ -72,7 +69,7 @@ export const RentsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                 setRents([]);
             }
 
-            console.log('Rentals:', data);
+            console.log('Rentals:', rents);
         } catch (error) {
             console.error('Error fetching car list:', error);
             setRents([]);

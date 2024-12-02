@@ -4,7 +4,6 @@ import CarRent from "./CarRent.tsx";
 const CarRents = () => {
     const { rents } = useRents();
 
-
     if (!Array.isArray(rents)) {
         console.log(rents)
         console.log(typeof rents)

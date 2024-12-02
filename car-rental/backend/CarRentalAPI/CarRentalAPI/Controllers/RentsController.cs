@@ -75,7 +75,7 @@ namespace CarRentalAPI.Controllers
             return Ok(newSearchRentDto);
         }
 
-        [Authorize(Policy = "Manager")]
+        //[Authorize(Policy = "Manager")]
         [HttpGet("get-rents")]
         public async Task<IActionResult> GetRents([FromQuery] RentStatus? rentStatus)
         {
@@ -84,9 +84,17 @@ namespace CarRentalAPI.Controllers
                 .ThenInclude(c => c.Model)
                 .ThenInclude(m => m.Brand)
                 .Where(r => r.Status == rentStatus)
+                .Select(rent => new RentInfoDto
+                {
+                    BrandName = rent.Car.Model.Brand.Name,
+                    ModelName = rent.Car.Model.Name,
+                    RentStart = rent.RentStart,
+                    RentEnd = rent.RentEnd,
+                    RentStatus = rent.Status
+                })
                 .ToListAsync();
             
-            return Ok(new {rents});
+            return Ok(rents);
         }
 
         [HttpPost("close-rent")]
