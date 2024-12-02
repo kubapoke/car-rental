@@ -25,8 +25,8 @@ export const RentsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     
     // fetch offers based on filters
     const fetchRents = async () => {
-        console.log("fetching rents")
-        
+        console.log("fetching data")
+
         const token = sessionStorage.getItem('authToken');
         const headers = {
             'Content-Type': 'application/json',
@@ -34,22 +34,27 @@ export const RentsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         };
 
         const query = new URLSearchParams({
-            Status: filters.selectedRentStatus,
+            rentStatus: filters.selectedRentStatus,
         }).toString();
-        
-        const apiUrl = `${import.meta.env.VITE_SERVER_URL}/api/rentals?${query}`;
-        
+
+        const apiUrl = `${import.meta.env.VITE_SERVER_URL}/api/Rents/get-rents?${query}`;
         try {
             const response = await fetch(apiUrl, {method: 'GET', headers: headers});
-            if (!response.ok) {
-                throw new Error('Failed to fetch rentals');
+            const data: Rent[] = await response.json();
+
+            console.log(typeof data)
+
+            if (Array.isArray(data)) {
+                setRents(data);
+            } else {
+                console.error('Expected an array but received:', data);
+                setRents([]);
             }
 
-            const data : Rent[] = await response.json();
-            setRents(data);
             console.log('Rentals:', data);
         } catch (error) {
-            console.error('Error fetching rentals:', error);
+            console.error('Error fetching car list:', error);
+            setRents([]);
         }
     };
 

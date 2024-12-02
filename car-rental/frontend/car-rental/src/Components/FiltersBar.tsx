@@ -1,46 +1,17 @@
 import {FormEvent, useEffect, useState} from "react";
 import {FaSearch} from "react-icons/fa";
 import {rentStatus, useFilters} from "../Context/FiltersContext.tsx";
-import {Rent} from "../Context/RentsContext.tsx";
+import {useRents} from "../Context/RentsContext.tsx";
 
 const FiltersBar = () => {
     const {filters, setFilters} = useFilters();
-    const [, setRentsData] = useState<Rent[]>([]);
-    
-    
+    const {fetchRents} = useRents();
+
     const [selectedRentStatus, setSelectedRentStatus] = useState<rentStatus>(filters.selectedRentStatus);
 
     useEffect(() => {
         // Fetch the rent list data
-        const fetchData = async () => {
-            console.log("fetching data")
-
-            const token = sessionStorage.getItem('authToken');
-            const headers = {
-                'Content-Type': 'application/json',
-                ...(token && { Authorization: `Bearer ${token}` }),
-            };
-            
-            const query = new URLSearchParams({
-                rentStatus: filters.selectedRentStatus,
-            }).toString();
-
-            const apiUrl = `${import.meta.env.VITE_SERVER_URL}/api/Rents/get-rents?${query}`;
-            try {
-                const response = await fetch(apiUrl, {method: 'GET', headers: headers});
-                const data: Rent[] = await response.json();
-                
-                console.log("hello");
-                
-                setRentsData(data);
-
-                console.log('Rentals:', data);
-            } catch (error) {
-                console.error('Error fetching car list:', error);
-            }
-        };
-
-        fetchData();
+        fetchRents();
     }, [filters]);
     
     const handleSubmit = (e : FormEvent<HTMLFormElement>) => {
