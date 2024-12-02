@@ -5,23 +5,29 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using Azure.Storage.Blobs;
+using EllipticCurve.Utils;
+using Azure.Storage.Blobs.Specialized;
+using CarRentalAPI.DTOs.Rents;
+using CarRentalAPI.Abstractions;
 
 namespace CarRentalAPI.Controllers
-{
-    //[Authorize(Policy = "Backend")]
+{    
     [Route("api/[controller]")]
     [ApiController]
     public class RentsController : ControllerBase
     {
 
         private readonly CarRentalDbContext _context;
+        private readonly IStorageManager _storageManager;
 
-        public RentsController(CarRentalDbContext context) 
+        public RentsController(CarRentalDbContext context, IStorageManager storageManager) 
         {
             _context = context;
+            _storageManager = storageManager;
         }
 
-
+        [Authorize(Policy = "Backend")]
         [HttpPost("create-new-rent")]
         public async Task<IActionResult> CreateNewRent([FromBody] OfferInfoForNewRentDto offerInfo)
         {
@@ -68,7 +74,8 @@ namespace CarRentalAPI.Controllers
 
             return Ok(newSearchRentDto);
         }
-        
+
+        [Authorize(Policy = "Manager")]
         [HttpGet("get-rents")]
         public async Task<IActionResult> GetRents([FromQuery] RentStatus? rentStatus)
         {
@@ -81,5 +88,40 @@ namespace CarRentalAPI.Controllers
             
             return Ok(new {rents});
         }
+
+        [HttpPost("close-rent")]
+        public async Task<IActionResult> CloseRent([FromForm]CloseRentDto closeInfo) 
+        {
+            var rent = await _context.Rents.FirstOrDefaultAsync(r => r.RentId == closeInfo.Id);
+            if (rent == null) 
+            {
+                return BadRequest("There is no such rent.");
+            }
+            else if (rent.Status == RentStatus.Active)
+            {
+                return BadRequest("This is rent is not ready to be closed.");
+            }
+            else if (rent.Status == RentStatus.Returned)
+            {
+                return BadRequest("This is rent is already closed.");
+            }
+
+            var uri = await _storageManager.UploadImage(closeInfo.Image);
+
+            if (uri == null)
+            {
+                return BadRequest("Failed to upload file into Azure Blob storage");
+            }
+
+            rent.ImageUri = uri;
+            rent.Description = closeInfo.Description;
+            rent.Status = RentStatus.Returned;
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+
     }
 }
