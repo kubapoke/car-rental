@@ -11,7 +11,7 @@ const CarRents = () => {
     }
     
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 pl-20">
             {rents.map((rent, index) => (
                 <CarRent key={index} rent={rent}/>
             ))}
