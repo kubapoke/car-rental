@@ -75,7 +75,7 @@ namespace CarRentalAPI.Controllers
             return Ok(newSearchRentDto);
         }
 
-        //[Authorize(Policy = "Manager")]
+        [Authorize(Policy = "Manager")]
         [HttpGet("get-rents")]
         public async Task<IActionResult> GetRents([FromQuery] RentStatus? rentStatus)
         {
