@@ -16,9 +16,9 @@ namespace CarRentalAPI.Services
             await file.CopyToAsync(memmoryStream);
             memmoryStream.Position = 0;
             await blobClient.UploadAsync(memmoryStream);
-            var path = blobClient.Uri.AbsoluteUri;
+            var uri = blobClient.Uri.AbsoluteUri;
 
-            return path;
+            return uri;
         }
     }
 }

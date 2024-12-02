@@ -103,9 +103,18 @@ namespace CarRentalAPI.Controllers
                 return BadRequest("This is rent is already closed.");
             }
 
-            
-            // rent.Description = closeInfo.Description;
-            // _context.Update(rent);
+            var uri = await _storageManager.UploadImage(closeInfo.Image);
+
+            if (uri == null)
+            {
+                return BadRequest("Failed to upload file into Azure Blob storage");
+            }
+
+            rent.ImageUri = uri;
+            rent.Description = closeInfo.Description;
+            rent.Status = RentStatus.Returned;
+
+            await _context.SaveChangesAsync();
 
             return Ok();
         }
