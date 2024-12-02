@@ -1,7 +1,7 @@
 import {FormEvent, useEffect, useState} from "react";
 import {FaSearch} from "react-icons/fa";
-import {rentStatus, useFilters} from "../Context/FiltersContext.tsx";
-import {useRents} from "../Context/RentsContext.tsx";
+import {useFilters} from "../Context/FiltersContext.tsx";
+import {rentStatus, useRents} from "../Context/RentsContext.tsx";
 
 const FiltersBar = () => {
     const {filters, setFilters} = useFilters();

@@ -1,10 +1,6 @@
 import {createContext, ReactNode, useContext, useState} from "react";
+import {rentStatus} from "./RentsContext.tsx";
 
-export enum rentStatus {
-    Active = "Active",
-    ReadyToReturn = "ReadyToReturn",
-    Returned = "Returned"
-}
 
 interface Filters {
     selectedRentStatus: rentStatus;

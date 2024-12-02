@@ -1,5 +1,11 @@
 import React, { createContext, useContext, useState } from 'react';
-import {rentStatus, useFilters} from "./FiltersContext.tsx";
+import {useFilters} from "./FiltersContext.tsx";
+
+export enum rentStatus {
+    Active = "Active",
+    ReadyToReturn = "ReadyToReturn",
+    Returned = "Returned"
+}
 
 
 export interface Rent {
