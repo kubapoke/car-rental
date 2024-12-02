@@ -33,7 +33,7 @@ namespace CarRentalAPI.Controllers
             if (rentedCar == null) { return BadRequest("Car does not exist in database");  }
             
 
-            RentStatus status = 0;
+            RentStatus status = RentStatus.Active;
 
             var newRent = new Rent
             {
@@ -74,10 +74,12 @@ namespace CarRentalAPI.Controllers
         {
             var rents = await _context.Rents
                 .Include(r => r.Car)
+                .ThenInclude(c => c.Model)
+                .ThenInclude(m => m.Brand)
                 .Where(r => r.Status == rentStatus)
                 .ToListAsync();
             
-            return Ok(rents);
+            return Ok(new {rents});
         }
     }
 }

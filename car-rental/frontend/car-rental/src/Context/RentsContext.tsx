@@ -3,11 +3,17 @@ import {rentStatus, useFilters} from "./FiltersContext.tsx";
 
 
 export interface Rent {
-    brand: string,
-    model: string,
-    startDate: string,
-    endDate: string,
-    status: rentStatus
+    car: {
+        model: {
+            name: string;
+            brand: {
+                name: string;
+            };
+        };
+    };
+    rentStart: string;
+    rentEnd: string;
+    status: rentStatus;
 }
 
 
@@ -40,12 +46,27 @@ export const RentsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         const apiUrl = `${import.meta.env.VITE_SERVER_URL}/api/Rents/get-rents?${query}`;
         try {
             const response = await fetch(apiUrl, {method: 'GET', headers: headers});
-            const data: Rent[] = await response.json();
+            const data = await response.json();
 
+            console.log("here") 
             console.log(typeof data)
 
             if (Array.isArray(data)) {
-                setRents(data);
+                const rents: Rent[] = data.map((item) => ({
+                    car: {
+                        model: {
+                            name: item?.car?.model?.name || "",
+                            brand: {
+                                name: item?.car?.model?.brand?.name || "",
+                            },
+                        },
+                    },
+                    rentStart: item?.rentStart || "",
+                    rentEnd: item?.rentEnd || "",
+                    status: item?.status || "",
+                }));
+                
+                setRents(rents);
             } else {
                 console.error('Expected an array but received:', data);
                 setRents([]);
