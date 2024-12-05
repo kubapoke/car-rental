@@ -27,8 +27,13 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
     });
 builder.Services.AddDbContext<CarSearchDbContext>(options =>
-                options.UseSqlServer(Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING"))); // add connection string to your local db to .env
-
+                options.UseSqlServer(
+                    Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING"),
+                    sqlOptions =>
+                        sqlOptions.EnableRetryOnFailure(
+                            maxRetryCount: 5,
+                            maxRetryDelay: TimeSpan.FromSeconds(30),
+                            errorNumbersToAdd: null)));
 builder.Services.AddHttpClient();
 
 builder.Services.AddScoped<IEmailSender, SendGridEmailService>();

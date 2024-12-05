@@ -17,7 +17,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddDbContext<CarRentalDbContext>(options =>
-                options.UseSqlServer(Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING")));
+                options.UseSqlServer(
+                    Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING"),
+                    sqlOptions =>
+                        sqlOptions.EnableRetryOnFailure(
+                            maxRetryCount: 5,
+                            maxRetryDelay: TimeSpan.FromSeconds(30),
+                            errorNumbersToAdd: null)));
+
 builder.Services.AddScoped<IPriceGenerator, PricePerDayToHourGeneratorService>();
 builder.Services.AddScoped<PasswordHasher>();
 builder.Services.AddScoped<SessionTokenManager>();
