@@ -4,11 +4,17 @@ import { AuthProvider, useAuth } from "../Context/AuthContext.tsx";  // Zaimport
 import LogInPage from "../Pages/LogInPage.tsx";
 import CockpitPage from "../Pages/CockpitPage.tsx";
 import LoggedInLayout from "../Layouts/LoggedInLayout.tsx";
+import {FiltersProvider} from "../Context/FiltersContext.tsx";
+import {RentsProvider} from "../Context/RentsContext.tsx";
 
 function App() {
     return (
         <AuthProvider>  {/* Umieść AuthProvider wokół całej aplikacji */}
-            <MainRouter />
+            <FiltersProvider>
+                <RentsProvider>
+                    <MainRouter />
+                </RentsProvider>
+            </FiltersProvider>
         </AuthProvider>
     );
 }
