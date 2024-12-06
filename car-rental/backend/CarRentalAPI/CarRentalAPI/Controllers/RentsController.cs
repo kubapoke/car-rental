@@ -97,6 +97,7 @@ namespace CarRentalAPI.Controllers
             return Ok(rents);
         }
 
+        [Authorize(Policy = "Manager")]
         [HttpPost("close-rent")]
         public async Task<IActionResult> CloseRent([FromForm]CloseRentDto closeInfo) 
         {
