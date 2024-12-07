@@ -24,8 +24,8 @@ namespace CarRentalAPI.Services
         public async Task<List<OfferForCarSearchDto>>  GetNewOffers(string? brand, string? model, DateTime startDate, DateTime endDate, string? location, string email, string conditions, string companyName)
         {
             List<CarIdRentDatesDto> pairs = await _rentRepository.GetChosenCarActiveRentDatesAsync(brand, model, location);
-            List<int> availableCarIds = _availabilityChecker.CheckForAvailableCars(pairs, startDate, endDate);
-            List<Car> availableCars = await _carRepository.GetCarsByIdAsync(availableCarIds);
+            List<int> notAvailableCarIds = _availabilityChecker.CheckForNotAvailableCars(pairs, startDate, endDate);
+            List<Car> availableCars = await _carRepository.GetCarsByIdAsync(notAvailableCarIds, brand, model, location);
 
             List<OfferForCarSearchDto> newOffers = new List<OfferForCarSearchDto>();
             foreach (var car in availableCars)

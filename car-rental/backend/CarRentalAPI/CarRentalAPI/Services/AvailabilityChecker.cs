@@ -4,15 +4,14 @@ namespace CarRentalAPI.Services
 {
     public class AvailabilityChecker
     {
-        public List<int> CheckForAvailableCars(List<CarIdRentDatesDto> pairs, DateTime startDate, DateTime endDate)
+        public List<int> CheckForNotAvailableCars(List<CarIdRentDatesDto> pairs, DateTime startDate, DateTime endDate)
         {
-            List<int> availableCarIds = new List<int>();
+            List<int> notAvailableCarIds = new List<int>();
             foreach (var pair in pairs)
             {
-                if (IsIntervalsCollide(pair.StartDate, pair.EndDate, startDate, endDate)) continue;
-                else availableCarIds.Add(pair.CarId);
+                if (IsIntervalsCollide(pair.StartDate, pair.EndDate, startDate, endDate)) notAvailableCarIds.Add(pair.CarId);
             }
-            return availableCarIds;
+            return notAvailableCarIds;
         }
 
         private bool IsIntervalsCollide(DateTime start1,  DateTime end1, DateTime start2, DateTime end2)
