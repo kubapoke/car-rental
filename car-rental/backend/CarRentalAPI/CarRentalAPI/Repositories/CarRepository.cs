@@ -15,7 +15,10 @@ namespace CarRentalAPI.Repositories
 
         public async Task<List<Car>> GetCarsByIdAsync(List<int> ids)
         {
-            var cars = await _context.Cars.Where(c => ids.Contains(c.CarId)).ToListAsync();
+            var cars = await _context.Cars
+                .Where(c => ids.Contains(c.CarId))
+                .Include(c => c.Model)
+                .ThenInclude(m => m.Brand).ToListAsync();
             return cars;
         }
     }

@@ -32,6 +32,7 @@ builder.Services.AddScoped<PasswordHasher>();
 builder.Services.AddScoped<SessionTokenManager>();
 builder.Services.AddScoped<IStorageManager, AzureBlobStorageManager>();
 builder.Services.AddScoped<IRentRepository, RentRepository>();
+builder.Services.AddScoped<ICarRepository, CarRepository>();
 builder.Services.AddScoped<AvailabilityChecker>();
 builder.Services.AddScoped<OffersService>();
 
