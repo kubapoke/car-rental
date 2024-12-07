@@ -5,6 +5,8 @@ using CarRentalAPI.Abstractions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using CarRentalAPI.Abstractions.Repositories;
+using CarRentalAPI.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +31,9 @@ builder.Services.AddScoped<IPriceGenerator, PricePerDayToHourGeneratorService>()
 builder.Services.AddScoped<PasswordHasher>();
 builder.Services.AddScoped<SessionTokenManager>();
 builder.Services.AddScoped<IStorageManager, AzureBlobStorageManager>();
+builder.Services.AddScoped<IRentRepository, RentRepository>();
+builder.Services.AddScoped<AvailabilityChecker>();
+builder.Services.AddScoped<OffersService>();
 
 builder.Services.AddAuthentication(options => // that is instruction, how to check bearer token
 {

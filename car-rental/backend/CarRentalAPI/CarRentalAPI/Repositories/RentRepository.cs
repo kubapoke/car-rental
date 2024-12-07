@@ -14,7 +14,7 @@ namespace CarRentalAPI.Repositories
             _context = context;
         }
 
-        public async Task<List<CarIdRentDatesDto>> GetChosenCarActiveRentDates(string? brand, string? model, DateTime startDate, DateTime endDate, string? location) 
+        public async Task<List<CarIdRentDatesDto>> GetChosenCarActiveRentDates(string? brand, string? model, string? location) 
         {
             try
             {
