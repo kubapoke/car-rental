@@ -29,7 +29,7 @@ const UserRentsContainer = () => {
         }
 
         fetchRents();
-    }, [rents, setRents]);
+    }, [setRents]);
     
     // maybe slice it to a couple of first records in the future
     const displayedRents =  rents;

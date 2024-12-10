@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, {createContext, useCallback, useContext, useState} from 'react';
 
 
 export interface Rent {
@@ -21,7 +21,7 @@ export const RentsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const [rents, setRents] = useState<Rent[]>([]);
 
     // fetch offers based on filters
-    const fetchRents = async () => {
+    const fetchRents = useCallback(async () => {
         const token = sessionStorage.getItem('authToken');
         const headers = {
             'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ export const RentsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         catch (error){
             console.log('Error fetching data', error);
         }
-    };
+    }, []);
 
     return (
         <RentsContext.Provider value={{ rents, setRents, fetchRents }}>
