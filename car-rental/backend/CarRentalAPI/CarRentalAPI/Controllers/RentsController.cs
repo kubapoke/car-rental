@@ -64,13 +64,14 @@ namespace CarRentalAPI.Controllers
             await _context.Rents.AddAsync(newRent);
             await _context.SaveChangesAsync();
 
-            NewSearchRentDto newSearchRentDto = new NewSearchRentDto();
-            newSearchRentDto.Brand = rentedCar.Model.Brand.Name;
-            newSearchRentDto.Model = rentedCar.Model.Name;
-            newSearchRentDto.Email = offerInfo.Email;
-            newSearchRentDto.StartDate = offerInfo.StartDate;
-            newSearchRentDto.EndDate = offerInfo.EndDate;
-
+            var newSearchRentDto = new NewSearchRentDto
+            {
+                Brand = rentedCar.Model.Brand.Name,
+                Model = rentedCar.Model.Name,
+                Email = offerInfo.Email,
+                StartDate = offerInfo.StartDate,
+                EndDate = offerInfo.EndDate
+            };
 
             return Ok(newSearchRentDto);
         }
