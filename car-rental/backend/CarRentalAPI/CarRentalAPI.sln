@@ -1,6 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRentalAPI", "CarRentalAPI\CarRentalAPI.csproj", "{3FC2238E-B355-479D-BC68-3A7EECB15CB9}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34616.47
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarRentalAPI", "CarRentalAPI\CarRentalAPI.csproj", "{3FC2238E-B355-479D-BC68-3A7EECB15CB9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRentalAPI.Tests", "CarRentalAPI.Tests\CarRentalAPI.Tests.csproj", "{3294215E-4E2C-46FA-94C1-07FAD50E95BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +17,15 @@ Global
 		{3FC2238E-B355-479D-BC68-3A7EECB15CB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3FC2238E-B355-479D-BC68-3A7EECB15CB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3FC2238E-B355-479D-BC68-3A7EECB15CB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3294215E-4E2C-46FA-94C1-07FAD50E95BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3294215E-4E2C-46FA-94C1-07FAD50E95BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3294215E-4E2C-46FA-94C1-07FAD50E95BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3294215E-4E2C-46FA-94C1-07FAD50E95BC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B70CA968-2F44-47C4-9224-419D40175F6E}
 	EndGlobalSection
 EndGlobal

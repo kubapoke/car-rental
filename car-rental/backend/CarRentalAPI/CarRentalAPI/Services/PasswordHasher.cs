@@ -25,14 +25,21 @@ namespace CarRentalAPI.Services
 
         public bool VerifyPassword(string password, string hash, string salt)
         {
-            string computedHash = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: password,
-                salt: Convert.FromBase64String(salt),
-                prf: KeyDerivationPrf.HMACSHA256,
-                iterationCount: 10000,
-                numBytesRequested: 256 / 8));
+            try
+            {
+                string computedHash = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                    password: password,
+                    salt: Convert.FromBase64String(salt),
+                    prf: KeyDerivationPrf.HMACSHA256,
+                    iterationCount: 10000,
+                    numBytesRequested: 256 / 8));
 
-            return hash == computedHash;
+                return hash == computedHash;
+            }
+            catch (ArgumentNullException e)
+            {
+                return false;
+            }
         }
     }
 }
