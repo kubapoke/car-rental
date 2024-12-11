@@ -24,6 +24,19 @@ public class RedisCacheService
     {
         return await _database.StringGetAsync(key);
     }
+    
+    // same as the above method, but also refreshes the objects' expiry date
+    public async Task<string?> GetValueAndRefreshExpiryAsync(string key, TimeSpan newExpiry)
+    {
+        var value = await _database.StringGetAsync(key);
+
+        if (!value.IsNull)
+        {
+            await _database.KeyExpireAsync(key, newExpiry);
+        }
+        
+        return value;
+    }
 
     public async Task<bool> DeleteKeyAsync(string key)
     {
