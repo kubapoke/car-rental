@@ -35,6 +35,11 @@ builder.Services.AddScoped<IRentRepository, RentRepository>();
 builder.Services.AddScoped<ICarRepository, CarRepository>();
 builder.Services.AddScoped<AvailabilityChecker>();
 builder.Services.AddScoped<OffersService>();
+builder.Services.AddSingleton<RedisCacheService>(provider =>
+{
+    var configuration = builder.Configuration.GetConnectionString("REDIS_DATABASE_CONNECTION");
+    return new RedisCacheService(configuration);
+});
 
 builder.Services.AddAuthentication(options => // that is instruction, how to check bearer token
 {
