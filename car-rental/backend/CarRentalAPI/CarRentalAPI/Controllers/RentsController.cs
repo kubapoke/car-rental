@@ -77,7 +77,8 @@ namespace CarRentalAPI.Controllers
             {
                 return BadRequest("Rent is already created");
             }
-
+            
+            await _redisCacheService.DeleteKeyAsync(rentPatameters.OfferId);
             await _context.Rents.AddAsync(newRent);
             await _context.SaveChangesAsync();
 
