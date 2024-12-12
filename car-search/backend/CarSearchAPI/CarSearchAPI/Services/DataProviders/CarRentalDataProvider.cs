@@ -26,7 +26,7 @@ namespace CarSearchAPI.Services.DataProviders
         public CarRentalDataProvider(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
-            _accessToken = GenerateAcessToken();
+            _accessToken = GenerateAccessToken();
         }
 
         public string GetProviderName()
@@ -99,19 +99,13 @@ namespace CarSearchAPI.Services.DataProviders
             var client = _httpClientFactory.CreateClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
 
-            string carId = claimsPrincipal.FindFirst("CarId")?.Value;
+            string offerId = claimsPrincipal.FindFirst("OfferId")?.Value;
             string email = claimsPrincipal.FindFirst("Email")?.Value;
-            string price = claimsPrincipal.FindFirst("Price")?.Value;
-            string startDate = claimsPrincipal.FindFirst("StartDate")?.Value;
-            string endDate = claimsPrincipal.FindFirst("EndDate")?.Value;
 
             NewRentalRentDto newRentDto = new NewRentalRentDto
             {
-                CarId = int.Parse(carId),
+                OfferId = offerId,
                 Email = email,
-                Price = decimal.Parse(price),
-                StartDate = DateTime.Parse(startDate),
-                EndDate = DateTime.Parse(endDate)
             };
 
             var carRentalApiUrl = Environment.GetEnvironmentVariable("CAR_RENTAL_API_URL")
@@ -140,9 +134,9 @@ namespace CarSearchAPI.Services.DataProviders
             throw new HttpRequestException(errorMessage);
         }
         
-        private string GenerateAcessToken()
+        private string GenerateAccessToken()
         {
-            var tokenHandelr = new JwtSecurityTokenHandler();
+            var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("CAR_RENTAL_SECRET_KEY"));
             List<Claim> claims = new List<Claim>();
             Claim backendClaim = new Claim("Backend", "1");
@@ -153,9 +147,9 @@ namespace CarSearchAPI.Services.DataProviders
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
                 Expires = DateTime.UtcNow.AddMinutes(60)
             };
-            var token = tokenHandelr.CreateToken(tokenDescriptor);
+            var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            return tokenHandelr.WriteToken(token);
+            return tokenHandler.WriteToken(token);
         }
     }
 }

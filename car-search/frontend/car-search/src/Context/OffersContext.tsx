@@ -1,7 +1,7 @@
 import React, {createContext, useCallback, useContext, useState} from 'react';
 
 export interface Offer {
-    carId: number;
+    offerId: string;
     brand: string;
     model: string;
     email: string;

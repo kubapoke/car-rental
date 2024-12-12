@@ -55,7 +55,7 @@ const CarOffers = ({isHome} : {isHome : boolean}) => {
                 </h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {displayedOffers.map((offer) => (
-                            <CarOffer key={offer.carId} offer={offer}/>
+                            <CarOffer key={offer.offerId} offer={offer}/>
                         ))}
                     </div>
 

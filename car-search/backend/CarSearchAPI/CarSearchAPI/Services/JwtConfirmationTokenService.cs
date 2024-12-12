@@ -16,12 +16,9 @@ namespace CarSearchAPI.Services
 
             var claims = new[]
             {
-                new Claim("CarId", info.CarId.ToString()),
+                new Claim("OfferId", info.OfferId),
                 new Claim("Email", info.Email),
-                new Claim("Price", info.Price.ToString()),
                 new Claim("CompanyName", info.CompanyName),
-                new Claim("StartDate", info.StartDate.ToString()),
-                new Claim("EndDate", info.EndDate.ToString())
             };
 
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -52,21 +49,18 @@ namespace CarSearchAPI.Services
             return tokenHandler.ValidateToken(token, validationParameters, out _);
         }
 
-        public bool ValidateAllClaims(ClaimsPrincipal claimsPrincipal)
+        public bool ValidateOfferClaim(ClaimsPrincipal claimsPrincipal)
         {
-            string carId = claimsPrincipal.FindFirst("CarId")?.Value;
+            string offerId = claimsPrincipal.FindFirst("OfferId")?.Value;
             string email = claimsPrincipal.FindFirst("Email")?.Value;
-            string price = claimsPrincipal.FindFirst("Price")?.Value;
             string companyName = claimsPrincipal.FindFirst("CompanyName")?.Value;
-            string startDate = claimsPrincipal.FindFirst("StartDate")?.Value;
-            string endDate = claimsPrincipal.FindFirst("EndDate")?.Value;
-            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(price) || string.IsNullOrEmpty(companyName) ||
-                string.IsNullOrEmpty(startDate) || string.IsNullOrEmpty(endDate) || string.IsNullOrEmpty(carId))
+            
+            if (string.IsNullOrEmpty(offerId) || string.IsNullOrEmpty(email))
             {
                 return false;
             }
-            return true;
             
+            return true;
         }
     }
 }
