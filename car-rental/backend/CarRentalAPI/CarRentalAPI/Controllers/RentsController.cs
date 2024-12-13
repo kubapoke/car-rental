@@ -10,6 +10,7 @@ using EllipticCurve.Utils;
 using Azure.Storage.Blobs.Specialized;
 using CarRentalAPI.DTOs.Rents;
 using CarRentalAPI.Abstractions;
+using CarRentalAPI.Abstractions.Repositories;
 using CarRentalAPI.DTOs.Redis;
 using CarRentalAPI.Services;
 using Newtonsoft.Json;
@@ -22,28 +23,20 @@ namespace CarRentalAPI.Controllers
     {
         private readonly CarRentalDbContext _context;
         private readonly IStorageManager _storageManager;
-        private readonly RedisCacheService _redisCacheService;
+        private readonly IOfferRepository _offerRepository;
 
-        public RentsController(CarRentalDbContext context, IStorageManager storageManager, RedisCacheService redisCacheService) 
+        public RentsController(CarRentalDbContext context, IStorageManager storageManager, IOfferRepository offerRepository) 
         {
             _context = context;
             _storageManager = storageManager;
-            _redisCacheService = redisCacheService;
+            _offerRepository = offerRepository;
         }
 
         [Authorize(Policy = "Backend")]
         [HttpPost("create-new-rent")]
         public async Task<IActionResult> CreateNewRent([FromBody] NewRentParametersDto rentPatameters)
         {
-            var response = await _redisCacheService.GetValueAsync(rentPatameters.OfferId);
-            await _redisCacheService.DeleteKeyAsync(rentPatameters.OfferId);
-
-            if (response == null)
-            {
-                return NotFound("Offer not found");
-            }
-            
-            var offer = JsonConvert.DeserializeObject<OfferForRedisDto>(response);
+            var offer = await _offerRepository.GetAndDeleteOfferAsync(rentPatameters.OfferId);
 
             if (offer == null)
             {

@@ -42,10 +42,12 @@ public class RedisCacheService
     public async Task<string?> GetValueAndDeleteKeyAsync(string key)
     {
         var tran = _database.CreateTransaction();
-        var result = await tran.StringGetAsync(key);
-        await tran.KeyDeleteAsync(key);
+        var getResult = tran.StringGetAsync(key);
+        var deleteTask = tran.KeyDeleteAsync(key);
+        
         await tran.ExecuteAsync();
         
+        var result = await getResult;
         return result;
     }
 
