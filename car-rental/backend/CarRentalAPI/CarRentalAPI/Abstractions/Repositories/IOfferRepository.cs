@@ -6,10 +6,8 @@ namespace CarRentalAPI.Abstractions.Repositories
 {
     public interface IOfferRepository
     {
-        public Task<string> CreateOfferForRedisAsync(Car car, DateTime startDate, DateTime endDate,
-            string conditions, string companyName);
-
-        public Task<OfferForCarSearchDto?> CreateCarSearchOfferFromRedisOfferAsync(string offerGuid, string email);
+        public Task<List<OfferForCarSearchDto>> CreateAndRetrieveOffersAsync(List<Car> cars, DateTime startDate, DateTime endDate,
+            string conditions, string companyName, string email);
         public Task<OfferForRedisDto?> GetAndDeleteOfferAsync(string offerId);
     }
 }
