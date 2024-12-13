@@ -22,21 +22,19 @@ namespace CarRentalAPI.Repositories
         public async Task<List<OfferForCarSearchDto>> CreateAndRetrieveOffersAsync(List<Car> cars, DateTime startDate, DateTime endDate, 
             string conditions, string companyName, string email)
         {
-            List<OfferForCarSearchDto> offers = new List<OfferForCarSearchDto>();
-            List<string> guids = new List<string>();
-            List<Task<bool>> addTasks = new List<Task<bool>>();
+            var redisOffers = new List<(string Guid, OfferForRedisDto RedisOffer, decimal Price)>();
 
             foreach (var car in cars)
             {
                 var offerGuid = Guid.NewGuid().ToString();
-                guids.Add(offerGuid);
+                var price = await _priceGenerator.GeneratePriceAsync(car.Model.BasePrice, startDate, endDate);
             
                 OfferForRedisDto redisOffer = new OfferForRedisDto
                 {
                     CarId = car.CarId,
                     Brand = car.Model.Brand.Name,
                     Model = car.Model.Year == null ? car.Model.Name : car.Model.Name + " " + car.Model.Year,
-                    Price = await _priceGenerator.GeneratePriceAsync(car.Model.BasePrice, startDate, endDate),
+                    Price = price,
                     Conditions = conditions,
                     CompanyName = companyName,
                     Location = car.Location,
@@ -44,33 +42,27 @@ namespace CarRentalAPI.Repositories
                     EndDate = endDate,
                 };
             
-                var serializedOffer = JsonConvert.SerializeObject(redisOffer);
-            
-                addTasks.Add(_redisCacheService.GetSetValueTask(offerGuid, serializedOffer, TimeSpan.FromMinutes(15)));
+                redisOffers.Add((offerGuid, redisOffer, price));
             }
-            Task.WaitAll(addTasks.ToArray());
+            
+            var redisTasks = redisOffers.Select(r => 
+                _redisCacheService.GetSetValueTask(r.Guid, JsonConvert.SerializeObject(r.RedisOffer), TimeSpan.FromMinutes(15)));
+            await Task.WhenAll(redisTasks);
 
-            int id = 0;
-            
-            foreach (var car in cars)
+            var offers = redisOffers.Select(r => new OfferForCarSearchDto
             {
-                OfferForCarSearchDto offer = new OfferForCarSearchDto
-                {
-                    OfferId = guids[id++],
-                    Brand = car.Model.Brand.Name,
-                    Model = car.Model.Year == null ? car.Model.Name : car.Model.Name + " " + car.Model.Year,
-                    Price = await _priceGenerator.GeneratePriceAsync(car.Model.BasePrice, startDate, endDate),
-                    Conditions = conditions,
-                    CompanyName = companyName,
-                    Location = car.Location,
-                    StartDate = startDate,
-                    EndDate = endDate,
-                    Email = email,
-                };
-                
-                offers.Add(offer);
-            }
-            
+                OfferId = r.Guid,
+                Brand = r.RedisOffer.Brand,
+                Model = r.RedisOffer.Model,
+                Price = r.Price,
+                Conditions = conditions,
+                CompanyName = companyName,
+                Location = r.RedisOffer.Location,
+                StartDate = r.RedisOffer.StartDate,
+                EndDate = r.RedisOffer.EndDate,
+                Email = email,
+            }).ToList();
+
             return offers;
         }
 
