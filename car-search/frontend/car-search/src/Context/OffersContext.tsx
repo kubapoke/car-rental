@@ -49,8 +49,11 @@ export const OffersProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         }).toString();
         const apiUrl = `${import.meta.env.VITE_SERVER_URL}/api/OffersForward/offer-list?${queryParams}`;
 
+        const controller = new AbortController();
+        const signal = controller.signal;
+
         try {
-            const res = await fetch(apiUrl, { method: 'GET', headers });
+            const res = await fetch(apiUrl, { method: 'GET', headers, signal });
             const data = await res.json();
             setOffers(data.offers ?? []);
             setPage(data.page);
@@ -58,8 +61,14 @@ export const OffersProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             setTotalOffers(data.totalOffers);
             setPageCount(data.pageCount);
         } catch (error) {
-            console.error('Error fetching offers:', error);
+            if (error instanceof DOMException && error.name === "AbortError") {
+                console.log("Fetch aborted");
+            } else {
+                console.error("Error fetching offers:", error);
+            }
         }
+
+        controller.abort();
     }, []);
 
     return (

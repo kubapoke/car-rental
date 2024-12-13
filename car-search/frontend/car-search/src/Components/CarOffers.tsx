@@ -15,13 +15,20 @@ const CarOffers = ({isHome} : {isHome : boolean}) => {
     const filters = useFilters().filters;
 
     useEffect(() => {
-        fetchOffers({
-            brand: filters.selectedBrand || '',
-            model: filters.selectedModel || '',
-            location: filters.selectedLocation || '',
-            startDate: filters.startDate || '',
-            endDate: filters.endDate || '',
-        }, isHome ? 0 : page)
+        const fetchCurrentPageOffers = async () => {
+            await fetchOffers(
+                {
+                    brand: filters.selectedBrand || "",
+                    model: filters.selectedModel || "",
+                    location: filters.selectedLocation || "",
+                    startDate: filters.startDate || "",
+                    endDate: filters.endDate || "",
+                },
+                isHome ? 0 : page
+            );
+        };
+
+        fetchCurrentPageOffers();
     }, [filters, fetchOffers, page, isHome]);
 
     const handlePageChange = (newPage: number) => {
