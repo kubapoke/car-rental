@@ -37,6 +37,17 @@ public class RedisCacheService
         
         return value;
     }
+    
+    // same asthe above method, but after reading the value it atomically deletes the key
+    public async Task<string?> GetValueAndDeleteKeyAsync(string key)
+    {
+        var tran = _database.CreateTransaction();
+        var result = await tran.StringGetAsync(key);
+        await tran.KeyDeleteAsync(key);
+        await tran.ExecuteAsync();
+        
+        return result;
+    }
 
     public async Task<bool> DeleteKeyAsync(string key)
     {
