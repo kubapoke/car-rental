@@ -15,7 +15,7 @@ const OfferPage = () => {
     const { offers } = useOffers();
 
     // find appropriate offer
-    const offer = offers.find((offer) => offer.carId === Number(id));
+    const offer = offers.find((offer) => offer.offerId === id);
 
     if (!offer) {
         throw new Response("Offer not found", { status: 404 });

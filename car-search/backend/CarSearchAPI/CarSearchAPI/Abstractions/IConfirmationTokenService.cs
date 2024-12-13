@@ -9,6 +9,6 @@ namespace CarSearchAPI.Abstractions
 
         public ClaimsPrincipal ValidateConfirmationToken(string token);
 
-        public bool ValidateAllClaims(ClaimsPrincipal claimsPrincipal);
+        public bool ValidateOfferClaim(ClaimsPrincipal claimsPrincipal);
     }
 }

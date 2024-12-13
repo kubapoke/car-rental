@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 
 interface PaginationProps {
     currentPage: number;
@@ -7,6 +7,15 @@ interface PaginationProps {
 }
 
 const Pagination: React.FC<PaginationProps> = ({currentPage, pageCount, onPageChange}) => {
+    const [isDebouncing, setIsDebouncing] = useState(false);
+
+    const debounce = (callback: () => void, delay: number) => {
+        if(isDebouncing) return;
+        setIsDebouncing(true);
+        callback();
+        setTimeout(() => setIsDebouncing(false), delay);
+    }
+
     const getPageNumbers = () => {
         const numbers = [];
         const totalPagesToShow = 5;
@@ -22,7 +31,7 @@ const Pagination: React.FC<PaginationProps> = ({currentPage, pageCount, onPageCh
 
     const handlePageClick = (page: number) => {
         if (page >= 0 && page < pageCount) {
-            onPageChange(page);
+            debounce(() => onPageChange(page), 300);
         }
     }
 

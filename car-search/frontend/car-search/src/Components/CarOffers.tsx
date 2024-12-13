@@ -15,13 +15,20 @@ const CarOffers = ({isHome} : {isHome : boolean}) => {
     const filters = useFilters().filters;
 
     useEffect(() => {
-        fetchOffers({
-            brand: filters.selectedBrand || '',
-            model: filters.selectedModel || '',
-            location: filters.selectedLocation || '',
-            startDate: filters.startDate || '',
-            endDate: filters.endDate || '',
-        }, isHome ? 0 : page)
+        const fetchCurrentPageOffers = async () => {
+            await fetchOffers(
+                {
+                    brand: filters.selectedBrand || "",
+                    model: filters.selectedModel || "",
+                    location: filters.selectedLocation || "",
+                    startDate: filters.startDate || "",
+                    endDate: filters.endDate || "",
+                },
+                isHome ? 0 : page
+            );
+        };
+
+        fetchCurrentPageOffers();
     }, [filters, fetchOffers, page, isHome]);
 
     const handlePageChange = (newPage: number) => {
@@ -55,7 +62,7 @@ const CarOffers = ({isHome} : {isHome : boolean}) => {
                 </h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {displayedOffers.map((offer) => (
-                            <CarOffer key={offer.carId} offer={offer}/>
+                            <CarOffer key={offer.offerId} offer={offer}/>
                         ))}
                     </div>
 

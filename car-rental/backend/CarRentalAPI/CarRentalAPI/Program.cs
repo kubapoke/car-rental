@@ -33,8 +33,14 @@ builder.Services.AddScoped<SessionTokenManager>();
 builder.Services.AddScoped<IStorageManager, AzureBlobStorageManager>();
 builder.Services.AddScoped<IRentRepository, RentRepository>();
 builder.Services.AddScoped<ICarRepository, CarRepository>();
+builder.Services.AddScoped<IOfferRepository, OfferRepository>();
 builder.Services.AddScoped<AvailabilityChecker>();
 builder.Services.AddScoped<OffersService>();
+builder.Services.AddSingleton<RedisCacheService>(provider =>
+{
+    var connectionString = Environment.GetEnvironmentVariable("REDIS_DATABASE_CONNECTION");
+    return new RedisCacheService(connectionString);
+});
 
 builder.Services.AddAuthentication(options => // that is instruction, how to check bearer token
 {

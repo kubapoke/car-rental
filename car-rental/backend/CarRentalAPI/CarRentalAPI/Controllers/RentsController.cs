@@ -10,6 +10,10 @@ using EllipticCurve.Utils;
 using Azure.Storage.Blobs.Specialized;
 using CarRentalAPI.DTOs.Rents;
 using CarRentalAPI.Abstractions;
+using CarRentalAPI.Abstractions.Repositories;
+using CarRentalAPI.DTOs.Redis;
+using CarRentalAPI.Services;
+using Newtonsoft.Json;
 
 namespace CarRentalAPI.Controllers
 {    
@@ -17,25 +21,32 @@ namespace CarRentalAPI.Controllers
     [ApiController]
     public class RentsController : ControllerBase
     {
-
         private readonly CarRentalDbContext _context;
         private readonly IStorageManager _storageManager;
+        private readonly IOfferRepository _offerRepository;
 
-        public RentsController(CarRentalDbContext context, IStorageManager storageManager) 
+        public RentsController(CarRentalDbContext context, IStorageManager storageManager, IOfferRepository offerRepository) 
         {
             _context = context;
             _storageManager = storageManager;
+            _offerRepository = offerRepository;
         }
 
         [Authorize(Policy = "Backend")]
         [HttpPost("create-new-rent")]
-        public async Task<IActionResult> CreateNewRent([FromBody] OfferInfoForNewRentDto offerInfo)
+        public async Task<IActionResult> CreateNewRent([FromBody] NewRentParametersDto rentPatameters)
         {
-            // TODO: User.Email == email          
-            Car rentedCar = await _context.Cars
+            var offer = await _offerRepository.GetAndDeleteOfferAsync(rentPatameters.OfferId);
+
+            if (offer == null)
+            {
+                return BadRequest("Couldn't retrieve offer");
+            }
+            
+            Car? rentedCar = await _context.Cars
                 .Include(c => c.Model)
                 .ThenInclude(m => m.Brand)
-                .FirstOrDefaultAsync(c => c.CarId == offerInfo.CarId);
+                .FirstOrDefaultAsync(c => c.CarId == offer.CarId);
             if (rentedCar == null) { return BadRequest("Car does not exist in database");  }
             
 
@@ -43,24 +54,13 @@ namespace CarRentalAPI.Controllers
 
             var newRent = new Rent
             {
-                CarId = offerInfo.CarId,
-                UserEmail = offerInfo.Email,
-                RentStart = offerInfo.StartDate,
-                RentEnd = offerInfo.EndDate,
+                CarId = offer.CarId,
+                UserEmail = rentPatameters.Email,
+                RentStart = offer.StartDate,
+                RentEnd = offer.EndDate,
                 Status = status
             };
-
-            var existingRent = await _context.Rents
-                .FirstOrDefaultAsync(r =>
-                    r.CarId == offerInfo.CarId &&
-                    r.RentStart == offerInfo.StartDate &&
-                    r.RentEnd == offerInfo.EndDate);
-
-            if (existingRent != null)
-            {
-                return BadRequest("Rent is already created");
-            }
-
+            
             await _context.Rents.AddAsync(newRent);
             await _context.SaveChangesAsync();
 
@@ -68,9 +68,9 @@ namespace CarRentalAPI.Controllers
             {
                 Brand = rentedCar.Model.Brand.Name,
                 Model = rentedCar.Model.Name,
-                Email = offerInfo.Email,
-                StartDate = offerInfo.StartDate,
-                EndDate = offerInfo.EndDate
+                Email = rentPatameters.Email,
+                StartDate = offer.StartDate,
+                EndDate = offer.EndDate
             };
 
             return Ok(newSearchRentDto);
@@ -131,7 +131,5 @@ namespace CarRentalAPI.Controllers
 
             return Ok();
         }
-
-
     }
 }

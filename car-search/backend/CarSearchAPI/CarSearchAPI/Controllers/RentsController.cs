@@ -32,7 +32,7 @@ namespace CarSearchAPI.Controllers
             {
                 var claimsPrincipal = _confirmationTokenService.ValidateConfirmationToken(token);
                 
-                if (!_confirmationTokenService.ValidateAllClaims(claimsPrincipal)) { return BadRequest("Invalid token"); }
+                if (!_confirmationTokenService.ValidateOfferClaim(claimsPrincipal)) { return BadRequest("Invalid token"); }
 
                 IExternalDataProvider? activeProvider = null;
 
