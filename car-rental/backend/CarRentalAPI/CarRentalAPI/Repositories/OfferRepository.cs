@@ -82,6 +82,7 @@ namespace CarRentalAPI.Repositories
         {
             List<OfferForCarSearchDto> offers = new List<OfferForCarSearchDto>();
             List<string> guids = new List<string>();
+            List<Task<bool>> addTasks = new List<Task<bool>>();
 
             foreach (var car in cars)
             {
@@ -103,8 +104,9 @@ namespace CarRentalAPI.Repositories
             
                 var serializedOffer = JsonConvert.SerializeObject(redisOffer);
             
-                await _redisCacheService.SetValueAsync(offerGuid, serializedOffer, TimeSpan.FromMinutes(15));
+                addTasks.Add(_redisCacheService.GetSetValueTask(offerGuid, serializedOffer, TimeSpan.FromMinutes(15)));
             }
+            Task.WaitAll(addTasks.ToArray());
 
             int id = 0;
             

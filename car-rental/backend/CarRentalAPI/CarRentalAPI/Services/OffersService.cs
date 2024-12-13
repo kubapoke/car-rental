@@ -31,10 +31,7 @@ namespace CarRentalAPI.Services
             List<int> notAvailableCarIds = _availabilityChecker.CheckForNotAvailableCars(pairs, startDate, endDate);
             List<Car> availableCars = await _carRepository.GetCarsByIdAsync(notAvailableCarIds, brand, model, location);
             
-            var stopwatch = Stopwatch.StartNew();
             List<OfferForCarSearchDto> newOffers = await _offerRepository.CreateAndRetrieveOffersAsync(availableCars, startDate, endDate, conditions, companyName, email);
-            stopwatch.Stop();
-            Console.WriteLine(stopwatch.Elapsed);
             
             return newOffers;
         }

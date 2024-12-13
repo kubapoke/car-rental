@@ -20,6 +20,11 @@ public class RedisCacheService
         await _database.StringSetAsync(key, value, expiry);
     }
 
+    public Task<bool> GetSetValueTask(string key, string value, TimeSpan? expiry = null)
+    {
+        return _database.StringSetAsync(key, value, expiry);
+    }
+
     public async Task<string?> GetValueAsync(string key)
     {
         return await _database.StringGetAsync(key);
