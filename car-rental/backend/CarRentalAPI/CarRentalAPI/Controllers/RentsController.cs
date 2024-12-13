@@ -36,6 +36,7 @@ namespace CarRentalAPI.Controllers
         public async Task<IActionResult> CreateNewRent([FromBody] NewRentParametersDto rentPatameters)
         {
             var response = await _redisCacheService.GetValueAsync(rentPatameters.OfferId);
+            await _redisCacheService.DeleteKeyAsync(rentPatameters.OfferId);
 
             if (response == null)
             {
@@ -66,19 +67,7 @@ namespace CarRentalAPI.Controllers
                 RentEnd = offer.EndDate,
                 Status = status
             };
-
-            var existingRent = await _context.Rents
-                .FirstOrDefaultAsync(r =>
-                    r.CarId == offer.CarId &&
-                    r.RentStart == offer.StartDate &&
-                    r.RentEnd == offer.EndDate);
-
-            if (existingRent != null)
-            {
-                return BadRequest("Rent is already created");
-            }
             
-            await _redisCacheService.DeleteKeyAsync(rentPatameters.OfferId);
             await _context.Rents.AddAsync(newRent);
             await _context.SaveChangesAsync();
 
