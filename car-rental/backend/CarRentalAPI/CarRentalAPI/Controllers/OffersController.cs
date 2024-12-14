@@ -14,13 +14,34 @@ namespace CarRentalAPI.Controllers
    [ApiController]
    public class OffersController : ControllerBase
    {
-        private readonly OffersService _offersService;
+       private readonly OffersService _offersService;
        private const string Conditions = "{}";
        private const string CompanyName = "CarRental";
    
        public OffersController(OffersService offersService)
        {
            _offersService = offersService;
+       }
+
+       [HttpGet("offer-amount")]
+       public async Task<IActionResult> OfferAmount(
+           [FromQuery] string? brand,
+           [FromQuery] string? model,
+           [FromQuery] DateTime startDate,
+           [FromQuery] DateTime endDate,
+           [FromQuery] string? location)
+       {
+           if (startDate > endDate)
+           {
+               return BadRequest("Start date must be earlier than end date.");
+           }
+           if (startDate.Date < DateTime.Now.Date)
+           {
+               return BadRequest("Start date must be in the future.");
+           }
+           
+           var offerCount = await _offersService.GetOffersCountAsync(brand, model, startDate, endDate, location);
+           return Ok(offerCount);
        }
    
        [HttpGet("offer-list")]
@@ -30,7 +51,9 @@ namespace CarRentalAPI.Controllers
            [FromQuery] DateTime startDate,
            [FromQuery] DateTime endDate,
            [FromQuery] string? location,
-           [FromQuery] string? email)
+           [FromQuery] string? email,
+           [FromQuery] int? page,
+           [FromQuery] int? pageSize)
        {
             if (startDate > endDate)
             {
@@ -45,7 +68,8 @@ namespace CarRentalAPI.Controllers
                 return BadRequest("User email is required.");
             }
 
-            List<OfferForCarSearchDto> offers = await _offersService.GetNewOffers(brand, model, startDate, endDate, location, email, Conditions, CompanyName);
+            List<OfferForCarSearchDto> offers = await _offersService.GetNewOffersAsync(brand, model, startDate, endDate, location, 
+                email, Conditions, CompanyName, page, pageSize);
 
             if (offers.Count == 0)
             {
