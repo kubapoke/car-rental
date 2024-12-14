@@ -34,17 +34,28 @@ namespace CarSearchAPI.Controllers.ForwardControllers
         [FromQuery] int? page,
         [FromQuery] int? pageSize)
         {
-
-            var parameters = new GetOfferListParametersDto()
+            var offerAmountPatametersDto = new GetOfferAmountParametersDto()
             {
                 Brand = brand,
                 Model = model,
                 StartDate = startDate,
                 EndDate = endDate,
                 Location = location,
-                Email = User.FindFirst(ClaimTypes.Email)?.Value
+            };
+                
+            var offerListParametersDto = new GetOfferListParametersDto()
+            {
+                Brand = brand,
+                Model = model,
+                StartDate = startDate,
+                EndDate = endDate,
+                Location = location,
+                Email = User.FindFirst(ClaimTypes.Email)?.Value,
+                Page = page,
+                PageSize = pageSize,
             };
 
+            var totalOfferAmount = 0;
             var aggregateOffers = new List<OfferDto>();
             var offerPage = new OfferPageDto();
 
@@ -52,7 +63,8 @@ namespace CarSearchAPI.Controllers.ForwardControllers
             {
                 try
                 {
-                    var offers = await provider.GetOfferListAsync(parameters);
+                    totalOfferAmount += await provider.GetOfferAmountAsync(offerAmountPatametersDto);
+                    var offers = await provider.GetOfferListAsync(offerListParametersDto);
                     
                     aggregateOffers.AddRange(offers);
                 }
@@ -62,7 +74,7 @@ namespace CarSearchAPI.Controllers.ForwardControllers
                 }
             }
             
-            int pageInt = Math.Max(page ?? 0, 0);
+            int pageInt = 0;
             int pageSizeInt = Math.Max(pageSize ?? 6, 1);
 
             if (page == null && pageSize == null)
@@ -71,8 +83,8 @@ namespace CarSearchAPI.Controllers.ForwardControllers
                 pageSizeInt = aggregateOffers.Count;
             }
             
-            offerPage.TotalOffers = aggregateOffers.Count;
-            offerPage.PageCount = Math.Max(1, (int)Math.Ceiling((double)aggregateOffers.Count / pageSizeInt));
+            offerPage.TotalOffers = totalOfferAmount;
+            offerPage.PageCount = Math.Max(1, (int)Math.Ceiling((double)offerPage.TotalOffers / pageSizeInt));
             
             // apply paging
             aggregateOffers = aggregateOffers
@@ -80,7 +92,7 @@ namespace CarSearchAPI.Controllers.ForwardControllers
                 .Take(pageSizeInt)
                 .ToList();
             
-            offerPage.Page = pageInt;
+            offerPage.Page = page ?? 0;
             offerPage.PageSize = aggregateOffers.Count;
             offerPage.Offers = aggregateOffers;
             

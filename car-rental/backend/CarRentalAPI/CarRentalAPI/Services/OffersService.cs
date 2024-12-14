@@ -28,9 +28,9 @@ namespace CarRentalAPI.Services
         public async Task<int> GetOffersCountAsync(string? brand, string? model, DateTime startDate,
             DateTime endDate, string? location)
         {
-            List<CarIdRentDatesDto> pairs = await _rentRepository.GetChosenCarActiveRentDatesAsync(brand, model, location);
-            List<int> notAvailableCarIds = _availabilityChecker.CheckForNotAvailableCars(pairs, startDate, endDate);
-            List<Car> availableCars = await _carRepository.GetCarsByIdAsync(notAvailableCarIds, brand, model, location);
+            var pairs = await _rentRepository.GetChosenCarActiveRentDatesAsync(brand, model, location);
+            var notAvailableCarIds = _availabilityChecker.CheckForNotAvailableCars(pairs, startDate, endDate);
+            var availableCars = await _carRepository.GetCarsByIdAsync(notAvailableCarIds, brand, model, location);
             
             return availableCars.Count;
         }
@@ -38,11 +38,12 @@ namespace CarRentalAPI.Services
         public async Task<List<OfferForCarSearchDto>> GetNewOffersAsync(string? brand, string? model, DateTime startDate,
             DateTime endDate, string? location, string email, string conditions, string companyName, int? page, int? pageSize)
         {
-            List<CarIdRentDatesDto> pairs = await _rentRepository.GetChosenCarActiveRentDatesAsync(brand, model, location);
-            List<int> notAvailableCarIds = _availabilityChecker.CheckForNotAvailableCars(pairs, startDate, endDate);
-            List<Car> availableCars = await _carRepository.GetCarsByIdAsync(notAvailableCarIds, brand, model, location);
+            var pairs = await _rentRepository.GetChosenCarActiveRentDatesAsync(brand, model, location);
+            var notAvailableCarIds = _availabilityChecker.CheckForNotAvailableCars(pairs, startDate, endDate);
+            var availableCars = await _carRepository.GetCarsByIdAsync(notAvailableCarIds, brand, model, location);
             
-            List<OfferForCarSearchDto> newOffers = await _offerRepository.CreateAndRetrieveOffersAsync(availableCars, startDate, endDate, conditions, companyName, email);
+            var newOffers = await _offerRepository.CreateAndRetrieveOffersAsync(availableCars, 
+                startDate, endDate, conditions, companyName, email, page, pageSize);
             
             return newOffers;
         }
