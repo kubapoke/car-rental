@@ -19,7 +19,6 @@ interface OffersContextProps {
     fetchOffers: (filters: Record<string, string>, page?: number, pageSize?: number) => Promise<void>;
     page: number;
     pageSize: number;
-    totalOffers: number;
     pageCount: number;
     setPage: React.Dispatch<React.SetStateAction<number>>;
     setPageSize: React.Dispatch<React.SetStateAction<number>>;
@@ -31,7 +30,6 @@ export const OffersProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const [offers, setOffers] = useState<Offer[]>([]);
     const [page, setPage] = useState(0);
     const [pageSize, setPageSize] = useState(6);
-    const [totalOffers, setTotalOffers] = useState(0);
     const [pageCount, setPageCount] = useState(0);
 
     // fetch offers based on filters
@@ -56,9 +54,6 @@ export const OffersProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             const res = await fetch(apiUrl, { method: 'GET', headers, signal });
             const data = await res.json();
             setOffers(data.offers ?? []);
-            setPage(data.page);
-            setPageSize(data.pageSize);
-            setTotalOffers(data.totalOffers);
             setPageCount(data.pageCount);
         } catch (error) {
             if (error instanceof DOMException && error.name === "AbortError") {
@@ -78,7 +73,6 @@ export const OffersProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                 setOffers,
                 page,
                 pageSize,
-                totalOffers,
                 pageCount,
                 setPage,
                 setPageSize,

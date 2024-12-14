@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Exception = System.Exception;
+using IExternalDataProvider = CarSearchAPI.Abstractions.IExternalDataProvider;
 
 namespace CarSearchAPI.Controllers.ForwardControllers
 {
@@ -17,6 +18,7 @@ namespace CarSearchAPI.Controllers.ForwardControllers
     {
         // this contains all of the external data providers
         private readonly IEnumerable<IExternalDataProvider> _dataProviders;
+        private const int DefaultPageSize = 6;
 
         public OffersForwardController(IEnumerable<IExternalDataProvider> dataProviders)
         {
@@ -34,67 +36,125 @@ namespace CarSearchAPI.Controllers.ForwardControllers
         [FromQuery] int? page,
         [FromQuery] int? pageSize)
         {
-            var offerAmountPatametersDto = new GetOfferAmountParametersDto()
+            int _page = page ?? 0;
+            int _pageSize = pageSize ?? DefaultPageSize;
+            
+            var offerAmountParametersDto = new GetOfferAmountParametersDto()
             {
                 Brand = brand,
                 Model = model,
                 StartDate = startDate,
                 EndDate = endDate,
                 Location = location,
-            };
-                
-            var offerListParametersDto = new GetOfferListParametersDto()
-            {
-                Brand = brand,
-                Model = model,
-                StartDate = startDate,
-                EndDate = endDate,
-                Location = location,
-                Email = User.FindFirst(ClaimTypes.Email)?.Value,
-                Page = page,
-                PageSize = pageSize,
             };
 
             var totalOfferAmount = 0;
-            var aggregateOffers = new List<OfferDto>();
-            var offerPage = new OfferPageDto();
-
+            var providerOfferAmount = new List<(IExternalDataProvider provider, int amount)>();
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            
+            // get the amount of offers matching the search data from each provider
             foreach (var provider in _dataProviders)
             {
                 try
                 {
-                    totalOfferAmount += await provider.GetOfferAmountAsync(offerAmountPatametersDto);
-                    var offers = await provider.GetOfferListAsync(offerListParametersDto);
-                    
-                    aggregateOffers.AddRange(offers);
+                    var offerAmount = await provider.GetOfferAmountAsync(offerAmountParametersDto);
+                    totalOfferAmount += offerAmount;
+                    providerOfferAmount.Add((provider, offerAmount));
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error fetching data from provider: {ex.Message}");
+                    Console.WriteLine($"Error getting offer amount from provider: {ex.Message}");
                 }
             }
             
-            int pageInt = 0;
-            int pageSizeInt = Math.Max(pageSize ?? 6, 1);
+            var pageOffers = new List<OfferDto>();
+            var offerPage = new OfferPageDto();
+            
+            var cumulativeAmount = 0;
+            var offersToBePaged = _pageSize;
 
-            if (page == null && pageSize == null)
+            foreach (var providerAmount in providerOfferAmount)
             {
-                pageInt = 0;
-                pageSizeInt = aggregateOffers.Count;
+                var provider = providerAmount.provider;
+                var amount = providerAmount.amount;
+                cumulativeAmount += amount;
+
+                if (cumulativeAmount > _page * _pageSize)
+                {
+                    if (offersToBePaged == _pageSize)
+                    {
+                        // we need to start from the offer at the appropriate page, ignoring the ones
+                        // we've already taken from other providers
+                        var startingOffer = _page * _pageSize - (cumulativeAmount - amount);
+                        var startingPage = startingOffer / _pageSize;
+                        
+                        var offerListParametersDto = new GetOfferListParametersDto()
+                        {
+                            Brand = brand,
+                            Model = model,
+                            StartDate = startDate,
+                            EndDate = endDate,
+                            Location = location,
+                            Email = email,
+                            Page = startingPage,
+                            PageSize = _pageSize,
+                        };
+
+                        try
+                        {
+                            var startingOfferPage = await provider.GetOfferListAsync(offerListParametersDto);
+                            var takenOffers = startingOfferPage.Skip(startingOffer % _pageSize).Take(offersToBePaged).ToList();
+                            pageOffers.AddRange(takenOffers);
+                            offersToBePaged -= takenOffers.Count;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error fetching data from provider {provider.GetProviderName()}: {ex.Message}");        
+                        }
+                    }
+                    if (offersToBePaged > 0)
+                    {
+                        // we need to start from the offer at the appropriate page, ignoring the ones
+                        // we've already taken from other providers, and the aleady taken offers
+                        var startingOffer = _page * _pageSize - (cumulativeAmount - amount) + (_pageSize - offersToBePaged);
+                        var startingPage = startingOffer / _pageSize;
+                        
+                        var offerListParametersDto = new GetOfferListParametersDto()
+                        {
+                            Brand = brand,
+                            Model = model,
+                            StartDate = startDate,
+                            EndDate = endDate,
+                            Location = location,
+                            Email = email,
+                            Page = startingPage,
+                            PageSize = _pageSize,
+                        };
+
+                        try
+                        {
+                            var startingOfferPage = await provider.GetOfferListAsync(offerListParametersDto);
+                            var takenOffers = startingOfferPage.Skip(startingOffer % _pageSize).Take(offersToBePaged).ToList();
+                            pageOffers.AddRange(takenOffers);
+                            offersToBePaged -= takenOffers.Count;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error fetching data from provider {provider.GetProviderName()}: {ex.Message}");        
+                        }
+                    }
+
+                    if (offersToBePaged <= 0)
+                    {
+                        break;
+                    }
+                }
             }
             
-            offerPage.TotalOffers = totalOfferAmount;
-            offerPage.PageCount = Math.Max(1, (int)Math.Ceiling((double)offerPage.TotalOffers / pageSizeInt));
-            
-            // apply paging
-            aggregateOffers = aggregateOffers
-                .Skip(pageInt * pageSizeInt)
-                .Take(pageSizeInt)
-                .ToList();
-            
-            offerPage.Page = page ?? 0;
-            offerPage.PageSize = aggregateOffers.Count;
-            offerPage.Offers = aggregateOffers;
+            offerPage.PageCount = totalOfferAmount / _pageSize;
+            if(totalOfferAmount % _pageSize != 0)
+                offerPage.PageCount++;
+            offerPage.Offers = pageOffers;
             
             return Ok(offerPage);
         }
