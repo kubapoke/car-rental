@@ -44,6 +44,27 @@ export const RentsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     
     const returnCar= useCallback(async (rentId: number): Promise<void> => {
         console.log("returning car", rentId);
+        const token = sessionStorage.getItem('authToken');
+        const headers = {
+            'Content-Type': 'application/json',
+            ...(token && { Authorization: `Bearer ${token}` }),
+        };
+        
+        const apiUrl = `${import.meta.env.VITE_SERVER_URL}/api/Rents/return-car`;
+
+        try {
+            const res = await fetch(apiUrl, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({rentId})
+            });
+        
+            return res.json();
+        }
+        catch (error){
+            console.error('Error returning car:', error);
+        }
+        
     }, []);
 
     return (
