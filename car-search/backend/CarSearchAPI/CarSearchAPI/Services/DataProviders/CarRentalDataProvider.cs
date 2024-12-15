@@ -58,6 +58,41 @@ namespace CarSearchAPI.Services.DataProviders
             }
         }
 
+        public async Task<int> GetOfferAmountAsync(GetOfferAmountParametersDto parameters)
+        {
+            var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+
+            var carRentalApiUrl = Environment.GetEnvironmentVariable("CAR_RENTAL_API_URL");
+            var endpoint = "/api/Offers/offer-amount";
+
+            var queryParameters = new Dictionary<string, string?>()
+            {
+                { "model", parameters.Model },
+                { "brand", parameters.Brand },
+                { "startDate", parameters.StartDate.ToString("o") },
+                { "endDate", parameters.EndDate.ToString("o") },
+                { "location", parameters.Location },
+            };
+            
+            // this creates an appropriate url
+            var url = QueryHelpers.AddQueryString($"{carRentalApiUrl}{endpoint}", 
+                queryParameters.Where(p => p.Value != null));
+            
+            var response = await client.GetAsync(url);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var amount = int.Parse(responseContent);
+                return amount;
+            }
+            else
+            {
+                throw new Exception($"Error fetching data from {endpoint} at Car Rental API");
+            }
+        }
+
         public async Task<List<OfferDto>> GetOfferListAsync(GetOfferListParametersDto parameters)
         {
             var client = _httpClientFactory.CreateClient();
@@ -74,6 +109,8 @@ namespace CarSearchAPI.Services.DataProviders
                 { "endDate", parameters.EndDate.ToString("o") },
                 { "location", parameters.Location },
                 { "email", parameters.Email },
+                { "page", parameters.Page.ToString() },
+                { "pageSize", parameters.PageSize.ToString() },
             };
             
             // this creates an appropriate url

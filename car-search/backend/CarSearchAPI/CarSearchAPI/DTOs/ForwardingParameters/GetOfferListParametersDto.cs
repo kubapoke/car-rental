@@ -8,4 +8,6 @@ public class GetOfferListParametersDto
     public DateTime EndDate { get; set; }
     public string? Location { get; set; }
     public string? Email { get; set; }
+    public int? Page { get; set; }
+    public int? PageSize { get; set; }
 }
