@@ -16,34 +16,40 @@ import {OffersProvider} from "../Context/OffersContext.tsx";
 import RentConfirmationPage from "../Pages/RentConfirmationPage.tsx";
 import UserRentsPage from "../Pages/UserRentsPage.tsx";
 import {RentsProvider} from "../Context/RentsContext.tsx";
-import {AuthProvider} from "../Context/AuthContext.tsx";
+import {AuthProvider, useAuth} from "../Context/AuthContext.tsx";
 
 function App() {
-    const router = createBrowserRouter(
-      createRoutesFromElements(
-          <Route path="/" element={<MainLayout/>}>
-              <Route index element={<HomePage/>}/>
-              <Route path='/offers' element={<BrowseOffersPage/>}/>
-              <Route path='/new-user-form' element={<NewUserForm/>}/>
-              <Route path='/offers/:id' element={<OfferPage/>}/>
-              <Route path='/offers/rent-confirmation' element={<RentConfirmationPage/>}/>
-              <Route path="/user-rents" element={<UserRentsPage/>}/>
-              <Route path="*" element={<NotFoundPage/>}/>
-          </Route>
-      )
-    );
-  
   return(
       <AuthProvider>
           <FiltersProvider>
               <OffersProvider>
                   <RentsProvider>
-                      <RouterProvider router={router}/>
+                      <MainRouter/>
                   </RentsProvider>
               </OffersProvider>
           </FiltersProvider>
       </AuthProvider>
   );
+}
+
+function MainRouter() {
+    const { isLoggedIn } = useAuth();
+
+    const router = createBrowserRouter(
+        createRoutesFromElements(
+            <Route path="/" element={<MainLayout/>}>
+                <Route index element={<HomePage/>}/>
+                <Route path='/offers' element={<BrowseOffersPage/>}/>
+                <Route path='/new-user-form' element={<NewUserForm/>}/>
+                <Route path='/offers/:id' element={<OfferPage/>}/>
+                <Route path='/offers/rent-confirmation' element={<RentConfirmationPage/>}/>
+                <Route path="/user-rents" element={isLoggedIn ? <UserRentsPage/> : <NotFoundPage/>}/>
+                <Route path="*" element={<NotFoundPage/>}/>
+            </Route>
+        )
+    );
+
+    return <RouterProvider router={router} />;
 }
 
 export default App
