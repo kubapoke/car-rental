@@ -9,6 +9,7 @@ export enum rentStatus {
 
 
 export interface Rent {
+    id: string, 
     car: {
         model: {
             name: string;
@@ -56,6 +57,7 @@ export const RentsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             
             if (Array.isArray(data)) {
                 const rents: Rent[] = data.map((item) =>  ({
+                    id: item?.rentId || "",
                     car: {
                         model: {
                             name: item?.modelName || "",

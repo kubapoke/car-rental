@@ -87,6 +87,7 @@ namespace CarRentalAPI.Controllers
                 .Where(r => r.Status == rentStatus)
                 .Select(rent => new RentInfoDto
                 {
+                    RentId = rent.RentId,
                     BrandName = rent.Car.Model.Brand.Name,
                     ModelName = rent.Car.Model.Name,
                     RentStart = rent.RentStart,
