@@ -89,6 +89,7 @@ namespace CarSearchAPI.Controllers
             {
                 RentInfoDto rentInfoDto = new RentInfoDto()
                 {
+                    RentId = rent.RentId,
                     Brand = rent.Brand,
                     Model = rent.Model,
                     StartDate = rent.StartDate,
