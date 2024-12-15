@@ -2,6 +2,7 @@ import React, {createContext, useCallback, useContext, useState} from 'react';
 
 
 export interface Rent {
+    rentId: number,
     brand: string,
     model: string,
     startDate: string,
@@ -13,6 +14,7 @@ interface RentsContextProps {
     rents: Rent[];
     setRents: React.Dispatch<React.SetStateAction<Rent[]>>;
     fetchRents: () => Promise<void>;
+    returnCar: (rentId: number) => Promise<void>;
 }
 
 const RentsContext = createContext<RentsContextProps | undefined>(undefined);
@@ -39,9 +41,13 @@ export const RentsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             console.log('Error fetching data', error);
         }
     }, []);
+    
+    const returnCar= useCallback(async (rentId: number): Promise<void> => {
+        console.log("returning car", rentId);
+    }, []);
 
     return (
-        <RentsContext.Provider value={{ rents, setRents, fetchRents }}>
+        <RentsContext.Provider value={{ rents, setRents, fetchRents, returnCar}}>
             {children}
         </RentsContext.Provider>
     );

@@ -1,11 +1,9 @@
 import {FaCar} from "react-icons/fa";
-import {Rent} from "../Context/RentsContext.tsx";
+import {Rent, useRents} from "../Context/RentsContext.tsx";
 
 const UserRentTile = ({rent}: { rent: Rent }) => {
-    function handleReturn() {
-        
-    }
-
+    const { returnCar} = useRents();
+    
     return (
         <div className="bg-white rounded-xl shadow-md relative">
             <div className="p-4">
@@ -30,7 +28,7 @@ const UserRentTile = ({rent}: { rent: Rent }) => {
                             </div>
                         </div>
                         <button 
-                            onClick={handleReturn}
+                            onClick={()=>returnCar(rent.rentId)}
                             className="bg-blue-500 text-white rounded-lg p-2 m-4 mb-8">Return</button>
                     </div>
                 </div>
