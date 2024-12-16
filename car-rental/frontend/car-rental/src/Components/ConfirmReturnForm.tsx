@@ -1,8 +1,9 @@
 import {Rent} from "../Context/RentsContext.tsx";
 import React, {useState} from "react";
-// import {useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 interface FormData {
+    Id: string;
     ActualStartDate: string;
     ActualEndDate: string;
     Description: string;
@@ -12,8 +13,9 @@ interface FormData {
 
 const ConfirmReturnForm: React.FC<{ rent: Rent }> = ({rent}) => {
     const [error, setError] = useState<string | null>(null);
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     const [formData, setFormData] = useState<FormData>({
+        Id: rent.id,
         ActualStartDate: rent.rentStart,
         ActualEndDate: rent.rentEnd,
         Description: "",
@@ -36,7 +38,19 @@ const ConfirmReturnForm: React.FC<{ rent: Rent }> = ({rent}) => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-
+            const token = sessionStorage.getItem('authToken');
+            const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/Rents/close-rent`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    ...(token && { Authorization: `Bearer ${token}` }),
+                },
+                body: JSON.stringify(formData),
+            });
+            if (!response.ok) {
+                throw new Error("Could not send information to a server");
+            }
+            navigate("/logged-in/cockpit");
         } catch {
             setError("Failed to confirm return, try again");
         }
