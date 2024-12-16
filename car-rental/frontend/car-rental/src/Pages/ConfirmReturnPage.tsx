@@ -1,5 +1,6 @@
 import {Rent} from "../Context/RentsContext.tsx";
 import {useLocation} from "react-router-dom";
+import ConfirmReturnForm from "../Components/ConfirmReturnForm.tsx";
 
 const ConfirmReturnPage = () => {
     const location = useLocation();
@@ -14,6 +15,7 @@ const ConfirmReturnPage = () => {
                 <p><strong>Start Date:</strong> {rent.rentStart}</p>
                 <p><strong>End Date:</strong> {rent.rentEnd || "N/A"}</p>
             </div>
+            <ConfirmReturnForm rent={rent} />
         </div>
     );
 };
