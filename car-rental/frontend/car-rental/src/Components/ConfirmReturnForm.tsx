@@ -8,19 +8,18 @@ interface FormData {
     ActualEndDate: string;
     Description: string;
     Image: File | null; // Store the uploaded file
-    Preview: string | null; // Store the preview URL
 }
 
 const ConfirmReturnForm: React.FC<{ rent: Rent }> = ({rent}) => {
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
+    const [preview, setPreview] = useState<string | null>(null);
     const [formData, setFormData] = useState<FormData>({
         Id: rent.id,
         ActualStartDate: rent.rentStart,
         ActualEndDate: rent.rentEnd,
         Description: "",
         Image: null,
-        Preview: null,
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,7 +29,8 @@ const ConfirmReturnForm: React.FC<{ rent: Rent }> = ({rent}) => {
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            setFormData({...formData, Image: file, Preview: URL.createObjectURL(file) });
+            setFormData({...formData, Image: file});
+            setPreview(URL.createObjectURL(file));
         }
 
     }
@@ -102,11 +102,11 @@ const ConfirmReturnForm: React.FC<{ rent: Rent }> = ({rent}) => {
                         accept="image/*"
                         onChange={handleImageChange}
                     />
-                    {formData.Preview && (
+                    {preview && (
                         <div>
                             <p>Image Preview:</p>
                             <img
-                                src={formData.Preview}
+                                src={preview}
                                 alt="Preview"
                                 style={{ width: "200px" }}
                             />
