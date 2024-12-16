@@ -125,6 +125,8 @@ namespace CarRentalAPI.Controllers
             }
 
             rent.ImageUri = uri;
+            rent.RentStart = closeInfo.ActualStartDate;
+            rent.RentEnd = closeInfo.ActualEndDate;
             rent.Description = closeInfo.Description;
             rent.Status = RentStatus.Returned;
 
