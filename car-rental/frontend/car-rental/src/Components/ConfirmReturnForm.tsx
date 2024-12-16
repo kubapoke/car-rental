@@ -1,5 +1,5 @@
 import {Rent} from "../Context/RentsContext.tsx";
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 
 interface FormData {
@@ -15,12 +15,20 @@ const ConfirmReturnForm: React.FC<{ rent: Rent }> = ({rent}) => {
     const navigate = useNavigate();
     const [preview, setPreview] = useState<string | null>(null);
     const [formData, setFormData] = useState<FormData>({
-        Id: rent.id,
+        Id: (rent.id),
         ActualStartDate: rent.rentStart,
         ActualEndDate: rent.rentEnd,
         Description: "",
         Image: null,
     });
+
+    useEffect(() => {
+        return () => {
+            if (preview) {
+                URL.revokeObjectURL(preview);
+            }
+        };
+    }, [preview]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({...formData, [e.target.name]: e.target.value});
@@ -39,13 +47,20 @@ const ConfirmReturnForm: React.FC<{ rent: Rent }> = ({rent}) => {
         e.preventDefault();
         try {
             const token = sessionStorage.getItem('authToken');
+            const dataToSend = new FormData();
+            dataToSend.append("Id", String(Number(formData.Id)));
+            dataToSend.append("ActualStartDate", new Date(formData.ActualStartDate).toISOString());
+            dataToSend.append("ActualEndDate", new Date(formData.ActualEndDate).toISOString());
+            dataToSend.append("Description", formData.Description);
+            if (formData.Image) {
+                dataToSend.append("Image", formData.Image); // File object for the image
+            }
             const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/Rents/close-rent`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
                     ...(token && { Authorization: `Bearer ${token}` }),
                 },
-                body: JSON.stringify(formData),
+                body: dataToSend,
             });
             if (!response.ok) {
                 throw new Error("Could not send information to a server");
@@ -75,7 +90,7 @@ const ConfirmReturnForm: React.FC<{ rent: Rent }> = ({rent}) => {
                     <label className="block text-sm font-medium text-black">Actual end of the rent:</label>
                     <input
                         type="date"
-                        name="ActualStartDate"
+                        name="ActualEndDate"
                         value={formData.ActualEndDate}
                         onChange={handleChange}
                         required={true}
@@ -100,6 +115,7 @@ const ConfirmReturnForm: React.FC<{ rent: Rent }> = ({rent}) => {
                         type="file"
                         name="Image"
                         accept="image/*"
+                        required={true}
                         onChange={handleImageChange}
                     />
                     {preview && (
@@ -108,12 +124,17 @@ const ConfirmReturnForm: React.FC<{ rent: Rent }> = ({rent}) => {
                             <img
                                 src={preview}
                                 alt="Preview"
-                                style={{ width: "200px" }}
+                                style={{width: "200px"}}
                             />
                         </div>
                     )}
                 </div>
-
+                <div className="form-group flex justify-center">
+                    <button type="submit"
+                            className="w-1/2 py-2 bg-indigo-500 text-black rounded-md shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        Submit
+                    </button>
+                </div>
             </form>
         </div>);
 };
