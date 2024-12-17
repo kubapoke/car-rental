@@ -72,7 +72,8 @@ namespace CarRentalAPI.Controllers
                 Model = rentedCar.Model.Name,
                 Email = rentPatameters.Email,
                 StartDate = offer.StartDate,
-                EndDate = offer.EndDate
+                EndDate = offer.EndDate,
+                RentalCompanyRentId = newRent.RentId
             };
 
             return Ok(newSearchRentDto);
