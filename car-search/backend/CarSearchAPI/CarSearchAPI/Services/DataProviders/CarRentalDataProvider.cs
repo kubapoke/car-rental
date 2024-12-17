@@ -199,7 +199,7 @@ namespace CarSearchAPI.Services.DataProviders
             const string endpoint = "/api/Rents/set-rent-status-ready-to-return";
             
             var jsonContent = new StringContent(
-                JsonSerializer.Serialize(new {RentId}),
+                JsonSerializer.Serialize(RentId),
                 Encoding.UTF8,
                 "application/json"
             );
