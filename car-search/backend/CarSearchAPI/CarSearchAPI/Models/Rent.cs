@@ -36,5 +36,11 @@ namespace CarSearchAPI.Models
 
         [Required]
         public DateTime EndDate { get; set; }
+        
+        [Required]
+        public string RentalCompanyName { get; set; }
+        
+        [Required]
+        public int RentalCompanyRentId { get; set; }
     }
 }

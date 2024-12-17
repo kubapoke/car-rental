@@ -11,6 +11,7 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using CarSearchAPI.DTOs.Users;
+using CarSearchAPI.Models;
 using Newtonsoft.Json;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -150,6 +151,11 @@ namespace CarSearchAPI.Services.DataProviders
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(token);
+        }
+        public async Task<HttpResponseMessage> UpdateRentStatusAsync(int rentId, RentStatus status)
+        {
+            // TODO: implement
+            throw new NotImplementedException();
         }
     }
 }

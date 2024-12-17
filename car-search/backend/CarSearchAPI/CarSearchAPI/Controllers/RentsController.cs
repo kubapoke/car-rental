@@ -52,10 +52,13 @@ namespace CarSearchAPI.Controllers
                 Rent newRent = new Rent()
                 {
                     UserEmail = results.Email,
+                    Status = RentStatus.Active,
                     Brand = results.Brand,
                     Model = results.Model,
                     StartDate = results.StartDate,
-                    EndDate = results.EndDate
+                    EndDate = results.EndDate,
+                    RentalCompanyName = activeProvider.GetProviderName(),
+                    RentalCompanyRentId = results.RentalCompanyRentId
                 };
 
                 _context.rents.Add(newRent);
@@ -99,5 +102,34 @@ namespace CarSearchAPI.Controllers
             }
             return Ok(rentInfoList);
         }
+
+        // [Authorize]
+        // [HttpPost("return-car")]
+        // public async Task<IActionResult> ReturnCar(int rentId)
+        // {
+        //     var email = User.Claims.FirstOrDefault(c => ClaimTypes.Email == c.Type)?.Value;
+        //     if (email == null)
+        //     {
+        //         return Unauthorized("You are not logged in");
+        //     }
+        //     
+        //     var rent = await _context.rents.FirstOrDefaultAsync(r => r.RentId == rentId && r.UserEmail == email);
+        //     if (rent == null)
+        //     {
+        //         return NotFound("Rent not found");
+        //     }
+        //         
+        //     //var rentalApiResponse = await 
+        //      if (!rentalApiResponse.IsSuccessStatusCode)
+        //      {
+        //          return StatusCode((int)rentalApiResponse.StatusCode, "Failed to update external API");
+        //     }
+        //     
+        //     rent.Status = RentStatus.ReadyToReturn;
+        //     _context.rents.Update(rent);
+        //     await _context.SaveChangesAsync();
+        //     
+        //     return Ok();
+        // }
     }
 }
