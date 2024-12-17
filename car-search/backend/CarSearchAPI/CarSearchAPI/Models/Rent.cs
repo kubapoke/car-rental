@@ -3,6 +3,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CarSearchAPI.Models
 {
+    public enum RentStatus
+    {
+        Active = 1,
+        ReadyToReturn = 2,
+        Returned = 3
+    }
+
+    
     public class Rent
     {
         [Key]
@@ -19,6 +27,9 @@ namespace CarSearchAPI.Models
         [Required]
         public ApplicationUser RentUser { get; set; }
         public string UserEmail { get; set; }
+        
+        [Required]
+        public RentStatus Status { get; set; }
 
         [Required]
         public DateTime StartDate { get; set; }
