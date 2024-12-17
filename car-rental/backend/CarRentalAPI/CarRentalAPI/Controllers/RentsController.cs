@@ -117,11 +117,11 @@ namespace CarRentalAPI.Controllers
             }
             else if (rent.Status == RentStatus.Active)
             {
-                return BadRequest("This is rent is not ready to be closed.");
+                return BadRequest("This rent is not ready to be closed.");
             }
             else if (rent.Status == RentStatus.Returned)
             {
-                return BadRequest("This is rent is already closed.");
+                return BadRequest("This rent is already closed.");
             }
 
             var uri = await _storageManager.UploadImage(closeInfo.Image);
@@ -147,6 +147,31 @@ namespace CarRentalAPI.Controllers
             rent.ImageUri = uri;
             rent.Description = closeInfo.Description;
             rent.Status = RentStatus.Returned;
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [Authorize(Policy = "Backend")]
+        [HttpPost("set-rent-status-ready-to-return")]
+        public async Task<IActionResult> SetRentStatusReadyToReturn([FromBody]int RentId)
+        {
+            var rent = await _context.Rents.FirstOrDefaultAsync(r => r.RentId == RentId);
+            if (rent == null) 
+            {
+                return BadRequest("There is no such rent.");
+            }
+            else if (rent.Status == RentStatus.ReadyToReturn)
+            {
+                return BadRequest("This rent is already ready to return.");
+            }
+            else if (rent.Status == RentStatus.Returned)
+            {
+                return BadRequest("This rent is already closed.");
+            }
+
+            rent.Status = RentStatus.ReadyToReturn;
 
             await _context.SaveChangesAsync();
 
