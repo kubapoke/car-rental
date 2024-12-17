@@ -152,7 +152,7 @@ namespace CarSearchAPI.Services.DataProviders
 
             return tokenHandler.WriteToken(token);
         }
-        public async Task<HttpResponseMessage> UpdateRentStatusAsync(int rentId, RentStatus status)
+        public async Task<HttpResponseMessage> SetRentStatusReadyToReturnAsync(int rentId)
         {
             // TODO: implement
             throw new NotImplementedException();
