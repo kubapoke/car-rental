@@ -15,5 +15,5 @@ public interface IExternalDataProvider
     public Task<List<OfferDto>> GetOfferListAsync(GetOfferListParametersDto parameters);
     public Task<NewSearchRentDto> CreateNewRentAsync(ClaimsPrincipal claimsPrincipal);
     public string GetProviderName(); 
-    public Task<HttpResponseMessage> SetRentStatusReadyToReturnAsync(int rentId);
+    public Task<bool> SetRentStatusReadyToReturnAsync(int RentId);
 }

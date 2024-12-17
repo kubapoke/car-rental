@@ -127,10 +127,10 @@ namespace CarSearchAPI.Controllers
             if (activeProvider == null) { return BadRequest("Invalid provider name"); }
 
             var rentalApiResponse = await activeProvider.SetRentStatusReadyToReturnAsync(rent.RentalCompanyRentId);
-             if (!rentalApiResponse.IsSuccessStatusCode)
+             if (!rentalApiResponse)
              {
-                 return StatusCode((int)rentalApiResponse.StatusCode, "Failed to update external API");
-            }
+                 return BadRequest();
+             }
 
             rent.Status = RentStatus.Returned;
             // TODO: check if we need these two lines stuff below
