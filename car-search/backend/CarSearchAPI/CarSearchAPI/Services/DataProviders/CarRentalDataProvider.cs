@@ -189,10 +189,32 @@ namespace CarSearchAPI.Services.DataProviders
 
             return tokenHandler.WriteToken(token);
         }
-        public async Task<HttpResponseMessage> SetRentStatusReadyToReturnAsync(int rentId)
-        {
-            // TODO: implement
-            throw new NotImplementedException();
+        public async Task<bool> SetRentStatusReadyToReturnAsync(int RentId)
+        {  
+            var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+
+            var carRentalApiUrl = Environment.GetEnvironmentVariable("CAR_RENTAL_API_URL")
+                                  ?? throw new InvalidOperationException("CAR_RENTAL_API_URL is not set.");
+            const string endpoint = "/api/Rents/set-rent-status-ready-to-return";
+            
+            var jsonContent = new StringContent(
+                JsonSerializer.Serialize(new {RentId}),
+                Encoding.UTF8,
+                "application/json"
+            );
+            
+            var url = $"{carRentalApiUrl}{endpoint}";
+
+            var response = await client.PostAsync(url, jsonContent);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+
+            var errorMessage = $"Error fetching data from {endpoint} at Car Rental API. StatusCode: {response.StatusCode}, ReasonPhrase: {response.ReasonPhrase}";
+            throw new HttpRequestException(errorMessage);
         }
     }
 }
