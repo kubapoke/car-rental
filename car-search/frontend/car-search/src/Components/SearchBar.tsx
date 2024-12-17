@@ -31,6 +31,7 @@ const SearchBar = () => {
     const [endDate, setEndDate] = useState<string>(filters.endDate);
 
     const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
     useEffect(() => {
         // Fetch the car list data
@@ -82,11 +83,37 @@ const SearchBar = () => {
         }
     }
 
+    const validateInput = () => {
+        const newErrors: { [key: string]: string } = {};
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        if (!startDate) {
+            newErrors.startDate = "Start date is required.";
+        } else if (new Date(startDate) < today) {
+            newErrors.startDate = "Start date cannot be in the past.";
+        }
+
+        if (!endDate) {
+            newErrors.endDate = "End date is required.";
+        } else if (startDate && new Date(startDate) > new Date(endDate)) {
+            newErrors.dateRange = "Start date must be before end date.";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    }
+
     const handleSubmit = (e : FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if(!isLoggedIn) {
             setShowLoginModal(true);
+            return;
+        }
+
+        if(!validateInput()) {
             return;
         }
 
