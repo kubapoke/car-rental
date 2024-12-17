@@ -24,12 +24,14 @@ namespace CarRentalAPI.Controllers
         private readonly CarRentalDbContext _context;
         private readonly IStorageManager _storageManager;
         private readonly IOfferRepository _offerRepository;
+        private readonly IEmailSender _emailSender;
 
-        public RentsController(CarRentalDbContext context, IStorageManager storageManager, IOfferRepository offerRepository) 
+        public RentsController(CarRentalDbContext context, IStorageManager storageManager, IOfferRepository offerRepository, IEmailSender emailSender) 
         {
             _context = context;
             _storageManager = storageManager;
             _offerRepository = offerRepository;
+            _emailSender = emailSender;
         }
 
         [Authorize(Policy = "Backend")]
@@ -103,7 +105,11 @@ namespace CarRentalAPI.Controllers
         [HttpPost("close-rent")]
         public async Task<IActionResult> CloseRent([FromForm]CloseRentDto closeInfo) 
         {
-            var rent = await _context.Rents.FirstOrDefaultAsync(r => r.RentId == closeInfo.Id);
+            var rent = await _context.Rents
+                .Include(r => r.Car)
+                .ThenInclude(c => c.Model)
+                .ThenInclude(m => m.Brand)
+                .FirstOrDefaultAsync(r => r.RentId == closeInfo.Id);
             if (rent == null) 
             {
                 return BadRequest("There is no such rent.");
@@ -124,9 +130,20 @@ namespace CarRentalAPI.Controllers
                 return BadRequest("Failed to upload file into Azure Blob storage");
             }
 
-            rent.ImageUri = uri;
+            DateTime startBackup = rent.RentStart;
+            DateTime? endBackup = rent.RentEnd;
+
             rent.RentStart = closeInfo.ActualStartDate;
             rent.RentEnd = closeInfo.ActualEndDate;
+
+            if (!(await _emailSender.SendReturnConfirmedEmailAsync(rent)))
+            {
+                rent.RentStart = startBackup;
+                rent.RentEnd = endBackup;
+                return BadRequest("Failed to send email");
+            }
+
+            rent.ImageUri = uri;
             rent.Description = closeInfo.Description;
             rent.Status = RentStatus.Returned;
 
