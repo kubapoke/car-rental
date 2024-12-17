@@ -5,9 +5,9 @@ namespace CarSearchAPI.Models
 {
     public enum RentStatus
     {
+        // This is different than the RentStatus in CarRental which has an additional "ReadyToReturn" state
         Active = 1,
-        ReadyToReturn = 2,
-        Returned = 3
+        Returned = 2
     }
 
     
