@@ -103,33 +103,41 @@ namespace CarSearchAPI.Controllers
             return Ok(rentInfoList);
         }
 
-        // [Authorize]
-        // [HttpPost("return-car")]
-        // public async Task<IActionResult> ReturnCar(int rentId)
-        // {
-        //     var email = User.Claims.FirstOrDefault(c => ClaimTypes.Email == c.Type)?.Value;
-        //     if (email == null)
-        //     {
-        //         return Unauthorized("You are not logged in");
-        //     }
-        //     
-        //     var rent = await _context.rents.FirstOrDefaultAsync(r => r.RentId == rentId && r.UserEmail == email);
-        //     if (rent == null)
-        //     {
-        //         return NotFound("Rent not found");
-        //     }
-        //         
-        //     //var rentalApiResponse = await 
-        //      if (!rentalApiResponse.IsSuccessStatusCode)
-        //      {
-        //          return StatusCode((int)rentalApiResponse.StatusCode, "Failed to update external API");
-        //     }
-        //     
-        //     rent.Status = RentStatus.ReadyToReturn;
-        //     _context.rents.Update(rent);
-        //     await _context.SaveChangesAsync();
-        //     
-        //     return Ok();
-        // }
+        [Authorize]
+        [HttpPost("return-car")]
+        public async Task<IActionResult> ReturnCar(int rentId)
+        {
+            var rent = await _context.rents.FirstOrDefaultAsync(r => r.RentId == rentId);
+            if (rent == null)
+            {
+                return NotFound("Rent not found");
+            }
+            
+            IExternalDataProvider? activeProvider = null;
+
+            foreach (var provider in _dataProviders)
+            {
+                if (provider.GetProviderName() == rent.RentalCompanyName) 
+                {
+                    activeProvider = provider;
+                    break;
+                }
+            }
+                
+            if (activeProvider == null) { return BadRequest("Invalid provider name"); }
+
+            var rentalApiResponse = await activeProvider.SetRentStatusReadyToReturnAsync(rent.RentalCompanyRentId);
+             if (!rentalApiResponse.IsSuccessStatusCode)
+             {
+                 return StatusCode((int)rentalApiResponse.StatusCode, "Failed to update external API");
+            }
+
+            rent.Status = RentStatus.Returned;
+            // TODO: check if we need these two lines stuff below
+            _context.rents.Update(rent);
+            await _context.SaveChangesAsync();
+            
+            return Ok();
+        }
     }
 }
