@@ -113,7 +113,7 @@ namespace CarSearchAPI.Controllers
             {
                 return NotFound("Rent not found");
             }
-            Console.WriteLine($"Here: {rentId}");
+
             IExternalDataProvider? activeProvider = null;
 
             foreach (var provider in _dataProviders)
@@ -124,8 +124,6 @@ namespace CarSearchAPI.Controllers
                     break;
                 }
             }
-            Console.WriteLine($"Active provider: {activeProvider.GetProviderName()}");
-            Console.WriteLine($"ID in the rental company: {rent.RentalCompanyRentId}");
                 
             if (activeProvider == null) { return BadRequest("Invalid provider name"); }
 
