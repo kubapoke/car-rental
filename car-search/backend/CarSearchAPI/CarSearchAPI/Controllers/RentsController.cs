@@ -1,5 +1,6 @@
 ﻿using CarSearchAPI.Abstractions;
 using CarSearchAPI.DTOs.Rents;
+using CarSearchAPI.Enums;
 using CarSearchAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -52,7 +53,7 @@ namespace CarSearchAPI.Controllers
                 Rent newRent = new Rent()
                 {
                     UserEmail = results.Email,
-                    Status = RentStatus.Active,
+                    Status = RentStatuses.Active,
                     Brand = results.Brand,
                     Model = results.Model,
                     StartDate = results.StartDate,
@@ -96,8 +97,7 @@ namespace CarSearchAPI.Controllers
                     Brand = rent.Brand,
                     Model = rent.Model,
                     StartDate = rent.StartDate,
-                    EndDate = rent.EndDate,
-                    Status = rent.Status
+                    EndDate = rent.EndDate
                 };
                 rentInfoList.Add(rentInfoDto);
             }
@@ -133,7 +133,7 @@ namespace CarSearchAPI.Controllers
                  return BadRequest();
              }
 
-            rent.Status = RentStatus.Returned;
+            rent.Status = RentStatuses.Returned;
             // TODO: check if we need these two lines stuff below
             _context.rents.Update(rent);
             await _context.SaveChangesAsync();
