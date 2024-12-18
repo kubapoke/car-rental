@@ -9,15 +9,15 @@ namespace CarSearchAPI.Services
 {
     public class SessionTokenManager
     {
-        // this create bearer tokens
+  
         public string GenerateJwtToken(string email, bool isTemporary)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_TOKEN_SECRET_KEY"));
             List<Claim> claims = new List<Claim>();
             Claim emailClaim = new Claim(JwtRegisteredClaimNames.Email, email);
-            claims.Add(emailClaim); // claims represent information, which will be inside token
-            double expirationMinutes; // that is time, in which token will be valid
+            claims.Add(emailClaim); 
+            double expirationMinutes;
             if (isTemporary)
             {
                 Claim protoUserClaim = new Claim("ProtoUserClaim", "1");
@@ -32,9 +32,9 @@ namespace CarSearchAPI.Services
             }
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(claims), // add claims to the token
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature), // add key
-                Expires = DateTime.UtcNow.AddMinutes(expirationMinutes) // add time
+                Subject = new ClaimsIdentity(claims),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                Expires = DateTime.UtcNow.AddMinutes(expirationMinutes)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
 

@@ -40,28 +40,26 @@ namespace CarSearchAPI.Controllers
                 return Unauthorized();
             }
 
-            var payload = await GoogleJsonWebSignature.ValidateAsync(idToken); // information extracted from token
-            var user = await _context.applicationUsers.FirstOrDefaultAsync(u => u.Email == payload.Email); // check is user exist in the database
+            var payload = await GoogleJsonWebSignature.ValidateAsync(idToken);
+            var user = await _context.applicationUsers.FirstOrDefaultAsync(u => u.Email == payload.Email); 
 
             if (user != null)
             {
-                var jwtToken = _sessionTokenManager.GenerateJwtToken(user.Email, false); // create normal token for old user
+                var jwtToken = _sessionTokenManager.GenerateJwtToken(user.Email, false);
                 return Ok(new { jwtToken, isNewUser = false });
             }
             else
             {
-                var jwtToken = _sessionTokenManager.GenerateJwtToken(payload.Email, true); // create temporary token to finish registration
+                var jwtToken = _sessionTokenManager.GenerateJwtToken(payload.Email, true);
                 return Ok(new { jwtToken, isNewUser = true });
             }
         }
 
-        [Authorize(Policy = "ProtoUser")] // only users with appropriate bearer token can use this method
+        [Authorize(Policy = "ProtoUser")] 
         [HttpPost("complete-registration")]
-        // create new user, based on the information from NewUserForm from front-end, information will be transformed from json to NewUserDto
         public async Task<IActionResult> CompleteRegistration([FromBody] NewUserInfoDto userInfo)
         {
-            // User is .net feature, it contains information from bearer token
-            var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value; // we get an email from bearer token
+            var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             
             if (string.IsNullOrEmpty(email))
             {
@@ -70,7 +68,7 @@ namespace CarSearchAPI.Controllers
             if (!ModelState.IsValid) { return BadRequest(ModelState); }
 
             
-            var user = await _context.applicationUsers.FirstOrDefaultAsync(u => u.Email == email); // double check is user in database
+            var user = await _context.applicationUsers.FirstOrDefaultAsync(u => u.Email == email);
             if (user == null)
             {
                 user = new ApplicationUser
@@ -82,7 +80,6 @@ namespace CarSearchAPI.Controllers
                     LicenceDate = userInfo.licenceDate
                 };
 
-                // adding user to the database
                 _context.applicationUsers.Add(user); 
                 await _context.SaveChangesAsync();
             }
@@ -91,7 +88,6 @@ namespace CarSearchAPI.Controllers
                 return BadRequest("This user already exist");
             }
 
-            // creation of new token
             var sessionToken = _sessionTokenManager.GenerateJwtToken(email, false);
             return Ok(new {sessionToken});
         }
