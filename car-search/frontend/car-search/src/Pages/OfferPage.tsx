@@ -36,7 +36,6 @@ const OfferPage = () => {
             console.log("Rent failed");
             throw new Error('Failed to rent');
         } else {
-            console.log("Hello");
             // you need to check email
             navigate('/offers/rent-confirmation');
         }

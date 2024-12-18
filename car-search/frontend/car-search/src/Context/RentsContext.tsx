@@ -56,14 +56,19 @@ export const RentsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         };
         
         const apiUrl = `${import.meta.env.VITE_SERVER_URL}/api/Rents/return-car`;
-
+        
         try {
             const res = await fetch(apiUrl, {
                 method: 'POST',
                 headers: headers,
-                body: JSON.stringify({rentId})
+                body: JSON.stringify(rentId)
             });
-        
+
+            if (!res.ok) {
+                console.error(`Error: HTTP ${res.status} - ${res.statusText}`);
+                return;
+            }
+            console.log(res.json())
             return res.json();
         }
         catch (error){
