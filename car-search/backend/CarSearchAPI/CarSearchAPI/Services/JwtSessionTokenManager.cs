@@ -24,19 +24,10 @@ namespace CarSearchAPI.Services
             List<Claim> claims = new List<Claim>();
             Claim emailClaim = new Claim(JwtRegisteredClaimNames.Email, email);
             claims.Add(emailClaim);
-            double expirationMinutes;
-            if (isTemporary)
-            {
-                Claim protoUserClaim = new Claim("ProtoUserClaim", "1");
-                claims.Add(protoUserClaim);
-                expirationMinutes = 10;
-            }
-            else
-            {
-                Claim legitUserClaim = new Claim("LegitUserClaim", "1");
-                claims.Add(legitUserClaim);
-                expirationMinutes = 60;
-            }
+
+            (Claim userClaim, double expirationMinutes) = GetClaimAndExpirationTime(isTemporary);
+            claims.Add(userClaim);
+            
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
@@ -49,6 +40,23 @@ namespace CarSearchAPI.Services
 
 
             return tokenHandler.WriteToken(token);
+        }
+
+        public (Claim, double) GetClaimAndExpirationTime(bool isTemporary)
+        {
+            double expirationMinutes;
+            if (isTemporary)
+            {
+                Claim protoUserClaim = new Claim("ProtoUserClaim", "1");                
+                expirationMinutes = 10;
+                return (protoUserClaim, expirationMinutes);
+            }
+            else
+            {
+                Claim legitUserClaim = new Claim("LegitUserClaim", "1");
+                expirationMinutes = 60;
+                return (legitUserClaim, expirationMinutes);
+            }
         }
 
         private string GetSekretKeyAsString()
