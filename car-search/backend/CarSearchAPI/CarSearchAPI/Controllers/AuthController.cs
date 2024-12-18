@@ -33,26 +33,16 @@ namespace CarSearchAPI.Controllers
         [HttpPost("google-signin")]
         public async Task<IActionResult> GoogleSignIn([FromBody] string idToken)
         {            
-            bool isValid = await _authService.VerifyToken(idToken);
+            bool isValid = await _authService.VerifyTokenAsync(idToken);
 
             if (!isValid)
             {
                 return Unauthorized();
             }
 
-            var payload = await GoogleJsonWebSignature.ValidateAsync(idToken);
-            var user = await _context.applicationUsers.FirstOrDefaultAsync(u => u.Email == payload.Email); 
+            (string jwtToken, bool isNewUser) = await _authService.GetTokenAndFlagAsync(idToken);
 
-            if (user != null)
-            {
-                var jwtToken = _sessionTokenManager.GetSessionToken(user.Email, false);
-                return Ok(new { jwtToken, isNewUser = false });
-            }
-            else
-            {
-                var jwtToken = _sessionTokenManager.GetSessionToken(payload.Email, true);
-                return Ok(new { jwtToken, isNewUser = true });
-            }
+            return Ok(new { jwtToken, isNewUser});
         }
 
         [Authorize(Policy = "ProtoUser")] 

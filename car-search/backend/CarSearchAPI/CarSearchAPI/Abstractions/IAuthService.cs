@@ -2,6 +2,8 @@
 {
     public interface IAuthService
     {
-        Task<bool> VerifyToken(string idToken);
+        Task<bool> VerifyTokenAsync(string idToken);
+
+        Task<(string token, bool isTemporary)> GetTokenAndFlagAsync(string idToken);
     }
 }
