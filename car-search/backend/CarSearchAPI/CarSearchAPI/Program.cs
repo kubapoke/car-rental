@@ -10,6 +10,8 @@ using CarSearchAPI.Abstractions;
 using CarSearchAPI.Services.DataProviders;
 using System.Security.Cryptography;
 using System.IdentityModel.Tokens.Jwt;
+using CarSearchAPI.Repositories.Abstractions;
+using CarSearchAPI.Repositories.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,10 +38,14 @@ builder.Services.AddDbContext<CarSearchDbContext>(options =>
                             errorNumbersToAdd: null)));
 builder.Services.AddHttpClient();
 
+// Services
 builder.Services.AddScoped<IEmailSender, SendGridEmailService>();
 builder.Services.AddScoped<IConfirmationTokenService, JwtConfirmationTokenService>();
 builder.Services.AddScoped<IAuthService, GoogleAuthService>();
 builder.Services.AddScoped<ISessionTokenManager, JwtSessionTokenManager>();
+
+// Repositories
+builder.Services.AddScoped<IUserRepository, ApplicationUserRepository>();
 
 // Register external data providers
 builder.Services.AddScoped<IExternalDataProvider, CarRentalDataProvider>();
