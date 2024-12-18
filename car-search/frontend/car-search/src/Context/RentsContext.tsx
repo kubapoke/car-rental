@@ -1,12 +1,17 @@
 import React, {createContext, useCallback, useContext, useState} from 'react';
 
+export enum RentStatus {
+    Rented = 1,
+    Returned = 2
+}
 
 export interface Rent {
     rentId: number,
     brand: string,
     model: string,
     startDate: string,
-    endDate: string
+    endDate: string,
+    status: RentStatus
 }
 
 

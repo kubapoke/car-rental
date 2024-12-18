@@ -96,7 +96,8 @@ namespace CarSearchAPI.Controllers
                     Brand = rent.Brand,
                     Model = rent.Model,
                     StartDate = rent.StartDate,
-                    EndDate = rent.EndDate
+                    EndDate = rent.EndDate,
+                    Status = rent.Status
                 };
                 rentInfoList.Add(rentInfoDto);
             }

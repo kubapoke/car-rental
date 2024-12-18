@@ -1,9 +1,9 @@
 import {FaCar} from "react-icons/fa";
-import {Rent, useRents} from "../Context/RentsContext.tsx";
+import {Rent, RentStatus, useRents} from "../Context/RentsContext.tsx";
 
 const UserRentTile = ({rent}: { rent: Rent }) => {
     const { returnCar} = useRents();
-    const isReturned = true; //TODO change this to check if the car is returned
+    const isReturned = rent.status == RentStatus.Returned; //TODO change this to check if the car is returned
     
     return (
         <div className={`rounded-xl shadow-md relative ${isReturned ? 'bg-gray-300' : 'bg-white'}`}>
