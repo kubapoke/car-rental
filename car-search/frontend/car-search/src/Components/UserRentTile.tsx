@@ -1,14 +1,16 @@
 import {FaCar} from "react-icons/fa";
 import {Rent, RentStatus, useRents} from "../Context/RentsContext.tsx";
+import {useState} from "react";
 
 const UserRentTile = ({rent}: { rent: Rent }) => {
-    const { returnCar} = useRents();
-    const isReturned = rent.status == RentStatus.Returned; //TODO change this to check if the car is returned
+    const {returnCar} = useRents();
+    const [isReturned, setIsReturned] = useState(rent.status === RentStatus.Returned);
     
     const handleReturn = async () => {
         try {
             await returnCar(rent.rentId);
             rent.status = RentStatus.Returned;
+            setIsReturned(true);
         } catch (error) {
             console.error('Error returning car:', error);
         }
