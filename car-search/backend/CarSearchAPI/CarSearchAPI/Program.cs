@@ -39,7 +39,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<IEmailSender, SendGridEmailService>();
 builder.Services.AddScoped<IConfirmationTokenService, JwtConfirmationTokenService>();
 builder.Services.AddScoped<IAuthService, GoogleAuthService>();
-builder.Services.AddScoped<SessionTokenManager>();
+builder.Services.AddScoped<ISessionTokenManager, JwtSessionTokenManager>();
 
 // Register external data providers
 builder.Services.AddScoped<IExternalDataProvider, CarRentalDataProvider>();

@@ -21,9 +21,9 @@ namespace CarSearchAPI.Controllers
 
         private readonly IAuthService _authService;
 
-        private readonly SessionTokenManager _sessionTokenManager;
+        private readonly ISessionTokenManager _sessionTokenManager;
 
-        public AuthController(CarSearchDbContext context, IAuthService authService, SessionTokenManager sessionTokenManager)
+        public AuthController(CarSearchDbContext context, IAuthService authService, ISessionTokenManager sessionTokenManager)
         {
             _context = context;
             _authService = authService;
@@ -45,12 +45,12 @@ namespace CarSearchAPI.Controllers
 
             if (user != null)
             {
-                var jwtToken = _sessionTokenManager.GenerateJwtToken(user.Email, false);
+                var jwtToken = _sessionTokenManager.GetSessionToken(user.Email, false);
                 return Ok(new { jwtToken, isNewUser = false });
             }
             else
             {
-                var jwtToken = _sessionTokenManager.GenerateJwtToken(payload.Email, true);
+                var jwtToken = _sessionTokenManager.GetSessionToken(payload.Email, true);
                 return Ok(new { jwtToken, isNewUser = true });
             }
         }
@@ -88,7 +88,7 @@ namespace CarSearchAPI.Controllers
                 return BadRequest("This user already exist");
             }
 
-            var sessionToken = _sessionTokenManager.GenerateJwtToken(email, false);
+            var sessionToken = _sessionTokenManager.GetSessionToken(email, false);
             return Ok(new {sessionToken});
         }
     }
