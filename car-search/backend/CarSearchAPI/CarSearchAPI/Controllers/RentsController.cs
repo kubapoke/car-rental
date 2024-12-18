@@ -106,14 +106,14 @@ namespace CarSearchAPI.Controllers
 
         [Authorize]
         [HttpPost("return-car")]
-        public async Task<IActionResult> ReturnCar(int rentId)
+        public async Task<IActionResult> ReturnCar([FromBody]int rentId)
         {
             var rent = await _context.rents.FirstOrDefaultAsync(r => r.RentId == rentId);
             if (rent == null)
             {
                 return NotFound("Rent not found");
             }
-            
+            Console.WriteLine($"Here: {rentId}");
             IExternalDataProvider? activeProvider = null;
 
             foreach (var provider in _dataProviders)
@@ -124,11 +124,13 @@ namespace CarSearchAPI.Controllers
                     break;
                 }
             }
+            Console.WriteLine($"Active provider: {activeProvider.GetProviderName()}");
+            Console.WriteLine($"ID in the rental company: {rent.RentalCompanyRentId}");
                 
             if (activeProvider == null) { return BadRequest("Invalid provider name"); }
 
             var rentalApiResponse = await activeProvider.SetRentStatusReadyToReturnAsync(rent.RentalCompanyRentId);
-             if (!rentalApiResponse)
+            if (!rentalApiResponse)
              {
                  return BadRequest();
              }

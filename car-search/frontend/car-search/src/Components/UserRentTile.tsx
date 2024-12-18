@@ -5,6 +5,15 @@ const UserRentTile = ({rent}: { rent: Rent }) => {
     const { returnCar} = useRents();
     const isReturned = rent.status == RentStatus.Returned; //TODO change this to check if the car is returned
     
+    const handleReturn = async () => {
+        try {
+            await returnCar(rent.rentId);
+            rent.status = RentStatus.Returned;
+        } catch (error) {
+            console.error('Error returning car:', error);
+        }
+    }
+    
     return (
         <div className={`rounded-xl shadow-md relative ${isReturned ? 'bg-gray-300' : 'bg-white'}`}>
             <div className="p-4">
@@ -32,7 +41,7 @@ const UserRentTile = ({rent}: { rent: Rent }) => {
                         </div>
                         {!isReturned && (
                             <button
-                                onClick={() => returnCar(rent.rentId)}
+                                onClick={handleReturn}
                                 className="bg-blue-500 text-white rounded-lg p-2 m-4 mb-8">
                                 Return
                             </button>
