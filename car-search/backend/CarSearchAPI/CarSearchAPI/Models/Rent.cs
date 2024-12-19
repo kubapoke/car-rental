@@ -3,6 +3,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CarSearchAPI.Models
 {
+    public enum RentStatus
+    {
+        // This is different than the RentStatus in CarRental which has an additional "ReadyToReturn" state
+        Active = 1,
+        Returned = 2
+    }
+
+    
     public class Rent
     {
         [Key]
@@ -19,11 +27,20 @@ namespace CarSearchAPI.Models
         [Required]
         public ApplicationUser RentUser { get; set; }
         public string UserEmail { get; set; }
+        
+        [Required]
+        public RentStatus Status { get; set; }
 
         [Required]
         public DateTime StartDate { get; set; }
 
         [Required]
         public DateTime EndDate { get; set; }
+        
+        [Required]
+        public string RentalCompanyName { get; set; }
+        
+        [Required]
+        public int RentalCompanyRentId { get; set; }
     }
 }
