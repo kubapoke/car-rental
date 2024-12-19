@@ -16,7 +16,7 @@ interface Car{
 const SearchBar = () => {
     const {filters, setFilters}  = useFilters();
     const {isLoggedIn} = useAuth();
-    const {setPage} = useOffers();
+    const {page, setPage, pageSize} = useOffers();
     const navigate = useNavigate();
 
     const [carData, setCarData] = useState<Car[]>([]);
@@ -32,6 +32,7 @@ const SearchBar = () => {
 
     const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const {fetchOffers} = useOffers();
 
     useEffect(() => {
         // Fetch the car list data
@@ -105,7 +106,7 @@ const SearchBar = () => {
         return Object.keys(newErrors).length === 0;
     }
 
-    const handleSubmit = (e : FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e : FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if(!isLoggedIn) {
@@ -117,15 +118,27 @@ const SearchBar = () => {
             return;
         }
 
-        setPage(0);
-
-        setFilters({
+        const newFilters = {
             selectedBrand,
             selectedModel,
             selectedLocation,
             startDate,
             endDate
-        })
+        };
+
+        setPage(0);
+        setFilters(newFilters);
+
+        await fetchOffers(
+            {
+                brand: newFilters.selectedBrand || "",
+                model: newFilters.selectedModel || "",
+                location: newFilters.selectedLocation || "",
+                startDate: newFilters.startDate || "",
+                endDate: newFilters.endDate || "",
+            },
+            page, pageSize
+        );
 
         navigate("/offers");
     };

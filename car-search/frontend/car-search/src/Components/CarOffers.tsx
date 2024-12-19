@@ -10,6 +10,7 @@ const CarOffers = ({isHome} : {isHome : boolean}) => {
         page,
         pageCount,
         setPage,
+        pageSize,
         fetchOffers,
     } = useOffers();
     const filters = useFilters().filters;
@@ -31,7 +32,18 @@ const CarOffers = ({isHome} : {isHome : boolean}) => {
         fetchCurrentPageOffers();
     }, [filters, fetchOffers, page, isHome]);
 
-    const handlePageChange = (newPage: number) => {
+    const handlePageChange = async (newPage: number) => {
+        await fetchOffers(
+            {
+                brand: filters.selectedBrand || "",
+                model: filters.selectedModel || "",
+                location: filters.selectedLocation || "",
+                startDate: filters.startDate || "",
+                endDate: filters.endDate || "",
+            },
+            newPage, pageSize
+        );
+
         setPage(newPage); // Update the page in context
     };
 
