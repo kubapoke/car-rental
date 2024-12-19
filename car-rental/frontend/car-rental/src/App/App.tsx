@@ -6,6 +6,7 @@ import CockpitPage from "../Pages/CockpitPage.tsx";
 import LoggedInLayout from "../Layouts/LoggedInLayout.tsx";
 import {FiltersProvider} from "../Context/FiltersContext.tsx";
 import {RentsProvider} from "../Context/RentsContext.tsx";
+import ConfirmReturnPage from "../Pages/ConfirmReturnPage.tsx";
 
 function App() {
     return (
@@ -25,11 +26,11 @@ function MainRouter() {
     const router = createBrowserRouter(
         createRoutesFromElements(
             <>
-                <Route index element={<Navigate to="/log-in" replace />} />
-                <Route path="*" element={<Navigate to={isLoggedIn ? "/logged-in/cockpit" : "/log-in"} replace />} />
-                <Route path="/log-in" element={<LogInPage />} />
-                <Route path="/logged-in" element={<LoggedInLayout />}>
-                    <Route path="cockpit" element={<CockpitPage />} />
+                <Route index element={<Navigate to={isLoggedIn ? "/logged-in/cockpit" : "/log-in"} replace />} />
+                <Route path="log-in" element={isLoggedIn ? <Navigate to="/logged-in/cockpit" replace /> : <LogInPage />} />
+                <Route path="logged-in" element={isLoggedIn ? <LoggedInLayout /> : <Navigate to="/log-in" replace />}>
+                    <Route path="cockpit" element={isLoggedIn ? <CockpitPage /> : <Navigate to="/log-in" replace />} />
+                    <Route path="confirm-return/:id" element={isLoggedIn ? <ConfirmReturnPage/> : <Navigate to="/log-in" replace />}/>
                 </Route>
             </>
         )

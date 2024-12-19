@@ -12,6 +12,7 @@ namespace CarRentalAPI.Repositories
     {
         private readonly RedisCacheService _redisCacheService;
         private readonly IPriceGenerator _priceGenerator;
+        private const int DefaultPageSize = 6;
 
         public OfferRepository(RedisCacheService redisCacheService, IPriceGenerator priceGenerator)
         {
@@ -20,8 +21,10 @@ namespace CarRentalAPI.Repositories
         }
 
         public async Task<List<OfferForCarSearchDto>> CreateAndRetrieveOffersAsync(List<Car> cars, DateTime startDate, DateTime endDate, 
-            string conditions, string companyName, string email)
+            string conditions, string companyName, string email, int? page, int? pageSize)
         {
+            cars = TrimCarsToPage(cars, page, pageSize);
+            
             var redisOffers = new List<(string Guid, OfferForRedisDto RedisOffer, decimal Price)>();
 
             foreach (var car in cars)
@@ -72,6 +75,22 @@ namespace CarRentalAPI.Repositories
             var offer = offerJson != null ? JsonConvert.DeserializeObject<OfferForRedisDto?>(offerJson) : null;
             
             return offer; 
+        }
+
+        private List<Car> TrimCarsToPage(List<Car> cars, int? page, int? pageSize)
+        {
+            if(page is null && pageSize is null)
+                return cars;
+            
+            int pageInt = Math.Max(page ?? 0, 0);
+            int pageSizeInt = Math.Max(pageSize ?? DefaultPageSize, 1);
+            
+            var trimmedCars = cars
+                .Skip(pageInt * pageSizeInt)
+                .Take(pageSizeInt)
+                .ToList();
+            
+            return trimmedCars;
         }
     }
 }

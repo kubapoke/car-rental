@@ -1,8 +1,8 @@
 import React, {createContext, useCallback, useContext, useState} from 'react';
 
 export enum RentStatus {
-    Rented = 1,
-    Returned = 2
+    Rented = "Rented",
+    Returned = "Returned"
 }
 
 export interface Rent {
@@ -40,6 +40,7 @@ export const RentsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         try {
             const res = await fetch(apiUrl, {method: 'GET', headers: headers});
             const data : Rent[]= await res.json();
+            console.log(data);
             setRents(data);
         }
         catch (error){
@@ -56,15 +57,17 @@ export const RentsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         };
         
         const apiUrl = `${import.meta.env.VITE_SERVER_URL}/api/Rents/return-car`;
-
+        
         try {
             const res = await fetch(apiUrl, {
                 method: 'POST',
                 headers: headers,
-                body: JSON.stringify({rentId})
+                body: JSON.stringify(rentId)
             });
-        
-            return res.json();
+
+            if (!res.ok) {
+                console.error(`Error: HTTP ${res.status} - ${res.statusText}`);
+            }
         }
         catch (error){
             console.error('Error returning car:', error);
