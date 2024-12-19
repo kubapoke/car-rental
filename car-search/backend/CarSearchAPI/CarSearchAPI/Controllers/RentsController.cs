@@ -16,14 +16,16 @@ namespace CarSearchAPI.Controllers
     public class RentsController : ControllerBase
     {
         private readonly CarSearchDbContext _context;
+        private readonly IRentService _rentService;
         private readonly IConfirmationTokenValidator _confirmationTokenValidator;
         private readonly IEnumerable<IExternalDataProvider> _dataProviders;
 
-        public RentsController(CarSearchDbContext context, IConfirmationTokenValidator confirmationTokenValidator, IEnumerable<IExternalDataProvider> dataProviders)
+        public RentsController(CarSearchDbContext context, IConfirmationTokenValidator confirmationTokenValidator, IEnumerable<IExternalDataProvider> dataProviders, IRentService rentService)
         {
             _context = context;
             _confirmationTokenValidator = confirmationTokenValidator;
             _dataProviders = dataProviders;
+            _rentService = rentService;
         }
 
         [HttpGet("new-rent-confirm")]
@@ -50,20 +52,7 @@ namespace CarSearchAPI.Controllers
                 
                 var results = await activeProvider.CreateNewRentAsync(claimsPrincipal);                
 
-                Rent newRent = new Rent()
-                {
-                    UserEmail = results.Email,
-                    Status = RentStatuses.Active,
-                    Brand = results.Brand,
-                    Model = results.Model,
-                    StartDate = results.StartDate,
-                    EndDate = results.EndDate,
-                    RentalCompanyName = activeProvider.GetProviderName(),
-                    RentalCompanyRentId = results.RentalCompanyRentId
-                };
-
-                _context.rents.Add(newRent);
-                await _context.SaveChangesAsync();
+                await _rentService.CreateNewRentAsync(results, activeProvider.GetProviderName());
 
                 return Ok();
             }
@@ -87,20 +76,9 @@ namespace CarSearchAPI.Controllers
             {
                 return Unauthorized("You are not logged in");
             }
-            var rentList = await _context.rents.Where(r => r.UserEmail == email).ToListAsync(); 
-            List<RentInfoDto> rentInfoList = new List<RentInfoDto>();
-            foreach (Rent rent in rentList)
-            {
-                RentInfoDto rentInfoDto = new RentInfoDto()
-                {
-                    RentId = rent.RentId,
-                    Brand = rent.Brand,
-                    Model = rent.Model,
-                    StartDate = rent.StartDate,
-                    EndDate = rent.EndDate
-                };
-                rentInfoList.Add(rentInfoDto);
-            }
+
+            var rentInfoList = _rentService.GetRentInfoListByEmailAsync(email);
+
             return Ok(rentInfoList);
         }
 
