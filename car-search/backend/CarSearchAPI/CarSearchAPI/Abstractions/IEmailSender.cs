@@ -4,6 +4,6 @@ namespace CarSearchAPI.Abstractions
 {
     public interface IEmailSender
     {
-        Task<bool> SendEmailAsync(OfferDto recipientEmail);
+        Task<bool> SendNewRentEmailAsync(OfferDto recipientEmail);
     }
 }

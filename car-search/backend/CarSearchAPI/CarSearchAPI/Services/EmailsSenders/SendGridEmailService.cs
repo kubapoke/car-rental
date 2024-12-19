@@ -14,32 +14,67 @@ namespace CarSearchAPI.Services.EmailsSenders
             _confirmationTokenService = confirmationTokenService;
         }
 
-        public async Task<bool> SendEmailAsync(OfferDto info)
-        {
-            var apiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
-            var client = new SendGridClient(apiKey);
+        public async Task<bool> SendNewRentEmailAsync(OfferDto info)
+        {         
 
-            var from = new EmailAddress(Environment.GetEnvironmentVariable("COMPANY_EMAIL"), "CarSearch");
-            var subject = "Rent confirmation";
+            var from = GetSenderEmailAddress();            
             var to = new EmailAddress(info.Email, info.Email);
+
+            var subject = "Rent confirmation";
             var plainTextContent = "";
 
-            var token = _confirmationTokenService.GenerateConfirmationToken(info);
-            string myAddress = Environment.GetEnvironmentVariable("MY_ADDRESS");
-            string confirmationLink = myAddress + $"/api/Rents/new-rent-confirm?token={Uri.EscapeDataString(token)}";
+            var htmlContent = GetHtmlContentOfNewRentEmail(info);
 
-            var htmlContent = $"<ul>Your rent:" +
+            string apiKey = GetSendGridApiKey();
+            bool isSuccess = await SendEmailAsync(from, to, subject, plainTextContent, htmlContent, apiKey);
+            return isSuccess;
+        }
+
+        private string  GetHtmlContentOfNewRentEmail(OfferDto info)
+        {
+            string confirmationLink = CreateConfirmationLink(info);
+
+            string htmlContent = $"<ul>Your rent:" +
                                   $"<li>From: {info.CompanyName}</li>" +
                                   $"<li>Your car: {info.Brand} {info.Model}</li>" +
                                   $"<li>Price: {info.Price}</li>" +
                                   $"<li>Rent starts: {info.StartDate}</li>" +
                                   $"<li>Rent ends: {info.EndDate}</li>" +
                               $"</ul><br/>" + $"<div>Click here to confirm your rent: {confirmationLink}</div>";
+            return htmlContent;
+        }
+
+        private string CreateConfirmationLink(OfferDto info) 
+        {
+            var token = _confirmationTokenService.GenerateConfirmationToken(info);
+            string myAddress = GetMyAddress();
+            string confirmationLink = myAddress + $"/api/Rents/new-rent-confirm?token={Uri.EscapeDataString(token)}";
+            return confirmationLink;
+        }
+
+        private async Task<bool> SendEmailAsync(EmailAddress from, EmailAddress to, string subject, string plainTextContent, string htmlContent, string apiKey)
+        {
+            var client = new SendGridClient(apiKey);
             var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
             var response = await client.SendEmailAsync(msg);
 
             if (response.IsSuccessStatusCode) return true;
             else return false;
+        }
+
+        private string GetSendGridApiKey()
+        {
+            return Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
+        }
+
+        private EmailAddress GetSenderEmailAddress()
+        {
+            return new EmailAddress(Environment.GetEnvironmentVariable("COMPANY_EMAIL"), "CarSearch");
+        }
+
+        private string GetMyAddress()
+        {
+            return Environment.GetEnvironmentVariable("MY_ADDRESS");
         }
     }
 }
