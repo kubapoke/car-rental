@@ -99,7 +99,7 @@ const SearchBar = () => {
         if (!endDate) {
             newErrors.endDate = "End date is required.";
         } else if (startDate && new Date(startDate) > new Date(endDate)) {
-            newErrors.dateRange = "Start date must be before end date.";
+            newErrors.endDate = "End date must be after start date.";
         }
 
         setErrors(newErrors);
@@ -146,82 +146,111 @@ const SearchBar = () => {
     return (
         <>
             <form
-                className="flex flex-col md:flex-row items-center p-4 bg-white rounded-lg shadow-md"
+                className="flex flex-wrap items-center p-4 bg-white rounded-lg shadow-md"
                 onSubmit={handleSubmit}
             >
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-between">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex gap-4 flex-nowrap overflow-x-auto">
                     {/* Brand Dropdown */}
-                    <select
-                        value={selectedBrand}
-                        onChange={(e) => setSelectedBrand(e.target.value)}
-                        className="border border-gray-300 rounded-lg p-2 mb-2 md:mb-0 md:mr-2 w-full md:w-1/3"
-                    >
-                        <option value="">Select Brand</option>
-                        {brands.map((brand) => (
-                            <option key={brand} value={brand}>
-                                {brand}
-                            </option>
-                        ))}
-                    </select>
+                    <div className="flex flex-col w-1/5 min-w-[150px]">
+                        <select
+                            value={selectedBrand}
+                            onChange={(e) => setSelectedBrand(e.target.value)}
+                            className="border border-gray-300 rounded-lg py-4 px-4 text-base h-[64px]"
+                        >
+                            <option value="">Select Brand</option>
+                            {brands.map((brand) => (
+                                <option key={brand} value={brand}>
+                                    {brand}
+                                </option>
+                            ))}
+                        </select>
+                        <span className="text-red-500 text-sm mt-1 min-h-[1.5rem] break-words w-full">
+                {errors.selectedBrand}
+            </span>
+                    </div>
 
                     {/* Model Dropdown */}
-                    <select
-                        value={selectedModel}
-                        onChange={(e) => handleModelChange(e.target.value)}
-                        className="border border-gray-300 rounded-lg p-2 mb-2 md:mb-0 md:mr-2 w-full md:w-1/3"
-                    >
-                        <option value="">Select Model</option>
-                        {models.map((model) => (
-                            <option key={model} value={model}>
-                                {model}
-                            </option>
-                        ))}
-                    </select>
+                    <div className="flex flex-col w-1/5 min-w-[150px]">
+                        <select
+                            value={selectedModel}
+                            onChange={(e) => handleModelChange(e.target.value)}
+                            className="border border-gray-300 rounded-lg py-4 px-4 text-base h-[64px]"
+                        >
+                            <option value="">Select Model</option>
+                            {models.map((model) => (
+                                <option key={model} value={model}>
+                                    {model}
+                                </option>
+                            ))}
+                        </select>
+                        <span className="text-red-500 text-sm mt-1 min-h-[1.5rem] break-words w-full">
+                {errors.selectedModel}
+            </span>
+                    </div>
 
                     {/* Location Dropdown */}
-                    <select
-                        value={selectedLocation}
-                        onChange={(e) => setSelectedLocation(e.target.value)}
-                        className="border border-gray-300 rounded-lg p-2 mb-2 md:mb-0 md:mr-2 w-full md:w-1/3"
-                    >
-                        <option value="">Select Location</option>
-                        {locations.map((location) => (
-                            <option key={location} value={location}>
-                                {location}
-                            </option>
-                        ))}
-                    </select>
+                    <div className="flex flex-col w-1/5 min-w-[150px]">
+                        <select
+                            value={selectedLocation}
+                            onChange={(e) => setSelectedLocation(e.target.value)}
+                            className="border border-gray-300 rounded-lg py-4 px-4 text-base h-[64px]"
+                        >
+                            <option value="">Select Location</option>
+                            {locations.map((location) => (
+                                <option key={location} value={location}>
+                                    {location}
+                                </option>
+                            ))}
+                        </select>
+                        <span className="text-red-500 text-sm mt-1 min-h-[1.5rem] break-words w-full">
+                {errors.selectedLocation}
+            </span>
+                    </div>
 
                     {/* Start Date Picker */}
-                    <input
-                        type="date"
-                        value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
-                        className="border border-gray-300 rounded-lg p-2 mb-2 md:mb-0 md:mr-2 w-full md:w-1/3"
-                    />
+                    <div className="flex flex-col w-1/5 min-w-[150px]">
+                        <input
+                            type="date"
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
+                            className="border border-gray-300 rounded-lg py-4 px-4 text-base h-[64px]"
+                        />
+                        <span className="text-red-500 text-sm mt-1 min-h-[1.5rem] break-words w-full">
+                {errors.startDate}
+            </span>
+                    </div>
 
                     {/* End Date Picker */}
-                    <input
-                        type="date"
-                        value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
-                        className="border border-gray-300 rounded-lg p-2 mb-2 md:mb-0 md:mr-2 w-full md:w-1/3"
-                    />
+                    <div className="flex flex-col w-1/5 min-w-[150px]">
+                        <input
+                            type="date"
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
+                            className="border border-gray-300 rounded-lg py-4 px-4 text-base h-[64px]"
+                        />
+                        <span className="text-red-500 text-sm mt-1 min-h-[1.5rem] break-words w-full">
+                {errors.endDate}
+            </span>
+                    </div>
 
                     {/* Search Button */}
-                    <button
-                        type="submit"
-                        className="bg-blue-500 text-white rounded-lg p-2 mt-2 md:mt-0 md:ml-2"
-                    >
-                        <FaSearch className={'inline text-lg mb-1'} /> Search
-                    </button>
+                    <div className="flex flex-col items-center w-1/5 min-w-[150px] z-40">
+                        <button
+                            type="submit"
+                            className="bg-blue-500 text-white rounded-lg py-4 px-6 text-base h-[64px]"
+                        >
+                            <FaSearch className="inline text-lg mb-1"/> Search
+                        </button>
+                        <span className="text-red-500 text-sm mt-1 min-h-[1.5rem]"> </span> {/* Dummy error space */}
+                    </div>
                 </div>
             </form>
-            { showLoginModal && (
+
+            {showLoginModal && (
                 <LoginModal
                     onClose={() => setShowLoginModal(false)}
                     onLoginSuccess={() => setShowLoginModal(false)}
-                />) }
+                />)}
         </>
     );
 };
