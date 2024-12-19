@@ -32,7 +32,7 @@ namespace CarSearchAPI.Controllers
             {
                 var claimsPrincipal = _confirmationTokenService.ValidateConfirmationToken(token);
                 
-                if (!_confirmationTokenService.ValidateAllClaims(claimsPrincipal)) { return BadRequest("Invalid token"); }
+                if (!_confirmationTokenService.ValidateOfferClaim(claimsPrincipal)) { return BadRequest("Invalid token"); }
 
                 IExternalDataProvider? activeProvider = null;
 
@@ -52,10 +52,13 @@ namespace CarSearchAPI.Controllers
                 Rent newRent = new Rent()
                 {
                     UserEmail = results.Email,
+                    Status = RentStatus.Active,
                     Brand = results.Brand,
                     Model = results.Model,
                     StartDate = results.StartDate,
-                    EndDate = results.EndDate
+                    EndDate = results.EndDate,
+                    RentalCompanyName = activeProvider.GetProviderName(),
+                    RentalCompanyRentId = results.RentalCompanyRentId
                 };
 
                 _context.rents.Add(newRent);
@@ -89,14 +92,53 @@ namespace CarSearchAPI.Controllers
             {
                 RentInfoDto rentInfoDto = new RentInfoDto()
                 {
+                    RentId = rent.RentId,
                     Brand = rent.Brand,
                     Model = rent.Model,
                     StartDate = rent.StartDate,
-                    EndDate = rent.EndDate
+                    EndDate = rent.EndDate,
+                    Status = rent.Status
                 };
                 rentInfoList.Add(rentInfoDto);
             }
             return Ok(rentInfoList);
+        }
+
+        [Authorize]
+        [HttpPost("return-car")]
+        public async Task<IActionResult> ReturnCar([FromBody]int rentId)
+        {
+            var rent = await _context.rents.FirstOrDefaultAsync(r => r.RentId == rentId);
+            if (rent == null)
+            {
+                return NotFound("Rent not found");
+            }
+
+            IExternalDataProvider? activeProvider = null;
+
+            foreach (var provider in _dataProviders)
+            {
+                if (provider.GetProviderName() == rent.RentalCompanyName) 
+                {
+                    activeProvider = provider;
+                    break;
+                }
+            }
+                
+            if (activeProvider == null) { return BadRequest("Invalid provider name"); }
+
+            var rentalApiResponse = await activeProvider.SetRentStatusReadyToReturnAsync(rent.RentalCompanyRentId);
+            if (!rentalApiResponse)
+             {
+                 return BadRequest();
+             }
+
+            rent.Status = RentStatus.Returned;
+            // TODO: check if we need these two lines stuff below
+            _context.rents.Update(rent);
+            await _context.SaveChangesAsync();
+            
+            return Ok();
         }
     }
 }

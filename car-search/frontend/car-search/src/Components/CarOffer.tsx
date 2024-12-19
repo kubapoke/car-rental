@@ -23,7 +23,7 @@ const CarOffer = ({offer} : {offer : Offer}) => {
 
                 <div className="flex flex-col lg:flex-row justify-between mb-4">
                     <Link
-                        to={`/offers/${offer.carId}`}
+                        to={`/offers/${offer.offerId}`}
                         className="h-[36px] bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-center text-sm"
                     >
                         Read More
@@ -38,10 +38,10 @@ export const calculateDaysBetweenDates = (date1: string, date2: string): number 
     const firstDate = new Date(date1);
     const secondDate = new Date(date2);
 
-    // Obliczenie różnicy czasu w milisekundach
+    // Time difference in milliseconds
     const differenceInMilliseconds = Math.abs(secondDate.getTime() - firstDate.getTime());
 
-    // Przeliczenie na dni
+    // Calculate day difference
     const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
 
     return Math.round(differenceInDays) + 1;

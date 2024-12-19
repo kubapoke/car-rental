@@ -3,33 +3,11 @@ import UserRentTile from "./UserRentTile.tsx";
 import {useRents} from "../Context/RentsContext.tsx";
 
 const UserRentsContainer = () => {
-    const {rents, setRents} = useRents();
+    const {rents, setRents, fetchRents} = useRents();
 
     useEffect(() => {
-        const fetchRents = async () => {
-            // Retrieve the authToken from session storage
-            const token = sessionStorage.getItem('authToken'); // or use sessionStorage.getItem('jwt_token')
-
-            // If the token is present, add it to the Authorization header
-            const headers = {
-                'Content-Type': 'application/json',
-                ...(token && { 'Authorization': `Bearer ${token}` }), // Add the Authorization header if the token exists
-            };
-
-            const apiUrl = `${import.meta.env.VITE_SERVER_URL}/api/Rents/get-user-rents`;
-
-            try {
-                const res = await fetch(apiUrl, {method: 'GET', headers: headers});
-                const data = await res.json();
-                setRents(data);
-            }
-            catch (error){
-                console.log('Error fetching data', error);
-            }
-        }
-
         fetchRents();
-    }, [rents, setRents]);
+    }, [setRents]);
     
     // maybe slice it to a couple of first records in the future
     const displayedRents =  rents;

@@ -10,21 +10,40 @@ const CarOffers = ({isHome} : {isHome : boolean}) => {
         page,
         pageCount,
         setPage,
+        pageSize,
         fetchOffers,
     } = useOffers();
     const filters = useFilters().filters;
 
     useEffect(() => {
-        fetchOffers({
-            brand: filters.selectedBrand || '',
-            model: filters.selectedModel || '',
-            location: filters.selectedLocation || '',
-            startDate: filters.startDate || '',
-            endDate: filters.endDate || '',
-        }, isHome ? 0 : page)
+        const fetchCurrentPageOffers = async () => {
+            await fetchOffers(
+                {
+                    brand: filters.selectedBrand || "",
+                    model: filters.selectedModel || "",
+                    location: filters.selectedLocation || "",
+                    startDate: filters.startDate || "",
+                    endDate: filters.endDate || "",
+                },
+                isHome ? 0 : page
+            );
+        };
+
+        fetchCurrentPageOffers();
     }, [filters, fetchOffers, page, isHome]);
 
-    const handlePageChange = (newPage: number) => {
+    const handlePageChange = async (newPage: number) => {
+        await fetchOffers(
+            {
+                brand: filters.selectedBrand || "",
+                model: filters.selectedModel || "",
+                location: filters.selectedLocation || "",
+                startDate: filters.startDate || "",
+                endDate: filters.endDate || "",
+            },
+            newPage, pageSize
+        );
+
         setPage(newPage); // Update the page in context
     };
 
@@ -55,7 +74,7 @@ const CarOffers = ({isHome} : {isHome : boolean}) => {
                 </h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {displayedOffers.map((offer) => (
-                            <CarOffer key={offer.carId} offer={offer}/>
+                            <CarOffer key={offer.offerId} offer={offer}/>
                         ))}
                     </div>
 

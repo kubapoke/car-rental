@@ -1,7 +1,7 @@
 import React, {createContext, useCallback, useContext, useState} from 'react';
 
 export interface Offer {
-    carId: number;
+    offerId: string;
     brand: string;
     model: string;
     email: string;
@@ -19,7 +19,6 @@ interface OffersContextProps {
     fetchOffers: (filters: Record<string, string>, page?: number, pageSize?: number) => Promise<void>;
     page: number;
     pageSize: number;
-    totalOffers: number;
     pageCount: number;
     setPage: React.Dispatch<React.SetStateAction<number>>;
     setPageSize: React.Dispatch<React.SetStateAction<number>>;
@@ -31,7 +30,6 @@ export const OffersProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const [offers, setOffers] = useState<Offer[]>([]);
     const [page, setPage] = useState(0);
     const [pageSize, setPageSize] = useState(6);
-    const [totalOffers, setTotalOffers] = useState(0);
     const [pageCount, setPageCount] = useState(0);
 
     // fetch offers based on filters
@@ -49,17 +47,23 @@ export const OffersProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         }).toString();
         const apiUrl = `${import.meta.env.VITE_SERVER_URL}/api/OffersForward/offer-list?${queryParams}`;
 
+        const controller = new AbortController();
+        const signal = controller.signal;
+
         try {
-            const res = await fetch(apiUrl, { method: 'GET', headers });
+            const res = await fetch(apiUrl, { method: 'GET', headers, signal });
             const data = await res.json();
             setOffers(data.offers ?? []);
-            setPage(data.page);
-            setPageSize(data.pageSize);
-            setTotalOffers(data.totalOffers);
             setPageCount(data.pageCount);
         } catch (error) {
-            console.error('Error fetching offers:', error);
+            if (error instanceof DOMException && error.name === "AbortError") {
+                console.log("Fetch aborted");
+            } else {
+                console.error("Error fetching offers:", error);
+            }
         }
+
+        controller.abort();
     }, []);
 
     return (
@@ -69,7 +73,6 @@ export const OffersProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                 setOffers,
                 page,
                 pageSize,
-                totalOffers,
                 pageCount,
                 setPage,
                 setPageSize,

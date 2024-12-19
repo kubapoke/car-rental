@@ -362,6 +362,34 @@ namespace CarRentalAPI.Migrations
                         });
                 });
 
+            modelBuilder.Entity("CarRentalAPI.Models.Manager", b =>
+                {
+                    b.Property<int>("ManagerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ManagerId"));
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Salt")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("ManagerId");
+
+                    b.ToTable("Managers");
+                });
+
             modelBuilder.Entity("CarRentalAPI.Models.Model", b =>
                 {
                     b.Property<int>("ModelId")
@@ -559,6 +587,13 @@ namespace CarRentalAPI.Migrations
 
                     b.Property<int>("CarId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<string>("ImageUri")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("RentEnd")
                         .HasColumnType("datetime2");

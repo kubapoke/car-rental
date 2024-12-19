@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CarRentalAPI.Controller
 {
-    [Authorize]
+    [Authorize(Policy = "Backend")]
     [Route("api/[controller]")]
     [ApiController]
     public class CarsController : ControllerBase
