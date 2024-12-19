@@ -16,11 +16,12 @@ jobs:
           node-version: '20.x'
 
       - name: Create .env file for the Car Rent Frontend
-        working-directory: car-search/frontend/car-search
+        working-directory: car-rental/frontend/car-rental
         run: |
           echo "VITE_SERVER_URL=${{ secrets.RENTALFRONT_VITE_SERVER_URL }}" > .env
 
       - name: npm install, build, and test
+        working-directory: car-rental/frontend/car-rental
         run: |
           npm install
           npm run build --if-present
