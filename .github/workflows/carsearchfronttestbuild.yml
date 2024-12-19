@@ -22,7 +22,7 @@ jobs:
           echo "VITE_SERVER_URL=${{ secrets.SEARCHFRONT_VITE_SERVER_URL }}" >> .env
 
       - name: npm install, build, and test
-        working-directory: car-search/frontend/car-search
+        working-directory: car-rental/frontend/car-rental
         run: |
           npm install
           npm run build --if-present

@@ -16,7 +16,7 @@ jobs:
           node-version: '20.x'
 
       - name: Create .env file for the Car Search Frontend
-        working-directory: car-search/frontend/car-search
+        working-directory: car-rental/frontend/car-rental
         run: |
           echo "VITE_CLIENT_ID_FOR_OATH=${{ secrets.SEARCHFRONT_VITE_CLIENT_ID_FOR_OATH }}" > .env
           echo "VITE_SERVER_URL=${{ secrets.SEARCHFRONT_VITE_SERVER_URL }}" >> .env
