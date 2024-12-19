@@ -5,13 +5,17 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json.Serialization;
 using CarSearchAPI.Utilities;
-using CarSearchAPI.Services;
 using CarSearchAPI.Abstractions;
 using CarSearchAPI.Services.DataProviders;
 using System.Security.Cryptography;
 using System.IdentityModel.Tokens.Jwt;
 using CarSearchAPI.Repositories.Abstractions;
 using CarSearchAPI.Repositories.Implementations;
+using CarSearchAPI.Services.Authenticators;
+using CarSearchAPI.Services.TokenManagers;
+using CarSearchAPI.Services.EmailsSenders;
+using Microsoft.AspNetCore.WebSockets;
+using CarSearchAPI.Services.UserServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +47,7 @@ builder.Services.AddScoped<IEmailSender, SendGridEmailService>();
 builder.Services.AddScoped<IConfirmationTokenService, JwtConfirmationTokenService>();
 builder.Services.AddScoped<IAuthService, GoogleAuthService>();
 builder.Services.AddScoped<ISessionTokenManager, JwtSessionTokenManager>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Repositories
 builder.Services.AddScoped<IUserRepository, ApplicationUserRepository>();

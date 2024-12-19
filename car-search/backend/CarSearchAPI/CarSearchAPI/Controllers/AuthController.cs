@@ -17,17 +17,17 @@ namespace CarSearchAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly CarSearchDbContext _context;
+        private readonly IUserService _userService;
 
         private readonly IAuthService _authService;
 
         private readonly ISessionTokenManager _sessionTokenManager;
 
-        public AuthController(CarSearchDbContext context, IAuthService authService, ISessionTokenManager sessionTokenManager)
+        public AuthController(IAuthService authService, ISessionTokenManager sessionTokenManager, IUserService userService)
         {
-            _context = context;
             _authService = authService;
             _sessionTokenManager = sessionTokenManager;
+            _userService = userService;
         }
 
         [HttpPost("google-signin")]
@@ -58,24 +58,9 @@ namespace CarSearchAPI.Controllers
             if (!ModelState.IsValid) { return BadRequest(ModelState); }
 
             
-            var user = await _context.applicationUsers.FirstOrDefaultAsync(u => u.Email == email);
-            if (user == null)
-            {
-                user = new ApplicationUser
-                {
-                    Email = email,
-                    Name = userInfo.name,
-                    Surname = userInfo.surname,
-                    BirthDate = userInfo.birthDate,
-                    LicenceDate = userInfo.licenceDate
-                };
-
-                _context.applicationUsers.Add(user); 
-                await _context.SaveChangesAsync();
-            }
-            else
-            {
-                return BadRequest("This user already exist");
+            if (!(await _userService.ServeNewCreatedUser(email, userInfo))) 
+            { 
+                return BadRequest("User already exists"); 
             }
 
             var sessionToken = _sessionTokenManager.GetSessionToken(email, false);

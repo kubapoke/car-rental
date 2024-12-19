@@ -6,13 +6,13 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using CarSearchAPI.Abstractions;
 
-namespace CarSearchAPI.Services
+namespace CarSearchAPI.Services.TokenManagers
 {
     public class JwtSessionTokenManager : ISessionTokenManager
     {
-  
+
         public string GetSessionToken(string email, bool isTemporary)
-        {            
+        {
             string stringKey = GetSekretKeyAsString();
             string token = GenerateToken(email, isTemporary, stringKey);
             return token;
@@ -27,7 +27,7 @@ namespace CarSearchAPI.Services
 
             (Claim userClaim, double expirationMinutes) = GetClaimAndExpirationTime(isTemporary);
             claims.Add(userClaim);
-            
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
@@ -47,7 +47,7 @@ namespace CarSearchAPI.Services
             double expirationMinutes;
             if (isTemporary)
             {
-                Claim protoUserClaim = new Claim("ProtoUserClaim", "1");                
+                Claim protoUserClaim = new Claim("ProtoUserClaim", "1");
                 expirationMinutes = 10;
                 return (protoUserClaim, expirationMinutes);
             }

@@ -1,4 +1,4 @@
-﻿using CarSearchAPI.Services;
+﻿using CarSearchAPI.Services.TokenManagers;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;

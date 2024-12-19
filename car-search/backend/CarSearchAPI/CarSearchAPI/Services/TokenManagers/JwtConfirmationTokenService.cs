@@ -5,7 +5,7 @@ using CarSearchAPI.DTOs.CarRental;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-namespace CarSearchAPI.Services
+namespace CarSearchAPI.Services.TokenManagers
 {
     public class JwtConfirmationTokenService : IConfirmationTokenService
     {
@@ -23,8 +23,8 @@ namespace CarSearchAPI.Services
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(claims), 
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature), 
+                Subject = new ClaimsIdentity(claims),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
                 Expires = DateTime.UtcNow.AddMinutes(10)
             };
             var token = tokenHandelr.CreateToken(tokenDescriptor);
@@ -54,12 +54,12 @@ namespace CarSearchAPI.Services
             string offerId = claimsPrincipal.FindFirst("OfferId")?.Value;
             string email = claimsPrincipal.FindFirst("Email")?.Value;
             string companyName = claimsPrincipal.FindFirst("CompanyName")?.Value;
-            
+
             if (string.IsNullOrEmpty(offerId) || string.IsNullOrEmpty(email))
             {
                 return false;
             }
-            
+
             return true;
         }
     }

@@ -20,7 +20,7 @@ namespace CarSearchAPI.Repositories.Implementations
             await _context.SaveChangesAsync();
         }
 
-        public async Task<ApplicationUser?> GetApplicationUSerByEmailAsync(string email)
+        public async Task<ApplicationUser?> GetApplicationUserOrNullByEmailAsync(string email)
         {
             return await _context.applicationUsers.FirstOrDefaultAsync(u => u.Email == email);
         }

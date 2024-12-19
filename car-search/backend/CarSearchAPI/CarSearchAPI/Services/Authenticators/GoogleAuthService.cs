@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using CarSearchAPI.Abstractions;
 using CarSearchAPI.Repositories.Abstractions;
 
-namespace CarSearchAPI.Services
+namespace CarSearchAPI.Services.Authenticators
 {
     public class GoogleAuthService : IAuthService
     {
@@ -19,7 +19,7 @@ namespace CarSearchAPI.Services
         public async Task<(string token, bool isTemporary)> GetTokenAndFlagAsync(string idToken)
         {
             var payload = await GoogleJsonWebSignature.ValidateAsync(idToken);
-            var user = await _userRepository.GetApplicationUSerByEmailAsync(payload.Email);
+            var user = await _userRepository.GetApplicationUserOrNullByEmailAsync(payload.Email);
 
             if (user != null)
             {

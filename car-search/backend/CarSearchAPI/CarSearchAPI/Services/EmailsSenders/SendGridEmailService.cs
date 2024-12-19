@@ -3,7 +3,7 @@ using SendGrid.Helpers.Mail;
 using SendGrid;
 using CarSearchAPI.DTOs.CarRental;
 
-namespace CarSearchAPI.Services
+namespace CarSearchAPI.Services.EmailsSenders
 {
     public class SendGridEmailService : IEmailSender
     {
@@ -33,7 +33,7 @@ namespace CarSearchAPI.Services
                                   $"<li>Your car: {info.Brand} {info.Model}</li>" +
                                   $"<li>Price: {info.Price}</li>" +
                                   $"<li>Rent starts: {info.StartDate}</li>" +
-                                  $"<li>Rent ends: {info.EndDate}</li>" +                                   
+                                  $"<li>Rent ends: {info.EndDate}</li>" +
                               $"</ul><br/>" + $"<div>Click here to confirm your rent: {confirmationLink}</div>";
             var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
             var response = await client.SendEmailAsync(msg);
