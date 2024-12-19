@@ -45,18 +45,24 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
+    permissions:
+      id-token: write #This is required for requesting the JWT
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: node-app
 
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_219D88E7DB7F4D6B9DD411FE093FFBDA }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_D3DE35B5F38F410F8B8BC6678DB7CF54 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_747505616FC542D19410BAB6669E3374 }}
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
           app-name: 'carrentemployee'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_2E07AAC139EF446DA244AC632C954B41 }}
-          package: dist.zip # Point to the zipped package
+          package: dist.zip
