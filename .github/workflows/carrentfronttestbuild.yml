@@ -1,4 +1,4 @@
-name: Test build of Car Rental employee application
+name: Test build of Car Rent employee application
 
 on:
   workflow_dispatch:
@@ -15,10 +15,10 @@ jobs:
         with:
           node-version: '20.x'
 
-      - name: Create .env file for the Car Rental Frontend
+      - name: Create .env file for the Car Rent Frontend
         working-directory: car-rental/frontend/car-rental
         run: |
-          echo "VITE_SERVER_URL=${{ secrets.RENTALFRONT_VITE_SERVER_URL }}" >> .env
+          echo "VITE_SERVER_URL=${{ secrets.RENTALFRONT_VITE_SERVER_URL }}" > .env
 
       - name: npm install, build, and test
         working-directory: car-rental/frontend/car-rental
