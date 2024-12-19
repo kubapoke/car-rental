@@ -234,7 +234,7 @@ const SearchBar = () => {
                     </div>
 
                     {/* Search Button */}
-                    <div className="flex flex-col w-1/5 max-w-[150px] min-w-[150px] z-40">
+                    <div className="flex flex-col w-1/5 max-w-[150px] min-w-[150px] z-2">
                         <button
                             type="submit"
                             className="bg-blue-500 text-white rounded-lg py-4 px-6 text-base h-[64px]"
