@@ -52,6 +52,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 
 // Repositories
 builder.Services.AddScoped<IUserRepository, ApplicationUserRepository>();
+builder.Services.AddScoped<IRentRepository, RentRepository>();
 
 // Register external data providers
 builder.Services.AddScoped<IExternalDataProvider, CarRentalDataProvider>();
