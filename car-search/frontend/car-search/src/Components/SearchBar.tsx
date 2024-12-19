@@ -184,8 +184,8 @@ const SearchBar = () => {
                             ))}
                         </select>
                         <span className="text-red-500 text-sm mt-1 min-h-[1.5rem] break-words w-full">
-                {errors.selectedModel}
-            </span>
+                            {errors.selectedModel}
+                        </span>
                     </div>
 
                     {/* Location Dropdown */}
@@ -203,8 +203,8 @@ const SearchBar = () => {
                             ))}
                         </select>
                         <span className="text-red-500 text-sm mt-1 min-h-[1.5rem] break-words w-full">
-                {errors.selectedLocation}
-            </span>
+                            {errors.selectedLocation}
+                        </span>
                     </div>
 
                     {/* Start Date Picker */}
@@ -216,8 +216,8 @@ const SearchBar = () => {
                             className="border border-gray-300 rounded-lg py-4 px-4 text-base h-[64px] w-full"
                         />
                         <span className="text-red-500 text-sm mt-1 min-h-[1.5rem] break-words w-full">
-                {errors.startDate}
-            </span>
+                            {errors.startDate}
+                        </span>
                     </div>
 
                     {/* End Date Picker */}
@@ -229,8 +229,8 @@ const SearchBar = () => {
                             className="border border-gray-300 rounded-lg py-4 px-4 text-base h-[64px] w-full"
                         />
                         <span className="text-red-500 text-sm mt-1 min-h-[1.5rem] break-words w-full">
-                {errors.endDate}
-            </span>
+                            {errors.endDate}
+                        </span>
                     </div>
 
                     {/* Search Button */}
