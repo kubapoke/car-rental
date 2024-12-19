@@ -16,13 +16,13 @@ namespace CarSearchAPI.Controllers
     public class RentsController : ControllerBase
     {
         private readonly CarSearchDbContext _context;
-        private readonly IConfirmationTokenService _confirmationTokenService;
+        private readonly IConfirmationTokenValidator _confirmationTokenValidator;
         private readonly IEnumerable<IExternalDataProvider> _dataProviders;
 
-        public RentsController(CarSearchDbContext context, IConfirmationTokenService confirmationTokenService, IEnumerable<IExternalDataProvider> dataProviders)
+        public RentsController(CarSearchDbContext context, IConfirmationTokenValidator confirmationTokenValidator, IEnumerable<IExternalDataProvider> dataProviders)
         {
             _context = context;
-            _confirmationTokenService = confirmationTokenService;
+            _confirmationTokenValidator = confirmationTokenValidator;
             _dataProviders = dataProviders;
         }
 
@@ -31,9 +31,9 @@ namespace CarSearchAPI.Controllers
         {
             try
             {
-                var claimsPrincipal = _confirmationTokenService.ValidateConfirmationToken(token);
+                var claimsPrincipal = _confirmationTokenValidator.ValidateConfirmationToken(token);
                 
-                if (!_confirmationTokenService.ValidateOfferClaim(claimsPrincipal)) { return BadRequest("Invalid token"); }
+                if (!_confirmationTokenValidator.ValidateOfferClaim(claimsPrincipal)) { return BadRequest("Invalid token"); }
 
                 IExternalDataProvider? activeProvider = null;
 

@@ -7,11 +7,11 @@ namespace CarSearchAPI.Services.EmailsSenders
 {
     public class SendGridEmailService : IEmailSender
     {
-        private readonly IConfirmationTokenService _confirmationTokenService;
+        private readonly IConfirmationTokenGenerator _confirmationTokenGenerator;
 
-        public SendGridEmailService(IConfirmationTokenService confirmationTokenService)
+        public SendGridEmailService(IConfirmationTokenGenerator confirmationTokenGenerator)
         {
-            _confirmationTokenService = confirmationTokenService;
+            _confirmationTokenGenerator = confirmationTokenGenerator;
         }
 
         public async Task<bool> SendNewRentEmailAsync(OfferDto info)
@@ -46,7 +46,7 @@ namespace CarSearchAPI.Services.EmailsSenders
 
         private string CreateConfirmationLink(OfferDto info) 
         {
-            var token = _confirmationTokenService.GenerateConfirmationToken(info);
+            var token = _confirmationTokenGenerator.GenerateConfirmationToken(info);
             string myAddress = GetMyAddress();
             string confirmationLink = myAddress + $"/api/Rents/new-rent-confirm?token={Uri.EscapeDataString(token)}";
             return confirmationLink;

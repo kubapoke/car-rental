@@ -44,7 +44,8 @@ builder.Services.AddHttpClient();
 
 // Services
 builder.Services.AddScoped<IEmailSender, SendGridEmailService>();
-builder.Services.AddScoped<IConfirmationTokenService, JwtConfirmationTokenService>();
+builder.Services.AddScoped<IConfirmationTokenGenerator, JwtConfirmationTokenGenerator>();
+builder.Services.AddScoped<IConfirmationTokenValidator, JwtConfirmationTokenValidator>();
 builder.Services.AddScoped<IAuthService, GoogleAuthService>();
 builder.Services.AddScoped<ISessionTokenManager, JwtSessionTokenManager>();
 builder.Services.AddScoped<IUserService, UserService>();
