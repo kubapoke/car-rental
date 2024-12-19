@@ -59,19 +59,19 @@ const SearchBar = () => {
 
     useEffect(() => {
         // update models based on selected brand
-       if(selectedBrand) {
-           const filteredModels = carData
-               .filter(car => car.brandName === selectedBrand)
-               .map(car => car.modelName);
+        if(selectedBrand) {
+            const filteredModels = carData
+                .filter(car => car.brandName === selectedBrand)
+                .map(car => car.modelName);
 
-           setModels([...new Set(filteredModels)]);
+            setModels([...new Set(filteredModels)]);
 
-           if (!filteredModels.includes(selectedModel)) {
-               setSelectedModel('');
-           }
-       } else {
+            if (!filteredModels.includes(selectedModel)) {
+                setSelectedModel('');
+            }
+        } else {
             setModels([...new Set(carData.map(car => car.modelName))]);
-       }
+        }
     }, [selectedBrand, carData, selectedModel]);
 
     const handleModelChange = (model: string) => {
@@ -151,11 +151,11 @@ const SearchBar = () => {
             >
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex gap-4 flex-nowrap overflow-x-auto">
                     {/* Brand Dropdown */}
-                    <div className="flex flex-col w-1/5 min-w-[150px]">
+                    <div className="flex flex-col w-1/5 max-w-[150px] min-w-[150px]">
                         <select
                             value={selectedBrand}
                             onChange={(e) => setSelectedBrand(e.target.value)}
-                            className="border border-gray-300 rounded-lg py-4 px-4 text-base h-[64px]"
+                            className="border border-gray-300 rounded-lg py-4 px-4 text-base h-[64px] w-full"
                         >
                             <option value="">Select Brand</option>
                             {brands.map((brand) => (
@@ -170,11 +170,11 @@ const SearchBar = () => {
                     </div>
 
                     {/* Model Dropdown */}
-                    <div className="flex flex-col w-1/5 min-w-[150px]">
+                    <div className="flex flex-col w-1/5 max-w-[150px] min-w-[150px]">
                         <select
                             value={selectedModel}
                             onChange={(e) => handleModelChange(e.target.value)}
-                            className="border border-gray-300 rounded-lg py-4 px-4 text-base h-[64px]"
+                            className="border border-gray-300 rounded-lg py-4 px-4 text-base h-[64px] w-full"
                         >
                             <option value="">Select Model</option>
                             {models.map((model) => (
@@ -189,11 +189,11 @@ const SearchBar = () => {
                     </div>
 
                     {/* Location Dropdown */}
-                    <div className="flex flex-col w-1/5 min-w-[150px]">
+                    <div className="flex flex-col w-1/5 max-w-[150px] min-w-[150px]">
                         <select
                             value={selectedLocation}
                             onChange={(e) => setSelectedLocation(e.target.value)}
-                            className="border border-gray-300 rounded-lg py-4 px-4 text-base h-[64px]"
+                            className="border border-gray-300 rounded-lg py-4 px-4 text-base h-[64px] w-full"
                         >
                             <option value="">Select Location</option>
                             {locations.map((location) => (
@@ -208,12 +208,12 @@ const SearchBar = () => {
                     </div>
 
                     {/* Start Date Picker */}
-                    <div className="flex flex-col w-1/5 min-w-[150px]">
+                    <div className="flex flex-col w-1/5 max-w-[150px] min-w-[150px]">
                         <input
                             type="date"
                             value={startDate}
                             onChange={(e) => setStartDate(e.target.value)}
-                            className="border border-gray-300 rounded-lg py-4 px-4 text-base h-[64px]"
+                            className="border border-gray-300 rounded-lg py-4 px-4 text-base h-[64px] w-full"
                         />
                         <span className="text-red-500 text-sm mt-1 min-h-[1.5rem] break-words w-full">
                 {errors.startDate}
@@ -221,12 +221,12 @@ const SearchBar = () => {
                     </div>
 
                     {/* End Date Picker */}
-                    <div className="flex flex-col w-1/5 min-w-[150px]">
+                    <div className="flex flex-col w-1/5 max-w-[150px] min-w-[150px]">
                         <input
                             type="date"
                             value={endDate}
                             onChange={(e) => setEndDate(e.target.value)}
-                            className="border border-gray-300 rounded-lg py-4 px-4 text-base h-[64px]"
+                            className="border border-gray-300 rounded-lg py-4 px-4 text-base h-[64px] w-full"
                         />
                         <span className="text-red-500 text-sm mt-1 min-h-[1.5rem] break-words w-full">
                 {errors.endDate}
@@ -234,7 +234,7 @@ const SearchBar = () => {
                     </div>
 
                     {/* Search Button */}
-                    <div className="flex flex-col items-center w-1/5 min-w-[150px] z-40">
+                    <div className="flex flex-col w-1/5 max-w-[150px] min-w-[150px] z-40">
                         <button
                             type="submit"
                             className="bg-blue-500 text-white rounded-lg py-4 px-6 text-base h-[64px]"
