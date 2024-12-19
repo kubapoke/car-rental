@@ -48,27 +48,13 @@ namespace CarSearchAPI.Controllers.ForwardControllers
                 Location = location,
             };
 
-            var totalOfferAmount = 0;
-            var providerOfferAmount = new List<(IExternalDataProvider provider, int amount)>();
+            (int totalOfferAmount, List<(IExternalDataProvider provider, int amount)> providerOfferAmount) = 
+                await GetAmountOfOffersFromAllProvidersAsync(offerAmountParametersDto);
+            
+
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
-            
-            // get the amount of offers matching the search data from each provider
-            foreach (var provider in _dataProviders)
-            {
-                try
-                {
-                    var offerAmount = await provider.GetOfferAmountAsync(offerAmountParametersDto);
-                    totalOfferAmount += offerAmount;
-                    providerOfferAmount.Add((provider, offerAmount));
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error getting offer amount from provider: {ex.Message}");
-                }
-            }
-            
+
             var pageOffers = new List<OfferDto>();
-            var offerPage = new OfferPageDto();
             
             var cumulativeAmount = 0;
             var offersToBePaged = _pageSize;
@@ -150,13 +136,39 @@ namespace CarSearchAPI.Controllers.ForwardControllers
                     }
                 }
             }
-            
+
+            var offerPage = new OfferPageDto();
+
             offerPage.PageCount = totalOfferAmount / _pageSize;
             if(totalOfferAmount % _pageSize != 0)
                 offerPage.PageCount++;
             offerPage.Offers = pageOffers;
             
             return Ok(offerPage);
+        }
+
+        private async Task<(int, List<(IExternalDataProvider provider, int amount)>)> GetAmountOfOffersFromAllProvidersAsync(GetOfferAmountParametersDto offerAmountParametersDto)
+        {
+            var totalOfferAmount = 0;
+            var providerOfferAmount = new List<(IExternalDataProvider provider, int amount)>();
+
+
+            // get the amount of offers matching the search data from each provider
+            foreach (var provider in _dataProviders)
+            {
+                try
+                {
+                    var offerAmount = await provider.GetOfferAmountAsync(offerAmountParametersDto);
+                    totalOfferAmount += offerAmount;
+                    providerOfferAmount.Add((provider, offerAmount));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error getting offer amount from provider: {ex.Message}");
+                }
+            }
+
+            return (totalOfferAmount, providerOfferAmount);
         }
     }
 }
