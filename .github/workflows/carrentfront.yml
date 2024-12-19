@@ -59,6 +59,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: node-app
+          path: car-rental/frontend/car-rental/dist.zip
 
       - name: Login to Azure
         uses: azure/login@v2
