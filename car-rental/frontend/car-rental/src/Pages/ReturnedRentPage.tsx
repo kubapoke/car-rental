@@ -15,9 +15,6 @@ const ReturnedRentPage: React.FC = () => {
                 <p className="text-gray-600"><strong>Status:</strong> {rent.status}</p>
                 <p className="text-gray-600"><strong>Start Date:</strong> {new Date(rent.rentStart).toLocaleDateString()}</p>
                 <p className="text-gray-600"><strong>End Date:</strong> {rent.rentEnd ? new Date(rent.rentEnd).toLocaleDateString() : "N/A"}</p>
-                {rent.actualReturnDate && (
-                    <p className="text-gray-600"><strong>Actual Return Date:</strong> {new Date(rent.actualReturnDate).toLocaleDateString()}</p>
-                )}
             </div>
 
             {rent.description && (
@@ -27,11 +24,11 @@ const ReturnedRentPage: React.FC = () => {
                 </div>
             )}
 
-            {rent.image && (
+            {rent.imageUri && (
                 <div className="mt-4">
                     <h3 className="text-lg font-semibold text-gray-800">Return Photo</h3>
                     <img
-                        src={rent.image}
+                        src={rent.imageUri}
                         alt="Returned Car"
                         className="mt-2 w-full max-h-96 object-cover border border-gray-300 rounded-md shadow-sm"
                     />

@@ -35,7 +35,7 @@ const CarRent: React.FC<{ rent: Rent }> = ({ rent }) => {
 
                 {rent.status === "Returned" && (
                     <button
-                        className="bg-black text-white px-6 py-2 rounded-md shadow-md cursor-not-allowed"
+                        className="bg-black text-white px-6 py-2 rounded-md shadow-md hover:bg-gray-800 transition duration-200"
                         onClick={handleViewReturnedRent}
                     >
                         View Details
