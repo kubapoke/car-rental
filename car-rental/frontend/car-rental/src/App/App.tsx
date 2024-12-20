@@ -7,6 +7,7 @@ import LoggedInLayout from "../Layouts/LoggedInLayout.tsx";
 import {FiltersProvider} from "../Context/FiltersContext.tsx";
 import {RentsProvider} from "../Context/RentsContext.tsx";
 import ConfirmReturnPage from "../Pages/ConfirmReturnPage.tsx";
+import ReturnedRentPage from "../Pages/ReturnedRentPage.tsx";
 
 function App() {
     return (
@@ -29,8 +30,9 @@ function MainRouter() {
                 <Route index element={<Navigate to={isLoggedIn ? "/logged-in/cockpit" : "/log-in"} replace />} />
                 <Route path="log-in" element={isLoggedIn ? <Navigate to="/logged-in/cockpit" replace /> : <LogInPage />} />
                 <Route path="logged-in" element={isLoggedIn ? <LoggedInLayout /> : <Navigate to="/log-in" replace />}>
-                    <Route path="cockpit" element={isLoggedIn ? <CockpitPage /> : <Navigate to="/log-in" replace />} />
-                    <Route path="confirm-return/:id" element={isLoggedIn ? <ConfirmReturnPage/> : <Navigate to="/log-in" replace />}/>
+                <Route path="cockpit" element={isLoggedIn ? <CockpitPage /> : <Navigate to="/log-in" replace />} />
+                <Route path="confirm-return/:id" element={isLoggedIn ? <ConfirmReturnPage/> : <Navigate to="/log-in" replace />}/>
+                <Route path="returned-rent/:id" element={isLoggedIn ? <ReturnedRentPage /> : <Navigate to="/log-in" replace />}/>
                 </Route>
             </>
         )
