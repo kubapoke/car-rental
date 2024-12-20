@@ -66,7 +66,7 @@ namespace CarSearchAPI.Controllers
                 return Unauthorized("You are not logged in");
             }
 
-            var rentInfoList = _rentService.GetRentInfoListByEmailAsync(email);
+            var rentInfoList = await _rentService.GetRentInfoListByEmailAsync(email);
 
             return Ok(rentInfoList);
         }
