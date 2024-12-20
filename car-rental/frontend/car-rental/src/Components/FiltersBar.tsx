@@ -21,36 +21,42 @@ const FiltersBar = () => {
             selectedRentStatus: selectedRentStatus,
         })
     };
-    
-    
+
+    const formatStatus = (status: rentStatus): string => {
+        const mapping: Record<rentStatus, string> = {
+            [rentStatus.Active]: "Active",
+            [rentStatus.ReadyToReturn]: "Ready To Return",
+            [rentStatus.Returned]: "Returned",
+        };
+        return mapping[status] || status;
+    };
+
     return (
         <>
             <form
-                className="flex flex-col md:flex-row items-center p-4 bg-white rounded-lg shadow-md"
+                className="flex flex-wrap items-center p-4 bg-white rounded-lg shadow-md w-full max-w-screen-lg mx-auto"
                 onSubmit={handleSubmit}
             >
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-between">
-                    {/* Brand Dropdown */}
+                <div className="flex w-full justify-between flex-col md:flex-row">
+                    {/* Status Dropdown */}
                     <select
                         value={selectedRentStatus}
                         onChange={(e) => setSelectedRentStatus(e.target.value as rentStatus)}
                         className="border border-gray-300 rounded-lg p-2 mb-2 md:mb-0 md:mr-2 w-full md:w-1/3"
                     >
-                        <option value="">Select Status</option>
                         {Object.values(rentStatus).map((status) => (
                             <option key={status} value={status}>
-                                {status}
+                                {formatStatus(status)}
                             </option>
                         ))}
                     </select>
 
                     <button
                         type="submit"
-                        className="bg-black text-white rounded-lg p-2 mt-2 md:mt-0 md:ml-2"
+                        className="bg-black text-white rounded-lg p-2 mt-2 md:mt-0 md:ml-2 w-full md:w-auto"
                     >
-                        <FaSearch className={'inline text-lg mb-1'}/> <br/> Apply Filters
+                        <FaSearch className="inline text-lg mb-1"/> Apply Filters
                     </button>
-
                 </div>
             </form>
         </>
