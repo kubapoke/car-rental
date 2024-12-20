@@ -21,6 +21,8 @@ export interface Rent {
     rentStart: string;
     rentEnd: string;
     status: rentStatus;
+    imageUri: string;
+    description: string;
 }
 
 
@@ -69,6 +71,8 @@ export const RentsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                     rentStart: item?.rentStart || "",
                     rentEnd: item?.rentEnd || "",
                     status: item?.status || filters.selectedRentStatus, //TODO: cheated here a little bit
+                    imageUri: item?.imageUri || null,
+                    description: item?.description || null,
                 }));
                 
                 setRents(rents);
