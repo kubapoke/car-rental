@@ -67,25 +67,27 @@ namespace CarSearchAPI.Controllers.ForwardControllers
 
                 if (cumulativeAmount > _page * _pageSize)
                 {
+                    // initialization
+                    var offerListParametersDto = new GetOfferListParametersDto()
+                    {
+                        Brand = brand,
+                        Model = model,
+                        StartDate = startDate,
+                        EndDate = endDate,
+                        Location = location,
+                        Email = email,
+                        PageSize = _pageSize,
+                    };
+
                     if (offersToBePaged == _pageSize)
                     {
                         // we need to start from the offer at the appropriate page, ignoring the ones
                         // we've already taken from other providers
                         var startingOffer = _page * _pageSize - (cumulativeAmount - amount);
-                        var startingPage = startingOffer / _pageSize;
+                        var startingPage = startingOffer / _pageSize; 
                         
-                        var offerListParametersDto = new GetOfferListParametersDto()
-                        {
-                            Brand = brand,
-                            Model = model,
-                            StartDate = startDate,
-                            EndDate = endDate,
-                            Location = location,
-                            Email = email,
-                            Page = startingPage,
-                            PageSize = _pageSize,
-                        };
-
+                        offerListParametersDto.Page = startingPage;
+                       
                         try
                         {
                             var startingOfferPage = await provider.GetOfferListAsync(offerListParametersDto);
@@ -104,18 +106,8 @@ namespace CarSearchAPI.Controllers.ForwardControllers
                         // we've already taken from other providers, and the aleady taken offers
                         var startingOffer = _page * _pageSize - (cumulativeAmount - amount) + (_pageSize - offersToBePaged);
                         var startingPage = startingOffer / _pageSize;
-                        
-                        var offerListParametersDto = new GetOfferListParametersDto()
-                        {
-                            Brand = brand,
-                            Model = model,
-                            StartDate = startDate,
-                            EndDate = endDate,
-                            Location = location,
-                            Email = email,
-                            Page = startingPage,
-                            PageSize = _pageSize,
-                        };
+
+                        offerListParametersDto.Page = startingPage;
 
                         try
                         {
