@@ -15,14 +15,12 @@ namespace CarSearchAPI.Controllers
     [ApiController]
     public class RentsController : ControllerBase
     {
-        private readonly CarSearchDbContext _context;
         private readonly IRentService _rentService;
         private readonly IConfirmationTokenValidator _confirmationTokenValidator;
         private readonly IEnumerable<IExternalDataProvider> _dataProviders;
 
-        public RentsController(CarSearchDbContext context, IConfirmationTokenValidator confirmationTokenValidator, IEnumerable<IExternalDataProvider> dataProviders, IRentService rentService)
+        public RentsController(IConfirmationTokenValidator confirmationTokenValidator, IEnumerable<IExternalDataProvider> dataProviders, IRentService rentService)
         {
-            _context = context;
             _confirmationTokenValidator = confirmationTokenValidator;
             _dataProviders = dataProviders;
             _rentService = rentService;
