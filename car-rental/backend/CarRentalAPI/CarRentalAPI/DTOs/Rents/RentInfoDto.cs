@@ -10,4 +10,6 @@ public class RentInfoDto
     public DateTime RentStart { get; set; }
     public DateTime? RentEnd { get; set; }
     public RentStatus RentStatus { get; set; }
+    public string? ImageUri { get; set; }
+    public string? Description { get; set; }
 }

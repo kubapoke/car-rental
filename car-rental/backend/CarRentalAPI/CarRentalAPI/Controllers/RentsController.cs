@@ -95,7 +95,9 @@ namespace CarRentalAPI.Controllers
                     ModelName = rent.Car.Model.Name,
                     RentStart = rent.RentStart,
                     RentEnd = rent.RentEnd,
-                    RentStatus = rent.Status
+                    RentStatus = rent.Status,
+                    ImageUri = rent.ImageUri,
+                    Description = rent.Description,
                 })
                 .ToListAsync();
             
