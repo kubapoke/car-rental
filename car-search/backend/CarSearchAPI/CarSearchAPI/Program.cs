@@ -17,6 +17,7 @@ using CarSearchAPI.Services.EmailsSenders;
 using Microsoft.AspNetCore.WebSockets;
 using CarSearchAPI.Services.UserServices;
 using CarSearchAPI.Services.RentServices;
+using CarSearchAPI.Services.OfferServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,6 +52,8 @@ builder.Services.AddScoped<IAuthService, GoogleAuthService>();
 builder.Services.AddScoped<ISessionTokenManager, JwtSessionTokenManager>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRentService, RentService>();
+builder.Services.AddScoped<IOfferService, OfferService>();
+builder.Services.AddScoped<IOfferPageSeparator, OfferPageService>();
 
 // Repositories
 builder.Services.AddScoped<IUserRepository, ApplicationUserRepository>();
