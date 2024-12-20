@@ -11,7 +11,8 @@ namespace CarRentalAPI.Services
             string containerName = Environment.GetEnvironmentVariable("BLOB_CONTAINER_NAME");
 
             BlobContainerClient blobContainerClient = new BlobContainerClient(connectionString, containerName);
-            BlobClient blobClient = blobContainerClient.GetBlobClient(file.FileName);
+            string uniqueFileName = $"{Path.GetFileNameWithoutExtension(file.FileName)}_{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+            BlobClient blobClient = blobContainerClient.GetBlobClient(uniqueFileName);
             var memmoryStream = new MemoryStream();
             await file.CopyToAsync(memmoryStream);
             memmoryStream.Position = 0;
