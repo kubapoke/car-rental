@@ -25,8 +25,6 @@ namespace CarSearchAPI.Controllers.ForwardControllers
         [HttpGet("car-list")]
         public async Task<ActionResult<IEnumerable<string>>> CarList()
         {
-            var parameters = new Dictionary<string, string>();
-
             var aggregateCars = new List<CarDto>();
 
             foreach (var provider in _dataProviders)

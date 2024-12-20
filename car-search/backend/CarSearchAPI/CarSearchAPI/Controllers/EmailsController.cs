@@ -21,8 +21,10 @@ namespace CarSearchAPI.Controllers
         [HttpPost("send-email")]
         public async Task<IActionResult> SendEmail([FromBody] OfferDto info)
         {
-            bool isSuccess = await _emailSender.SendEmailAsync(info);
-            return isSuccess ? Ok() : BadRequest();
+            bool isSuccess = await _emailSender.SendNewRentEmailAsync(info);
+
+            if (isSuccess) { return Ok(); }
+            else { return BadRequest(); }
         }
     }
 }
