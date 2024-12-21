@@ -16,12 +16,12 @@ namespace CarSearchAPI.Services.RentServices
             _rentRepository = rentRepository;      
         }
 
-        public async Task<Rent?> GetRenOrNullByIdAsync(int id)
+        public async Task<Rent?> GetRentOrNullByIdAsync(int id)
         {
             return await _rentRepository.GetRentOrNullByIdAsync(id);
         }
 
-        public async Task SetRentStatusReturnedAsync(Rent rent)
+        public async Task MarkRentAsReturnedAsync(Rent rent)
         {
             rent.Status = RentStatuses.Returned;
             await _rentRepository.SaveChangesAsync();

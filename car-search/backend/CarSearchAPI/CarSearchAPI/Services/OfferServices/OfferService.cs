@@ -14,7 +14,7 @@ namespace CarSearchAPI.Services.OfferServices
             _dataProviders = dataProviders;
         }
 
-        public async Task<(int, List<(IExternalDataProvider provider, int amount)>)> GetAmountOfOffersFromAllProvidersAsync
+        public async Task<(int totalOfferAmount, List<(IExternalDataProvider provider, int amount)> providerOfferAmount)> GetAmountOfOffersFromAllProvidersAsync
             (GetOfferAmountParametersDto offerAmountParametersDto)
         {
             var totalOfferAmount = 0;
@@ -39,7 +39,7 @@ namespace CarSearchAPI.Services.OfferServices
             return (totalOfferAmount, providerOfferAmount);
         }
 
-        public async Task<int> UpdatePageOffersAndOffersToByPagedAsync(
+        public async Task<int> UpdatePageOffersAndOffersToBePagedAsync(
             IExternalDataProvider provider,
             GetOfferListParametersDto offerListParametersDto,
             List<OfferDto> pageOffers,

@@ -3,7 +3,7 @@ using CarSearchAPI.DTOs.ForwardingParameters;
 
 namespace CarSearchAPI.Abstractions
 {
-    public interface IOfferPageSeparator
+    public interface IOfferPageService
     {
         public GetOfferAmountParametersDto GetGetOfferAmountParameters
             (string? brand, string? model, DateTime startDate, DateTime endDate, string? location);

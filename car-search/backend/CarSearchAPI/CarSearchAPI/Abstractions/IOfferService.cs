@@ -5,9 +5,9 @@ namespace CarSearchAPI.Abstractions
 {
     public interface IOfferService
     {
-        public Task<(int, List<(IExternalDataProvider provider, int amount)>)> GetAmountOfOffersFromAllProvidersAsync
+        public Task<(int totalOfferAmount, List<(IExternalDataProvider provider, int amount)> providerOfferAmount)> GetAmountOfOffersFromAllProvidersAsync
             (GetOfferAmountParametersDto offerAmountParametersDto);
-        public Task<int> UpdatePageOffersAndOffersToByPagedAsync(
+        public Task<int> UpdatePageOffersAndOffersToBePagedAsync(
             IExternalDataProvider provider,
             GetOfferListParametersDto offerListParametersDto,
             List<OfferDto> pageOffers,

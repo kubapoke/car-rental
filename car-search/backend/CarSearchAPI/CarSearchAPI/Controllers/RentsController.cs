@@ -73,7 +73,7 @@ namespace CarSearchAPI.Controllers
         [HttpPost("return-car")]
         public async Task<IActionResult> ReturnCar([FromBody]int rentId)
         {
-            var rent = await _rentService.GetRenOrNullByIdAsync(rentId);
+            var rent = await _rentService.GetRentOrNullByIdAsync(rentId);
             if (rent == null)
             {
                 return NotFound("Rent not found");
@@ -88,7 +88,7 @@ namespace CarSearchAPI.Controllers
                  return BadRequest();
              }
 
-            await _rentService.SetRentStatusReturnedAsync(rent);
+            await _rentService.MarkRentAsReturnedAsync(rent);
             
             return Ok();
         }

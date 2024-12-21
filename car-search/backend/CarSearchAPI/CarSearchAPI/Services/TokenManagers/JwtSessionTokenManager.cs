@@ -63,6 +63,5 @@ namespace CarSearchAPI.Services.TokenManagers
         {
             return Environment.GetEnvironmentVariable("JWT_TOKEN_SECRET_KEY");
         }
-
     }
 }

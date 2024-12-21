@@ -59,7 +59,7 @@ builder.Services.AddScoped<ISessionTokenManager, JwtSessionTokenManager>();
 builder.Services.AddScoped<IEmailSender, SendGridEmailService>();
 builder.Services.AddScoped<IAuthService, GoogleAuthService>();
 builder.Services.AddScoped<IOfferService, OfferService>();
-builder.Services.AddScoped<IOfferPageSeparator, OfferPageService>();
+builder.Services.AddScoped<IOfferPageService, OfferPageService>();
 
 // Repositories
 builder.Services.AddScoped<IUserRepository, ApplicationUserRepository>();

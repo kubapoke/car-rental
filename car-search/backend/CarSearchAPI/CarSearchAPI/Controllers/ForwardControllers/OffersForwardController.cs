@@ -19,12 +19,12 @@ namespace CarSearchAPI.Controllers.ForwardControllers
         // this contains all of the external data providers
         private readonly IEnumerable<IExternalDataProvider> _dataProviders;
         private const int DefaultPageSize = 6;
-        private readonly IOfferPageSeparator _offerPageSeparator;
+        private readonly IOfferPageService _offerPageService;
 
-        public OffersForwardController(IEnumerable<IExternalDataProvider> dataProviders, IOfferPageSeparator offerPageSeparator)
+        public OffersForwardController(IEnumerable<IExternalDataProvider> dataProviders, IOfferPageService offerPageService)
         {
             _dataProviders = dataProviders;
-            _offerPageSeparator = offerPageSeparator;
+            _offerPageService = offerPageService;
         }
         
         [Authorize(Policy = "LegitUser")]
@@ -41,16 +41,16 @@ namespace CarSearchAPI.Controllers.ForwardControllers
             // initialization
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
 
-            (int _page, int _pageSize) = _offerPageSeparator.GetPageAndPageSize(page, pageSize);
+            (int _page, int _pageSize) = _offerPageService.GetPageAndPageSize(page, pageSize);
 
-            var offerAmountParametersDto = _offerPageSeparator.GetGetOfferAmountParameters
+            var offerAmountParametersDto = _offerPageService.GetGetOfferAmountParameters
                 (brand, model, startDate, endDate, location);
 
-            var offerListParametersDto = _offerPageSeparator.GetGetOfferListParameters
+            var offerListParametersDto = _offerPageService.GetGetOfferListParameters
                 (brand, model, startDate, endDate, location, email, _pageSize);
 
 
-            var offerPage = await _offerPageSeparator.GetOfferPageAsync
+            var offerPage = await _offerPageService.GetOfferPageAsync
                 (offerAmountParametersDto, offerListParametersDto, _page, _pageSize);
             
             return Ok(offerPage);

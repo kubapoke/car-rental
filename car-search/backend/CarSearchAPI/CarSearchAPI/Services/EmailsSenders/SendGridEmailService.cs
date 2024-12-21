@@ -16,7 +16,6 @@ namespace CarSearchAPI.Services.EmailsSenders
 
         public async Task<bool> SendNewRentEmailAsync(OfferDto info)
         {         
-
             var from = GetSenderEmailAddress();            
             var to = new EmailAddress(info.Email, info.Email);
 

@@ -6,7 +6,7 @@ using System.Security.Claims;
 
 namespace CarSearchAPI.Services.OfferServices
 {
-    public class OfferPageService : IOfferPageSeparator
+    public class OfferPageService : IOfferPageService
     {
         private const int DefaultPageSize = 6;
 
@@ -104,7 +104,7 @@ namespace CarSearchAPI.Services.OfferServices
 
                         offerListParametersDto.Page = startingPage;
 
-                        offersToBePaged -= await _offerService.UpdatePageOffersAndOffersToByPagedAsync(provider, offerListParametersDto,
+                        offersToBePaged -= await _offerService.UpdatePageOffersAndOffersToBePagedAsync(provider, offerListParametersDto,
                             pageOffers, offersToBePaged, startingOffer, pageSize);
                     }
                     if (offersToBePaged > 0)
@@ -114,7 +114,7 @@ namespace CarSearchAPI.Services.OfferServices
 
                         offerListParametersDto.Page = startingPage;
 
-                        offersToBePaged -= await _offerService.UpdatePageOffersAndOffersToByPagedAsync(provider, offerListParametersDto,
+                        offersToBePaged -= await _offerService.UpdatePageOffersAndOffersToBePagedAsync(provider, offerListParametersDto,
                             pageOffers, offersToBePaged, startingOffer, pageSize);
                     }
 

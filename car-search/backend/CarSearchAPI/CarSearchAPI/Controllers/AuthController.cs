@@ -42,7 +42,7 @@ namespace CarSearchAPI.Controllers
 
             (string jwtToken, bool isNewUser) = await _authService.GetTokenAndFlagAsync(idToken);
 
-            return Ok(new { jwtToken, isNewUser});
+            return Ok(new { jwtToken, isNewUser });
         }
 
         [Authorize(Policy = "ProtoUser")] 

@@ -6,9 +6,9 @@ namespace CarSearchAPI.Abstractions
 {
     public interface IRentService
     {
-        public Task<Rent?> GetRenOrNullByIdAsync(int id);
+        public Task<Rent?> GetRentOrNullByIdAsync(int id);
         public Task CreateNewRentAsync(NewSearchRentDto rentInfo, string providerName);
         public Task<List<RentInfoDto>> GetRentInfoListByEmailAsync(string email);
-        public Task SetRentStatusReturnedAsync(Rent rent);
+        public Task MarkRentAsReturnedAsync(Rent rent);
     }
-    }
+}

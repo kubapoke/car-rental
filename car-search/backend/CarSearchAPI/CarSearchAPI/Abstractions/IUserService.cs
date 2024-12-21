@@ -6,6 +6,5 @@ namespace CarSearchAPI.Abstractions
     public interface IUserService
     {
         public Task<bool> ServeNewCreatedUser(string email, NewUserInfoDto userInfo);
-
     }
 }
