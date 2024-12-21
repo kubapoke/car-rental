@@ -37,13 +37,9 @@ namespace CarSearchAPI.Services.DataProviders
 
         public async Task<List<CarDto>> GetCarListAsync()
         {
-            var client = _httpClientFactory.CreateClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
-            
-            var carRentalApiUrl = Environment.GetEnvironmentVariable("CAR_RENTAL_API_URL");
-            var endpoint = "/api/Cars/car-list";
+            var client = GetClientWithBearerToken();
 
-            var url = $"{carRentalApiUrl}{endpoint}";
+            var url = GetUrlWithoutQuery("/api/Cars/car-list");          
             
             var response = await client.GetAsync(url);
             
@@ -55,17 +51,15 @@ namespace CarSearchAPI.Services.DataProviders
             }
             else
             {
-                throw new Exception($"Error fetching data from {endpoint} at Car Rental API");
+                throw new Exception($"Error fetching data from \"/api/Cars/car-list\" at Car Rental API");
             }
         }
 
         public async Task<int> GetOfferAmountAsync(GetOfferAmountParametersDto parameters)
         {
-            var client = _httpClientFactory.CreateClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+            var client = GetClientWithBearerToken();
 
-            var carRentalApiUrl = Environment.GetEnvironmentVariable("CAR_RENTAL_API_URL");
-            var endpoint = "/api/Offers/offer-amount";
+            var urlWithoutQuery = GetUrlWithoutQuery("/api/Offers/offer-amount");
 
             var queryParameters = new Dictionary<string, string?>()
             {
@@ -77,7 +71,7 @@ namespace CarSearchAPI.Services.DataProviders
             };
             
             // this creates an appropriate url
-            var url = QueryHelpers.AddQueryString($"{carRentalApiUrl}{endpoint}", 
+            var url = QueryHelpers.AddQueryString(urlWithoutQuery, 
                 queryParameters.Where(p => p.Value != null));
             
             var response = await client.GetAsync(url);
@@ -90,17 +84,15 @@ namespace CarSearchAPI.Services.DataProviders
             }
             else
             {
-                throw new Exception($"Error fetching data from {endpoint} at Car Rental API");
+                throw new Exception($"Error fetching data from \"/api/Offers/offer-amount\" at Car Rental API");
             }
         }
 
         public async Task<List<OfferDto>> GetOfferListAsync(GetOfferListParametersDto parameters)
         {
-            var client = _httpClientFactory.CreateClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+            var client = GetClientWithBearerToken();
 
-            var carRentalApiUrl = Environment.GetEnvironmentVariable("CAR_RENTAL_API_URL");
-            var endpoint = "/api/Offers/offer-list";
+            var urlWithoutQuery = GetUrlWithoutQuery("/api/Offers/offer-list");
             
             var queryParameters = new Dictionary<string, string?>()
             {
@@ -115,7 +107,7 @@ namespace CarSearchAPI.Services.DataProviders
             };
             
             // this creates an appropriate url
-            var url = QueryHelpers.AddQueryString($"{carRentalApiUrl}{endpoint}", 
+            var url = QueryHelpers.AddQueryString(urlWithoutQuery, 
                 queryParameters.Where(p => p.Value != null));
             
             var response = await client.GetAsync(url);
@@ -128,14 +120,13 @@ namespace CarSearchAPI.Services.DataProviders
             }
             else
             {
-                throw new Exception($"Error fetching data from {endpoint} at Car Rental API");
+                throw new Exception($"Error fetching data from \"/api/Offers/offer-list\" at Car Rental API");
             }
         }
 
         public async Task<NewSearchRentDto> CreateNewRentAsync(ClaimsPrincipal claimsPrincipal)
         {
-            var client = _httpClientFactory.CreateClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+            var client = GetClientWithBearerToken();
 
             string offerId = claimsPrincipal.FindFirst("OfferId")?.Value;
             string email = claimsPrincipal.FindFirst("Email")?.Value;
@@ -146,19 +137,13 @@ namespace CarSearchAPI.Services.DataProviders
                 Email = email,
             };
 
-            var carRentalApiUrl = Environment.GetEnvironmentVariable("CAR_RENTAL_API_URL")
-                          ?? throw new InvalidOperationException("CAR_RENTAL_API_URL is not set.");
-            const string endpoint = "/api/Rents/create-new-rent";
-
-            Console.WriteLine($"Serialized Payload: {JsonSerializer.Serialize(newRentDto)}");
+            var url = GetUrlWithoutQuery("/api/Rents/create-new-rent");
 
             var jsonContent = new StringContent(
                 JsonSerializer.Serialize(newRentDto),
                 Encoding.UTF8,
                 "application/json"
             );
-
-            var url = $"{carRentalApiUrl}{endpoint}";
 
             var response = await client.PostAsync(url, jsonContent);
 
@@ -168,10 +153,40 @@ namespace CarSearchAPI.Services.DataProviders
                 return newSearchRentDto;
             }
 
-            var errorMessage = $"Error fetching data from {endpoint} at Car Rental API. StatusCode: {response.StatusCode}, ReasonPhrase: {response.ReasonPhrase}";
+            var errorMessage = $"Error fetching data from \"/api/Rents/create-new-rent\" at Car Rental API. StatusCode: {response.StatusCode}, ReasonPhrase: {response.ReasonPhrase}";
+            throw new HttpRequestException(errorMessage);
+        }        
+     
+        public async Task<bool> SetRentStatusReadyToReturnAsync(int RentId)
+        {
+            var client = GetClientWithBearerToken();
+
+            var url = GetUrlWithoutQuery("/api/Rents/set-rent-status-ready-to-return");
+
+            var jsonContent = new StringContent(
+                JsonSerializer.Serialize(RentId),
+                Encoding.UTF8,
+                "application/json"
+            );
+
+            var response = await client.PostAsync(url, jsonContent);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+
+            var errorMessage = $"Error fetching data from \"/api/Rents/set-rent-status-ready-to-return\" at Car Rental API. StatusCode: {response.StatusCode}, ReasonPhrase: {response.ReasonPhrase}";
             throw new HttpRequestException(errorMessage);
         }
-        
+
+        private HttpClient GetClientWithBearerToken()
+        {
+            var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+            return client;
+        }
+
         private string GenerateAccessToken()
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -189,32 +204,12 @@ namespace CarSearchAPI.Services.DataProviders
 
             return tokenHandler.WriteToken(token);
         }
-        public async Task<bool> SetRentStatusReadyToReturnAsync(int RentId)
-        {  
-            var client = _httpClientFactory.CreateClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
 
-            var carRentalApiUrl = Environment.GetEnvironmentVariable("CAR_RENTAL_API_URL")
-                                  ?? throw new InvalidOperationException("CAR_RENTAL_API_URL is not set.");
-            const string endpoint = "/api/Rents/set-rent-status-ready-to-return";
-            
-            var jsonContent = new StringContent(
-                JsonSerializer.Serialize(RentId),
-                Encoding.UTF8,
-                "application/json"
-            );
-            
+        private string GetUrlWithoutQuery(string endpoint)
+        {
+            var carRentalApiUrl = Environment.GetEnvironmentVariable("CAR_RENTAL_API_URL");
             var url = $"{carRentalApiUrl}{endpoint}";
-
-            var response = await client.PostAsync(url, jsonContent);
-
-            if (response.IsSuccessStatusCode)
-            {
-                return true;
-            }
-
-            var errorMessage = $"Error fetching data from {endpoint} at Car Rental API. StatusCode: {response.StatusCode}, ReasonPhrase: {response.ReasonPhrase}";
-            throw new HttpRequestException(errorMessage);
+            return url;
         }
     }
 }

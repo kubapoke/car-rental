@@ -17,51 +17,39 @@ namespace CarSearchAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly CarSearchDbContext _context;
+        private readonly IUserService _userService;
 
         private readonly IAuthService _authService;
 
-        private readonly SessionTokenManager _sessionTokenManager;
+        private readonly ISessionTokenManager _sessionTokenManager;
 
-        public AuthController(CarSearchDbContext context, IAuthService authService, SessionTokenManager sessionTokenManager)
+        public AuthController(IAuthService authService, ISessionTokenManager sessionTokenManager, IUserService userService)
         {
-            _context = context;
             _authService = authService;
             _sessionTokenManager = sessionTokenManager;
+            _userService = userService;
         }
 
         [HttpPost("google-signin")]
         public async Task<IActionResult> GoogleSignIn([FromBody] string idToken)
         {            
-            bool isValid = await _authService.VerifyToken(idToken);
+            bool isValid = await _authService.VerifyTokenAsync(idToken);
 
             if (!isValid)
             {
                 return Unauthorized();
             }
 
-            var payload = await GoogleJsonWebSignature.ValidateAsync(idToken); // information extracted from token
-            var user = await _context.applicationUsers.FirstOrDefaultAsync(u => u.Email == payload.Email); // check is user exist in the database
+            (string jwtToken, bool isNewUser) = await _authService.GetTokenAndFlagAsync(idToken);
 
-            if (user != null)
-            {
-                var jwtToken = _sessionTokenManager.GenerateJwtToken(user.Email, false); // create normal token for old user
-                return Ok(new { jwtToken, isNewUser = false });
-            }
-            else
-            {
-                var jwtToken = _sessionTokenManager.GenerateJwtToken(payload.Email, true); // create temporary token to finish registration
-                return Ok(new { jwtToken, isNewUser = true });
-            }
+            return Ok(new { jwtToken, isNewUser });
         }
 
-        [Authorize(Policy = "ProtoUser")] // only users with appropriate bearer token can use this method
+        [Authorize(Policy = "ProtoUser")] 
         [HttpPost("complete-registration")]
-        // create new user, based on the information from NewUserForm from front-end, information will be transformed from json to NewUserDto
         public async Task<IActionResult> CompleteRegistration([FromBody] NewUserInfoDto userInfo)
         {
-            // User is .net feature, it contains information from bearer token
-            var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value; // we get an email from bearer token
+            var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             
             if (string.IsNullOrEmpty(email))
             {
@@ -70,29 +58,12 @@ namespace CarSearchAPI.Controllers
             if (!ModelState.IsValid) { return BadRequest(ModelState); }
 
             
-            var user = await _context.applicationUsers.FirstOrDefaultAsync(u => u.Email == email); // double check is user in database
-            if (user == null)
-            {
-                user = new ApplicationUser
-                {
-                    Email = email,
-                    Name = userInfo.name,
-                    Surname = userInfo.surname,
-                    BirthDate = userInfo.birthDate,
-                    LicenceDate = userInfo.licenceDate
-                };
-
-                // adding user to the database
-                _context.applicationUsers.Add(user); 
-                await _context.SaveChangesAsync();
-            }
-            else
-            {
-                return BadRequest("This user already exist");
+            if (!(await _userService.ServeNewCreatedUser(email, userInfo))) 
+            { 
+                return BadRequest("User already exists"); 
             }
 
-            // creation of new token
-            var sessionToken = _sessionTokenManager.GenerateJwtToken(email, false);
+            var sessionToken = _sessionTokenManager.GetSessionToken(email, false);
             return Ok(new {sessionToken});
         }
     }

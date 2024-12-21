@@ -5,11 +5,19 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json.Serialization;
 using CarSearchAPI.Utilities;
-using CarSearchAPI.Services;
 using CarSearchAPI.Abstractions;
 using CarSearchAPI.Services.DataProviders;
 using System.Security.Cryptography;
 using System.IdentityModel.Tokens.Jwt;
+using CarSearchAPI.Repositories.Abstractions;
+using CarSearchAPI.Repositories.Implementations;
+using CarSearchAPI.Services.Authenticators;
+using CarSearchAPI.Services.TokenManagers;
+using CarSearchAPI.Services.EmailsSenders;
+using Microsoft.AspNetCore.WebSockets;
+using CarSearchAPI.Services.UserServices;
+using CarSearchAPI.Services.RentServices;
+using CarSearchAPI.Services.OfferServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +34,8 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
     });
+
+// context
 builder.Services.AddDbContext<CarSearchDbContext>(options =>
                 options.UseSqlServer(
                     Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING"),
@@ -36,22 +46,37 @@ builder.Services.AddDbContext<CarSearchDbContext>(options =>
                             errorNumbersToAdd: null)));
 builder.Services.AddHttpClient();
 
-builder.Services.AddScoped<IEmailSender, SendGridEmailService>();
-builder.Services.AddScoped<IConfirmationTokenService, JwtConfirmationTokenService>();
-builder.Services.AddScoped<IAuthService, GoogleAuthService>();
-builder.Services.AddScoped<SessionTokenManager>();
+// Model related services
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRentService, RentService>();
 
-// Register external data providers
+// Token related services
+builder.Services.AddScoped<IConfirmationTokenGenerator, JwtConfirmationTokenGenerator>();
+builder.Services.AddScoped<IConfirmationTokenValidator, JwtConfirmationTokenValidator>();
+builder.Services.AddScoped<ISessionTokenManager, JwtSessionTokenManager>();
+
+// Other services
+builder.Services.AddScoped<IEmailSender, SendGridEmailService>();
+builder.Services.AddScoped<IAuthService, GoogleAuthService>();
+builder.Services.AddScoped<IOfferService, OfferService>();
+builder.Services.AddScoped<IOfferPageService, OfferPageService>();
+
+// Repositories
+builder.Services.AddScoped<IUserRepository, ApplicationUserRepository>();
+builder.Services.AddScoped<IRentRepository, RentRepository>();
+
+// External data providers
 builder.Services.AddScoped<IExternalDataProvider, CarRentalDataProvider>();
 
-builder.Services.AddAuthentication(options => // that is instruction, how to check bearer token
+// Authentication
+builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     })
     .AddJwtBearer(options =>
     {
-        options.TokenValidationParameters = new TokenValidationParameters // we check only using secret key, write secret key to .env (usually 256 bit key)
+        options.TokenValidationParameters = new TokenValidationParameters 
         {
             ValidateAudience = false,
             ValidateIssuer = false,
@@ -61,6 +86,7 @@ builder.Services.AddAuthentication(options => // that is instruction, how to che
         };
     });
 
+// Authorization
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("ProtoUser", policy => policy.RequireClaim("ProtoUserClaim"));
