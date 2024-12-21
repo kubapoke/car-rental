@@ -51,12 +51,12 @@ const ProfileIcon:React.FC<ProfileIconProps> = ({email, logout} : {email : strin
     }, []);
     
     return (
-    <div className="relative flex flex-col items-center justify-center h-screen text-center">
+    <div className="relative flex flex-col items-center justify-center text-center">
         <FaUser className="text-2xl text-white mt-4" onClick={toggleMenu}/>
         <p className="mt-2 text-lg text-white" onClick={toggleMenu}>{email}</p>
 
         {isMenuOpen && (
-            <div ref={menuRef} className="absolute mt-44 bg-white border rounded-lg shadow-lg w-48 z-3">
+            <div ref={menuRef} className="absolute mt-44 bg-white border rounded-lg shadow-lg w-48">
                 <ul className="flex flex-col">
                     <li
                         className="p-2 cursor-pointer hover:bg-gray-200"
