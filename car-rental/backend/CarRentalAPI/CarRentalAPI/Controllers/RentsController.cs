@@ -12,6 +12,7 @@ using CarRentalAPI.DTOs.Rents;
 using CarRentalAPI.Abstractions;
 using CarRentalAPI.Abstractions.Repositories;
 using CarRentalAPI.DTOs.Redis;
+using CarRentalAPI.Enums;
 using CarRentalAPI.Services;
 using Newtonsoft.Json;
 
@@ -52,7 +53,7 @@ namespace CarRentalAPI.Controllers
             if (rentedCar == null) { return BadRequest("Car does not exist in database");  }
             
 
-            RentStatus status = RentStatus.Active;
+            RentStatuses status = RentStatuses.Active;
 
             var newRent = new Rent
             {
@@ -81,7 +82,7 @@ namespace CarRentalAPI.Controllers
 
         [Authorize(Policy = "Manager")]
         [HttpGet("get-rents")]
-        public async Task<IActionResult> GetRents([FromQuery] RentStatus? rentStatus)
+        public async Task<IActionResult> GetRents([FromQuery] RentStatuses? rentStatus)
         {
             var rents = await _context.Rents
                 .Include(r => r.Car)
@@ -117,11 +118,11 @@ namespace CarRentalAPI.Controllers
             {
                 return BadRequest("There is no such rent.");
             }
-            else if (rent.Status == RentStatus.Active)
+            else if (rent.Status == RentStatuses.Active)
             {
                 return BadRequest("This rent is not ready to be closed.");
             }
-            else if (rent.Status == RentStatus.Returned)
+            else if (rent.Status == RentStatuses.Returned)
             {
                 return BadRequest("This rent is already closed.");
             }
@@ -148,7 +149,7 @@ namespace CarRentalAPI.Controllers
 
             rent.ImageUri = uri;
             rent.Description = closeInfo.Description;
-            rent.Status = RentStatus.Returned;
+            rent.Status = RentStatuses.Returned;
 
             await _context.SaveChangesAsync();
 
@@ -164,16 +165,16 @@ namespace CarRentalAPI.Controllers
             {
                 return BadRequest("There is no such rent.");
             }
-            else if (rent.Status == RentStatus.ReadyToReturn)
+            else if (rent.Status == RentStatuses.ReadyToReturn)
             {
                 return BadRequest("This rent is already ready to return.");
             }
-            else if (rent.Status == RentStatus.Returned)
+            else if (rent.Status == RentStatuses.Returned)
             {
                 return BadRequest("This rent is already closed.");
             }
 
-            rent.Status = RentStatus.ReadyToReturn;
+            rent.Status = RentStatuses.ReadyToReturn;
 
             await _context.SaveChangesAsync();
 

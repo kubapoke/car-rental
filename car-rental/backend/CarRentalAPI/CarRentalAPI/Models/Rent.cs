@@ -1,39 +1,34 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using CarRentalAPI.Enums;
 
-namespace CarRentalAPI.Models;
-
-public enum RentStatus
+namespace CarRentalAPI.Models
 {
-    Active = 1,
-    ReadyToReturn = 2,
-    Returned = 3
-}
-
-public class Rent
-{
-    [Key] 
-    [Required] 
-    public int RentId { get; set; }
+    public class Rent
+    {
+        [Key] 
+        [Required] 
+        public int RentId { get; set; }
     
-    [ForeignKey("CarId")]
-    [Required]
-    public Car Car { get; set; }
-    public int CarId { get; set; }
+        [ForeignKey("CarId")]
+        [Required]
+        public Car Car { get; set; }
+        public int CarId { get; set; }
     
-    [Required]
-    [MaxLength(30)]
-    public string UserEmail { get; set; }
+        [Required]
+        [MaxLength(30)]
+        public string UserEmail { get; set; }
 
-    [Required]
-    public RentStatus Status { get; set; }
+        [Required]
+        public RentStatuses Status { get; set; }
 
-    [Required]
-    public DateTime RentStart { get; set; }
+        [Required]
+        public DateTime RentStart { get; set; }
     
-    public DateTime? RentEnd { get; set; }
+        public DateTime? RentEnd { get; set; }
 
-    [MaxLength(1024)]
-    public string? Description { get; set; }
-    public string? ImageUri {  get; set; }
+        [MaxLength(1024)]
+        public string? Description { get; set; }
+        public string? ImageUri {  get; set; }
+    }
 }
