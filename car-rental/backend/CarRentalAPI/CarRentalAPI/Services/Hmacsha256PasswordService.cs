@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Security.Cryptography;
+using CarRentalAPI.Abstractions;
 
 namespace CarRentalAPI.Services
 {
-    public class PasswordHasher
+    public class Hmacsha256PasswordService : IPasswordService
     {
-        public (string hash, string salt) HashPassowrd(string password)
+        public (string hash, string salt) HashPassword(string password)
         {
             byte[] saltBytes = new byte[128 / 8];
             using (var rng = RandomNumberGenerator.Create())

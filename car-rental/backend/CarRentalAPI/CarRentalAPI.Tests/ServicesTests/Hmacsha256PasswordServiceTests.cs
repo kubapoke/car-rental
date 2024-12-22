@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace CarRentalAPI.Tests.ServicesTests
 {
-    public class PasswordHasherTests
+    public class Hmacsha256PasswordServiceTests
     {
-        private readonly PasswordHasher _passwordHasher;
+        private readonly Hmacsha256PasswordService _passwordService;
 
-        public PasswordHasherTests()
+        public Hmacsha256PasswordServiceTests()
         {
-            _passwordHasher = new PasswordHasher();
+            _passwordService = new Hmacsha256PasswordService();
         }
 
         [Fact]
@@ -24,7 +24,7 @@ namespace CarRentalAPI.Tests.ServicesTests
             string password = "Example123";
 
             // Act
-            (string hash, string salt) = _passwordHasher.HashPassowrd(password);
+            (string hash, string salt) = _passwordService.HashPassword(password);
 
             // Assert
             Assert.False(hash.IsNullOrEmpty(), "Hash should not be null or empty");
@@ -38,8 +38,8 @@ namespace CarRentalAPI.Tests.ServicesTests
             string password = "Example123";
 
             // Act
-            (string hash1, string salt1) = _passwordHasher.HashPassowrd(password);
-            (string hash2, string salt2) = _passwordHasher.HashPassowrd(password);
+            (string hash1, string salt1) = _passwordService.HashPassword(password);
+            (string hash2, string salt2) = _passwordService.HashPassword(password);
 
             // Assert
             Assert.NotEqual(salt1, salt2);
@@ -51,10 +51,10 @@ namespace CarRentalAPI.Tests.ServicesTests
         {
             // Arrange
             string password = "Example123";
-            (string hash, string salt) = _passwordHasher.HashPassowrd(password);
+            (string hash, string salt) = _passwordService.HashPassword(password);
 
             // Act
-            bool result = _passwordHasher.VerifyPassword(password, hash, salt);
+            bool result = _passwordService.VerifyPassword(password, hash, salt);
 
             // Assert
             Assert.True(result, "Should be true for correct password");
@@ -65,11 +65,11 @@ namespace CarRentalAPI.Tests.ServicesTests
         {
             // Arrange
             string rightPassword = "Example123";
-            (string hash, string salt) = _passwordHasher.HashPassowrd(rightPassword);
+            (string hash, string salt) = _passwordService.HashPassword(rightPassword);
             string wrongPassword = "WrongPassword";
 
             // Act
-            bool result = _passwordHasher.VerifyPassword(wrongPassword, hash, salt);
+            bool result = _passwordService.VerifyPassword(wrongPassword, hash, salt);
 
             // Assert
             Assert.False(result, "Should be false for wrong password");
@@ -87,7 +87,7 @@ namespace CarRentalAPI.Tests.ServicesTests
             // Arrange
 
             // Act
-            bool result = _passwordHasher.VerifyPassword(password, hash, salt);
+            bool result = _passwordService.VerifyPassword(password, hash, salt);
 
             // Assert
             Assert.False(result, "Should return false for wrong input");

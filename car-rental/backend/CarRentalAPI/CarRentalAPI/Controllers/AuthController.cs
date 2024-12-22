@@ -12,13 +12,13 @@ namespace CarRentalAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly PasswordHasher _passwordHasher;
+        private readonly IPasswordService _passwordService;
         private readonly SessionTokenManager _sessionTokenManager;
         private readonly IManagerService _managerService;
 
-        public AuthController(PasswordHasher passwordHasher, SessionTokenManager sessionTokenManager, IManagerService managerService)
+        public AuthController(IPasswordService passwordService, SessionTokenManager sessionTokenManager, IManagerService managerService)
         {
-            _passwordHasher = passwordHasher;
+            _passwordService = passwordService;
             _sessionTokenManager = sessionTokenManager;
             _managerService = managerService;
         }
@@ -33,7 +33,7 @@ namespace CarRentalAPI.Controllers
                 return Unauthorized("Your provided wrong username or password!");
             }
 
-            if (!_passwordHasher.VerifyPassword(credentials.Password, manager.PasswordHash, manager.Salt))
+            if (!_passwordService.VerifyPassword(credentials.Password, manager.PasswordHash, manager.Salt))
             {
                 return Unauthorized("Your provided wrong username or password!");
             }
@@ -45,7 +45,7 @@ namespace CarRentalAPI.Controllers
         [HttpPost("get-hash-salt")]
         public async Task<IActionResult> GetHashSalt([FromBody]string password)
         {
-            (string hash, string salt) = _passwordHasher.HashPassowrd(password);
+            (string hash, string salt) = _passwordService.HashPassword(password);
             return Ok(new {hash, salt});
         }
     }

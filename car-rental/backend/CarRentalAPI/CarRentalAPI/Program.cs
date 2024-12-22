@@ -30,7 +30,7 @@ builder.Services.AddDbContext<CarRentalDbContext>(options =>
 
 builder.Services.AddScoped<IPriceGenerator, PricePerDayToHourGeneratorService>();
 builder.Services.AddScoped<IEmailSender, SendGridEmailSender>();
-builder.Services.AddScoped<PasswordHasher>();
+builder.Services.AddScoped<IPasswordService, Hmacsha256PasswordService>();
 builder.Services.AddScoped<SessionTokenManager>();
 builder.Services.AddScoped<IStorageManager, AzureBlobStorageManager>();
 builder.Services.AddScoped<IRentRepository, RentRepository>();
