@@ -12,15 +12,15 @@ namespace CarRentalAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IPasswordService _passwordService;
-        private readonly SessionTokenManager _sessionTokenManager;
         private readonly IManagerService _managerService;
+        private readonly IPasswordService _passwordService;
+        private readonly ISessionTokenManager _sessionTokenManager;
 
-        public AuthController(IPasswordService passwordService, SessionTokenManager sessionTokenManager, IManagerService managerService)
+        public AuthController(IManagerService managerService, IPasswordService passwordService, ISessionTokenManager sessionTokenManager)
         {
+            _managerService = managerService;
             _passwordService = passwordService;
             _sessionTokenManager = sessionTokenManager;
-            _managerService = managerService;
         }
 
         [HttpPost("log-in")]
@@ -38,8 +38,8 @@ namespace CarRentalAPI.Controllers
                 return Unauthorized("Your provided wrong username or password!");
             }
 
-            var jwtToken = _sessionTokenManager.GenerateJwtToken(manager.UserName);
-            return Ok(new { jwtToken });
+            var sessionToken = _sessionTokenManager.GetSessionToken(manager.UserName);
+            return Ok(new { jwtToken = sessionToken });
         }
 
         [HttpPost("get-hash-salt")]

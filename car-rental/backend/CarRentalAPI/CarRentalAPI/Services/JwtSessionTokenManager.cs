@@ -2,12 +2,13 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using CarRentalAPI.Abstractions;
 
 namespace CarRentalAPI.Services
 {
-    public class SessionTokenManager
+    public class JwtSessionTokenManager : ISessionTokenManager
     {
-        public string GenerateJwtToken(string userName)
+        public string GetSessionToken(string userName)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("CAR_RENTAL_SECRET_KEY"));
@@ -17,13 +18,12 @@ namespace CarRentalAPI.Services
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(claims), // add claims to the token
+                Subject = new ClaimsIdentity(claims),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature), // add key
-                Expires = DateTime.UtcNow.AddMinutes(60) // add time
+                Expires = DateTime.UtcNow.AddMinutes(60)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
-
-
+            
             return tokenHandler.WriteToken(token);
         }
     }
