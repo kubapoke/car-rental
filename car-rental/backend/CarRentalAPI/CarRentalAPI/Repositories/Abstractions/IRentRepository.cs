@@ -1,6 +1,6 @@
 ﻿using CarRentalAPI.DTOs.Combinations;
 
-namespace CarRentalAPI.Abstractions.Repositories
+namespace CarRentalAPI.Repositories.Abstractions
 {
     public interface IRentRepository
     {

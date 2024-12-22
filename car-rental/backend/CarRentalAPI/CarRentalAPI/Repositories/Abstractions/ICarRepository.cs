@@ -1,6 +1,6 @@
 ﻿using CarRentalAPI.Models;
 
-namespace CarRentalAPI.Abstractions.Repositories
+namespace CarRentalAPI.Repositories.Abstractions
 {
     public interface ICarRepository
     {

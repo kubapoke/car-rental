@@ -5,8 +5,9 @@ using CarRentalAPI.Abstractions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using CarRentalAPI.Abstractions.Repositories;
 using CarRentalAPI.Repositories;
+using CarRentalAPI.Repositories.Abstractions;
+using CarRentalAPI.Repositories.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +38,8 @@ builder.Services.AddScoped<ICarRepository, CarRepository>();
 builder.Services.AddScoped<IOfferRepository, OfferRepository>();
 builder.Services.AddScoped<AvailabilityChecker>();
 builder.Services.AddScoped<OffersService>();
+builder.Services.AddScoped<IManagerService, ManagerService>();
+builder.Services.AddScoped<IManagerRepository, ManagerRepository>();
 builder.Services.AddSingleton<RedisCacheService>(provider =>
 {
     var connectionString = Environment.GetEnvironmentVariable("REDIS_DATABASE_CONNECTION");

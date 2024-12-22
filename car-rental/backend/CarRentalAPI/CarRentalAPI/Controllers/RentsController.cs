@@ -10,9 +10,9 @@ using EllipticCurve.Utils;
 using Azure.Storage.Blobs.Specialized;
 using CarRentalAPI.DTOs.Rents;
 using CarRentalAPI.Abstractions;
-using CarRentalAPI.Abstractions.Repositories;
 using CarRentalAPI.DTOs.Redis;
 using CarRentalAPI.Enums;
+using CarRentalAPI.Repositories.Abstractions;
 using CarRentalAPI.Services;
 using Newtonsoft.Json;
 

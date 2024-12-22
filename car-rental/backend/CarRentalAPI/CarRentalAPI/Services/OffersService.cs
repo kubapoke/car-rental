@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics;
 using CarRentalAPI.Abstractions;
-using CarRentalAPI.Abstractions.Repositories;
 using CarRentalAPI.DTOs.CarSearch;
 using CarRentalAPI.DTOs.Combinations;
 using CarRentalAPI.DTOs.Redis;
 using CarRentalAPI.Models;
+using CarRentalAPI.Repositories.Abstractions;
 using Newtonsoft.Json;
 
 namespace CarRentalAPI.Services

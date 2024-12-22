@@ -1,4 +1,5 @@
-﻿using CarRentalAPI.DTOs.Authentication;
+﻿using CarRentalAPI.Abstractions;
+using CarRentalAPI.DTOs.Authentication;
 using CarRentalAPI.Models;
 using CarRentalAPI.Services;
 using Microsoft.AspNetCore.Http;
@@ -11,21 +12,21 @@ namespace CarRentalAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly CarRentalDbContext _context;
         private readonly PasswordHasher _passwordHasher;
         private readonly SessionTokenManager _sessionTokenManager;
+        private readonly IManagerService _managerService;
 
-        public AuthController(CarRentalDbContext context, PasswordHasher passwordHasher, SessionTokenManager sessionTokenManager)
+        public AuthController(PasswordHasher passwordHasher, SessionTokenManager sessionTokenManager, IManagerService managerService)
         {
-            _context = context;
             _passwordHasher = passwordHasher;
             _sessionTokenManager = sessionTokenManager;
+            _managerService = managerService;
         }
 
         [HttpPost("log-in")]
         public async Task<IActionResult> LogIn([FromBody] UserNamePasswordDto credentials)
         {
-            var manager = await _context.Managers.FirstOrDefaultAsync(manager => manager.UserName == credentials.UserName);
+            var manager = await _managerService.GetManagerOrNullFromCredentials(credentials);
 
             if (manager == null)
             {
@@ -47,7 +48,5 @@ namespace CarRentalAPI.Controllers
             (string hash, string salt) = _passwordHasher.HashPassowrd(password);
             return Ok(new {hash, salt});
         }
-
-        
     }
 }

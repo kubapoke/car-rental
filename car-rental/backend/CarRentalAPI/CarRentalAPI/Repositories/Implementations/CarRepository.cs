@@ -1,5 +1,5 @@
-﻿using CarRentalAPI.Abstractions.Repositories;
-using CarRentalAPI.Models;
+﻿using CarRentalAPI.Models;
+using CarRentalAPI.Repositories.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 

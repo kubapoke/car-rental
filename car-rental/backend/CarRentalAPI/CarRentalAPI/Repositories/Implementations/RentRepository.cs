@@ -1,9 +1,9 @@
-﻿using CarRentalAPI.Abstractions.Repositories;
-using CarRentalAPI.DTOs.Combinations;
+﻿using CarRentalAPI.DTOs.Combinations;
+using CarRentalAPI.Repositories.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
-namespace CarRentalAPI.Repositories
+namespace CarRentalAPI.Repositories.Implementations
 {
     public class RentRepository : IRentRepository
     {

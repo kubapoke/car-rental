@@ -1,12 +1,12 @@
 ﻿using CarRentalAPI.Abstractions;
-using CarRentalAPI.Abstractions.Repositories;
 using CarRentalAPI.DTOs.CarSearch;
 using CarRentalAPI.DTOs.Redis;
 using CarRentalAPI.Models;
+using CarRentalAPI.Repositories.Abstractions;
 using CarRentalAPI.Services;
 using Newtonsoft.Json;
 
-namespace CarRentalAPI.Repositories
+namespace CarRentalAPI.Repositories.Implementations
 {
     public class OfferRepository : IOfferRepository
     {
