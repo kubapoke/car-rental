@@ -14,13 +14,13 @@ namespace CarRentalAPI.Controllers
    [ApiController]
    public class OffersController : ControllerBase
    {
-       private readonly OffersService _offersService;
+       private readonly OfferService _offerService;
        private const string Conditions = "{}";
        private const string CompanyName = "CarRental";
    
-       public OffersController(OffersService offersService)
+       public OffersController(OfferService offerService)
        {
-           _offersService = offersService;
+           _offerService = offerService;
        }
 
        [HttpGet("offer-amount")]
@@ -40,7 +40,7 @@ namespace CarRentalAPI.Controllers
                return BadRequest("Start date must be in the future.");
            }
            
-           var offerCount = await _offersService.GetOffersCountAsync(brand, model, startDate, endDate, location);
+           var offerCount = await _offerService.GetOffersCountAsync(brand, model, startDate, endDate, location);
            return Ok(offerCount);
        }
    
@@ -68,7 +68,7 @@ namespace CarRentalAPI.Controllers
                 return BadRequest("User email is required.");
             }
 
-            List<OfferForCarSearchDto> offers = await _offersService.GetNewOffersAsync(brand, model, startDate, endDate, location, 
+            List<OfferForCarSearchDto> offers = await _offerService.GetNewOffersAsync(brand, model, startDate, endDate, location, 
                 email, Conditions, CompanyName, page, pageSize);
 
             if (offers.Count == 0)

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using CarRentalAPI.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,33 +10,17 @@ namespace CarRentalAPI.Controller
     [ApiController]
     public class CarsController : ControllerBase
     {
-        private readonly CarRentalDbContext _context;
+        private readonly ICarService _carService;
 
-        public CarsController(CarRentalDbContext context)
+        public CarsController(ICarService carService)
         {
-            _context = context;
+            _carService = carService;
         }
 
         [HttpGet("car-list")]
         public async Task<IActionResult> CarList()
         {
-            // Get all cars from the database with related Model and Brand data
-            var carList = await _context.Cars
-                .Include(car => car.Model)
-                .ThenInclude(model => model.Brand)
-                .ToListAsync();
-
-            // Group by Model and Brand, check if any car is active for each model
-            var distinctCarModels = carList
-                .GroupBy(car => new { ModelName = car.Model.Name, BrandName = car.Model.Brand.Name, Location = car.Location })  // Group by Model and Brand Name
-                .Select(group => new 
-                {
-                    ModelName = group.Key.ModelName,
-                    BrandName = group.Key.BrandName,
-                    Location = group.Key.Location,
-                    IsActive = group.Any(car => car.IsActive) // True if any car of this model is active in this location
-                })
-                .ToList();
+            var distinctCarModels = await _carService.GetAllDistinctCarTypesAsync();
 
             return Ok(distinctCarModels);
         }
