@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace CarRentalAPI.Services
 {
-    public class OfferService
+    public class OfferService : IOfferService
     {
         private readonly IRentRepository _rentRepository;
         private readonly ICarRepository _carRepository;

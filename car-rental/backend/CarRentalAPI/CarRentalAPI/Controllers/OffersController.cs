@@ -14,11 +14,11 @@ namespace CarRentalAPI.Controllers
    [ApiController]
    public class OffersController : ControllerBase
    {
-       private readonly OfferService _offerService;
+       private readonly IOfferService _offerService;
        private const string Conditions = "{}";
        private const string CompanyName = "CarRental";
    
-       public OffersController(OfferService offerService)
+       public OffersController(IOfferService offerService)
        {
            _offerService = offerService;
        }
@@ -68,7 +68,7 @@ namespace CarRentalAPI.Controllers
                 return BadRequest("User email is required.");
             }
 
-            List<OfferForCarSearchDto> offers = await _offerService.GetNewOffersAsync(brand, model, startDate, endDate, location, 
+            var offers = await _offerService.GetNewOffersAsync(brand, model, startDate, endDate, location, 
                 email, Conditions, CompanyName, page, pageSize);
 
             if (offers.Count == 0)
