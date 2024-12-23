@@ -36,7 +36,7 @@ builder.Services.AddScoped<IStorageManager, AzureBlobStorageManager>();
 builder.Services.AddScoped<IRentRepository, RentRepository>();
 builder.Services.AddScoped<ICarRepository, CarRepository>();
 builder.Services.AddScoped<IOfferRepository, OfferRepository>();
-builder.Services.AddScoped<AvailabilityChecker>();
+builder.Services.AddScoped<IAvailabilityChecker, AvailabilityChecker>();
 builder.Services.AddScoped<IOfferService, OfferService>();
 builder.Services.AddScoped<IManagerService, ManagerService>();
 builder.Services.AddScoped<IManagerRepository, ManagerRepository>();
