@@ -25,22 +25,35 @@ namespace CarSearchAPI.Controllers.ForwardControllers
         [HttpGet("car-list")]
         public async Task<ActionResult<IEnumerable<string>>> CarList()
         {
-            var aggregateCars = new List<CarDto>();
-
-            foreach (var provider in _dataProviders)
+            var tasks = _dataProviders.Select(async provider =>
             {
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
                 try
+                {                    
+                    return await provider.GetCarListAsync(cts.Token);
+                }
+                catch (TaskCanceledException ex)
                 {
-                    var cars = await provider.GetCarListAsync();
-                    
-                    aggregateCars.AddRange(cars);
+                    if (cts.Token.IsCancellationRequested)
+                    {
+                        Console.WriteLine($"Request to {provider.GetProviderName()} was canceled because the cancellation token was triggered.");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Request to {provider.GetProviderName()} timed out or was canceled for another reason.");
+                    }
+                    return new List<CarDto>();
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error fetching data from provider: {ex.Message}");
+                    Console.WriteLine($"Error fetching data from to {provider.GetProviderName()}: {ex.Message}");
+                    return new List<CarDto>();
                 }
-            }
-            
+            });
+
+            var results = await Task.WhenAll(tasks);
+            var aggregateCars = results.SelectMany(c => c).ToList();
+
             return Ok(aggregateCars);
         }
     }

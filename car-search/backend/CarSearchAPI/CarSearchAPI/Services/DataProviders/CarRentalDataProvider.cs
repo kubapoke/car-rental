@@ -35,13 +35,13 @@ namespace CarSearchAPI.Services.DataProviders
             return "CarRental";
         }
 
-        public async Task<List<CarDto>> GetCarListAsync()
+        public async Task<List<CarDto>> GetCarListAsync(CancellationToken cancellationToken)
         {
             var client = GetClientWithBearerToken();
 
             var url = GetUrlWithoutQuery("/api/Cars/car-list");          
             
-            var response = await client.GetAsync(url);
+            var response = await client.GetAsync(url, cancellationToken);
             
             if (response.IsSuccessStatusCode)
             {
