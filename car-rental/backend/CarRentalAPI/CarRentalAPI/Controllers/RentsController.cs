@@ -22,16 +22,17 @@ namespace CarRentalAPI.Controllers
     [ApiController]
     public class RentsController : ControllerBase
     {
-        private readonly CarRentalDbContext _context;
         private readonly IStorageManager _storageManager;
-        private readonly IOfferRepository _offerRepository;
+        private readonly IOfferService _offerService;
+        private readonly IRentService _rentService;
         private readonly IEmailSender _emailSender;
 
-        public RentsController(CarRentalDbContext context, IStorageManager storageManager, IOfferRepository offerRepository, IEmailSender emailSender) 
+        public RentsController(IStorageManager storageManager, IOfferService offerService, IRentService rentService,
+            IEmailSender emailSender) 
         {
-            _context = context;
             _storageManager = storageManager;
-            _offerRepository = offerRepository;
+            _offerService = offerService;
+            _rentService = rentService;
             _emailSender = emailSender;
         }
 
@@ -39,45 +40,24 @@ namespace CarRentalAPI.Controllers
         [HttpPost("create-new-rent")]
         public async Task<IActionResult> CreateNewRent([FromBody] NewRentParametersDto rentPatameters)
         {
-            var offer = await _offerRepository.GetAndDeleteOfferAsync(rentPatameters.OfferId);
+            var offer = await _offerService.GetAndDeleteOfferByIdAsync(rentPatameters.OfferId);
 
             if (offer == null)
             {
                 return BadRequest("Couldn't retrieve offer");
             }
-            
-            Car? rentedCar = await _context.Cars
-                .Include(c => c.Model)
-                .ThenInclude(m => m.Brand)
-                .FirstOrDefaultAsync(c => c.CarId == offer.CarId);
-            if (rentedCar == null) { return BadRequest("Car does not exist in database");  }
-            
 
-            RentStatuses status = RentStatuses.Active;
-
-            var newRent = new Rent
+            try
             {
-                CarId = offer.CarId,
-                UserEmail = rentPatameters.Email,
-                RentStart = offer.StartDate,
-                RentEnd = offer.EndDate,
-                Status = status
-            };
-            
-            await _context.Rents.AddAsync(newRent);
-            await _context.SaveChangesAsync();
-
-            var newSearchRentDto = new NewSearchRentDto
+                var newSearchRentDto =
+                    _rentService.CreateAndGetNewRentAsync(offer, rentPatameters.Email);
+                
+                return Ok(newSearchRentDto);
+            }
+            catch (KeyNotFoundException ex)
             {
-                Brand = rentedCar.Model.Brand.Name,
-                Model = rentedCar.Model.Name,
-                Email = rentPatameters.Email,
-                StartDate = offer.StartDate,
-                EndDate = offer.EndDate,
-                RentalCompanyRentId = newRent.RentId
-            };
-
-            return Ok(newSearchRentDto);
+                return BadRequest(ex.Message);
+            }
         }
 
         [Authorize(Policy = "Manager")]

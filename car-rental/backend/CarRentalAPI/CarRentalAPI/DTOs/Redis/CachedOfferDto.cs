@@ -1,6 +1,6 @@
 ﻿namespace CarRentalAPI.DTOs.Redis
 {
-    public class OfferForRedisDto
+    public class CachedOfferDto
     {
         public int CarId { get; set; }
         public string Brand { get; set; }

@@ -25,14 +25,14 @@ namespace CarRentalAPI.Repositories.Implementations
         {
             cars = TrimCarsToPage(cars, page, pageSize);
             
-            var redisOffers = new List<(string Guid, OfferForRedisDto RedisOffer, decimal Price)>();
+            var redisOffers = new List<(string Guid, CachedOfferDto RedisOffer, decimal Price)>();
 
             foreach (var car in cars)
             {
                 var offerGuid = Guid.NewGuid().ToString();
                 var price = await _priceGenerator.GeneratePriceAsync(car.Model.BasePrice, startDate, endDate);
             
-                OfferForRedisDto redisOffer = new OfferForRedisDto
+                CachedOfferDto cachedOffer = new CachedOfferDto
                 {
                     CarId = car.CarId,
                     Brand = car.Model.Brand.Name,
@@ -45,7 +45,7 @@ namespace CarRentalAPI.Repositories.Implementations
                     EndDate = endDate,
                 };
             
-                redisOffers.Add((offerGuid, redisOffer, price));
+                redisOffers.Add((offerGuid, cachedOffer, price));
             }
             
             var redisTasks = redisOffers.Select(r => 
@@ -69,10 +69,10 @@ namespace CarRentalAPI.Repositories.Implementations
             return offers;
         }
 
-        public async Task<OfferForRedisDto?> GetAndDeleteOfferAsync(string offerId)
+        public async Task<CachedOfferDto?> GetAndDeleteOfferAsync(string offerId)
         {
             var offerJson = await _redisCacheService.GetValueAndDeleteKeyAsync(offerId);
-            var offer = offerJson != null ? JsonConvert.DeserializeObject<OfferForRedisDto?>(offerJson) : null;
+            var offer = offerJson != null ? JsonConvert.DeserializeObject<CachedOfferDto?>(offerJson) : null;
             
             return offer; 
         }

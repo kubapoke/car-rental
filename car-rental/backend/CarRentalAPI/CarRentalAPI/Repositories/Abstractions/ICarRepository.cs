@@ -6,5 +6,6 @@ namespace CarRentalAPI.Repositories.Abstractions
     {
         public Task<List<Car>> GetAllCarsAsync();
         public Task<List<Car>> GetCarsByIdAndFiltersAsync(List<int> ids, string? brand, string? model, string? location);
+        public Task<Car?> GetCarOrNullByIdAsync(int id);
     }
 }

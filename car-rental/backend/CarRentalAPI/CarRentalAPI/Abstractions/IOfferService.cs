@@ -1,4 +1,5 @@
 ﻿using CarRentalAPI.DTOs.CarSearch;
+using CarRentalAPI.DTOs.Redis;
 
 namespace CarRentalAPI.Abstractions
 {   
@@ -9,5 +10,6 @@ namespace CarRentalAPI.Abstractions
         public Task<List<OfferForCarSearchDto>> GetNewOffersAsync(string? brand, string? model, DateTime startDate,
             DateTime endDate, string? location, string email, string conditions, string companyName, int? page,
             int? pageSize);
+        public Task<CachedOfferDto?> GetAndDeleteOfferByIdAsync(string offerId);
     }
 }

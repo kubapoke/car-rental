@@ -37,5 +37,12 @@ namespace CarRentalAPI.Services
             
             return distinctCars;
         }
+
+        public Task<Car?> GetCarOrNullByIdAsync(int id)
+        {
+            var car = _carRepository.
+
+            return car;
+        }
     }
 }

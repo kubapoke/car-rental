@@ -8,6 +8,6 @@ namespace CarRentalAPI.Repositories.Abstractions
     {
         public Task<List<OfferForCarSearchDto>> CreateAndRetrieveOffersAsync(List<Car> cars, DateTime startDate, DateTime endDate,
             string conditions, string companyName, string email, int? page, int? pageSize);
-        public Task<OfferForRedisDto?> GetAndDeleteOfferAsync(string offerId);
+        public Task<CachedOfferDto?> GetAndDeleteOfferAsync(string offerId);
     }
 }
