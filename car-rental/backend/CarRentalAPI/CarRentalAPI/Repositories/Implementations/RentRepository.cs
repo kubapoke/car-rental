@@ -1,4 +1,7 @@
 ﻿using CarRentalAPI.DTOs.Combinations;
+using CarRentalAPI.DTOs.Rents;
+using CarRentalAPI.Enums;
+using CarRentalAPI.Models;
 using CarRentalAPI.Repositories.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -30,11 +33,37 @@ namespace CarRentalAPI.Repositories.Implementations
             }
             catch (InvalidOperationException ex)
             {
-                Console.WriteLine("With high probability rent without RentEnd appeared in the database for some reason\n");
                 throw new InvalidOperationException("Error while fetching rent data.", ex);
-
             }
+        }
 
+        public async Task CreateNewRentAsync(Rent rent)
+        {
+            await _context.Rents.AddAsync(rent);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<RentInfoDto>> GetRentInformationByStatusAsync(RentStatuses? status)
+        {
+            var rents = await _context.Rents
+                .Include(r => r.Car)
+                .ThenInclude(c => c.Model)
+                .ThenInclude(m => m.Brand)
+                .Where(r => status == null || r.Status == status)
+                .Select(rent => new RentInfoDto
+                {
+                    RentId = rent.RentId,
+                    BrandName = rent.Car.Model.Brand.Name,
+                    ModelName = rent.Car.Model.Name,
+                    RentStart = rent.RentStart,
+                    RentEnd = rent.RentEnd,
+                    RentStatus = rent.Status,
+                    ImageUri = rent.ImageUri,
+                    Description = rent.Description,
+                })
+                .ToListAsync();
+
+            return rents;
         }
     }
 }

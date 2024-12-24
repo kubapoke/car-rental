@@ -1,6 +1,7 @@
 ﻿using CarRentalAPI.Abstractions;
 using CarRentalAPI.DTOs.CarSearch;
 using CarRentalAPI.DTOs.Redis;
+using CarRentalAPI.DTOs.Rents;
 using CarRentalAPI.Enums;
 using CarRentalAPI.Models;
 using CarRentalAPI.Repositories.Abstractions;
@@ -34,6 +35,11 @@ namespace CarRentalAPI.Services
                 offer.StartDate, offer.EndDate, newRent.RentId);
 
             return newSearchRent;
+        }
+
+        public async Task<List<RentInfoDto>> GetRentInformationByStatusAsync(RentStatuses? status)
+        {
+            return await _rentRepository.GetRentInformationByStatusAsync(status);
         }
 
         private Rent GetRent(int carId, string userEmail, DateTime rentStart, DateTime rentEnd)

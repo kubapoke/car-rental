@@ -64,23 +64,7 @@ namespace CarRentalAPI.Controllers
         [HttpGet("get-rents")]
         public async Task<IActionResult> GetRents([FromQuery] RentStatuses? rentStatus)
         {
-            var rents = await _context.Rents
-                .Include(r => r.Car)
-                .ThenInclude(c => c.Model)
-                .ThenInclude(m => m.Brand)
-                .Where(r => r.Status == rentStatus)
-                .Select(rent => new RentInfoDto
-                {
-                    RentId = rent.RentId,
-                    BrandName = rent.Car.Model.Brand.Name,
-                    ModelName = rent.Car.Model.Name,
-                    RentStart = rent.RentStart,
-                    RentEnd = rent.RentEnd,
-                    RentStatus = rent.Status,
-                    ImageUri = rent.ImageUri,
-                    Description = rent.Description,
-                })
-                .ToListAsync();
+            var rents = await _rentService.GetRentInformationByStatusAsync(rentStatus);
             
             return Ok(rents);
         }

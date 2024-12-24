@@ -1,4 +1,6 @@
 ﻿using CarRentalAPI.DTOs.Combinations;
+using CarRentalAPI.DTOs.Rents;
+using CarRentalAPI.Enums;
 using CarRentalAPI.Models;
 
 namespace CarRentalAPI.Repositories.Abstractions
@@ -7,5 +9,6 @@ namespace CarRentalAPI.Repositories.Abstractions
     {
         public Task<List<CarIdRentDatesDto>> GetChosenCarActiveRentDatesAsync(string? brand, string? model, string? location);
         public Task CreateNewRentAsync(Rent rent);
+        public Task<List<RentInfoDto>> GetRentInformationByStatusAsync(RentStatuses? status);
     }
 }
