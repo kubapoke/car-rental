@@ -28,16 +28,16 @@ namespace CarRentalAPI.Repositories
         {
             var cars = await _context.Cars
                 .Where(c => ((!ids.Contains(c.CarId))) &&
-                             (brand.IsNullOrEmpty() || c.Model.Brand.Name == brand) &&
-                             (model.IsNullOrEmpty() || c.Model.Name == model) &&
-                             (location.IsNullOrEmpty() || c.Location == location))
+                            (brand.IsNullOrEmpty() || c.Model.Brand.Name == brand) &&
+                            (model.IsNullOrEmpty() || c.Model.Name == model) &&
+                            (location.IsNullOrEmpty() || c.Location == location))
                 .Include(c => c.Model)
                 .ThenInclude(m => m.Brand).ToListAsync();
             
             return cars;
         }
 
-        public async Task<Car?> GetCarByIdAsync(int id)
+        public async Task<Car?> GetCarOrNullByIdAsync(int id)
         {
             var car = await _context.Cars
                 .Include(c => c.Model)

@@ -1,5 +1,6 @@
 ﻿using CarRentalAPI.Abstractions;
 using CarRentalAPI.DTOs.CarSearch;
+using CarRentalAPI.DTOs.Redis;
 using CarRentalAPI.Models;
 using CarRentalAPI.Repositories.Abstractions;
 using Microsoft.Extensions.Azure;
@@ -38,9 +39,9 @@ namespace CarRentalAPI.Services
             return distinctCars;
         }
 
-        public Task<Car?> GetCarOrNullByIdAsync(int id)
+        public async Task<Car?> GetCarOrNullFromOfferAsync(CachedOfferDto offer)
         {
-            var car = _carRepository.
+            var car = await _carRepository.GetCarOrNullByIdAsync(offer.CarId);
 
             return car;
         }
