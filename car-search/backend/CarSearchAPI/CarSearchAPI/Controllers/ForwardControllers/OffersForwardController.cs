@@ -49,7 +49,6 @@ namespace CarSearchAPI.Controllers.ForwardControllers
             var offerListParametersDto = _offerPageService.GetGetOfferListParameters
                 (brand, model, startDate, endDate, location, email, _pageSize);
 
-
             var offerPage = await _offerPageService.GetOfferPageAsync
                 (offerAmountParametersDto, offerListParametersDto, _page, _pageSize);
             
