@@ -22,25 +22,25 @@ namespace CarRentalAPI.Controllers
     [ApiController]
     public class RentsController : ControllerBase
     {
-        private readonly IStorageManager _storageManager;
         private readonly IOfferService _offerService;
         private readonly IRentService _rentService;
         private readonly IEmailSender _emailSender;
+        private readonly IStorageManager _storageManager;
 
-        public RentsController(IStorageManager storageManager, IOfferService offerService, IRentService rentService,
-            IEmailSender emailSender) 
+        public RentsController(IOfferService offerService, IRentService rentService, IEmailSender emailSender,
+            IStorageManager storageManager) 
         {
-            _storageManager = storageManager;
             _offerService = offerService;
             _rentService = rentService;
             _emailSender = emailSender;
+            _storageManager = storageManager;
         }
 
         [Authorize(Policy = "Backend")]
         [HttpPost("create-new-rent")]
-        public async Task<IActionResult> CreateNewRent([FromBody] NewRentParametersDto rentPatameters)
+        public async Task<IActionResult> CreateNewRent([FromBody] NewRentParametersDto rentParameters)
         {
-            var offer = await _offerService.GetAndDeleteOfferByIdAsync(rentPatameters.OfferId);
+            var offer = await _offerService.GetAndDeleteOfferByIdAsync(rentParameters.OfferId);
 
             if (offer == null)
             {
@@ -50,7 +50,7 @@ namespace CarRentalAPI.Controllers
             try
             {
                 var newSearchRentDto =
-                    _rentService.CreateAndGetNewRentAsync(offer, rentPatameters.Email);
+                    _rentService.CreateAndGetNewRentAsync(offer, rentParameters.Email);
                 
                 return Ok(newSearchRentDto);
             }
@@ -71,76 +71,56 @@ namespace CarRentalAPI.Controllers
 
         [Authorize(Policy = "Manager")]
         [HttpPost("close-rent")]
-        public async Task<IActionResult> CloseRent([FromForm]CloseRentDto closeInfo) 
+        public async Task<IActionResult> CloseRent([FromForm]CloseRentDto closeInfo)
         {
-            var rent = await _context.Rents
-                .Include(r => r.Car)
-                .ThenInclude(c => c.Model)
-                .ThenInclude(m => m.Brand)
-                .FirstOrDefaultAsync(r => r.RentId == closeInfo.Id);
-            if (rent == null) 
+            Rent rent;
+            string uri;
+            
+            try
             {
-                return BadRequest("There is no such rent.");
+                rent = await _rentService.GetRentByIdAsync(closeInfo.Id);
             }
-            else if (rent.Status == RentStatuses.Active)
+            catch (Exception ex)
             {
-                return BadRequest("This rent is not ready to be closed.");
-            }
-            else if (rent.Status == RentStatuses.Returned)
-            {
-                return BadRequest("This rent is already closed.");
+                if (ex is KeyNotFoundException or InvalidOperationException)
+                    return BadRequest(ex.Message);
+                throw;
             }
 
-            var uri = await _storageManager.UploadImage(closeInfo.Image);
-
-            if (uri == null)
+            try
+            {
+                uri = await _storageManager.UploadImage(closeInfo.Image);
+            }
+            catch (InvalidOperationException ex)
             {
                 return BadRequest("Failed to upload file into Azure Blob storage");
             }
-
-            DateTime startBackup = rent.RentStart;
-            DateTime? endBackup = rent.RentEnd;
-
-            rent.RentStart = closeInfo.ActualStartDate;
-            rent.RentEnd = closeInfo.ActualEndDate;
-
+            
             if (!(await _emailSender.SendReturnConfirmedEmailAsync(rent)))
             {
-                rent.RentStart = startBackup;
-                rent.RentEnd = endBackup;
                 return BadRequest("Failed to send email");
             }
 
-            rent.ImageUri = uri;
-            rent.Description = closeInfo.Description;
-            rent.Status = RentStatuses.Returned;
-
-            await _context.SaveChangesAsync();
+            await _rentService.CloseRentAsync(rent, 
+                closeInfo.ActualStartDate, closeInfo.ActualEndDate, uri, closeInfo.Description);
 
             return Ok();
         }
 
         [Authorize(Policy = "Backend")]
         [HttpPost("set-rent-status-ready-to-return")]
-        public async Task<IActionResult> SetRentStatusReadyToReturn([FromBody]int RentId)
+        public async Task<IActionResult> SetRentStatusReadyToReturn([FromBody]int rentId)
         {
-            var rent = await _context.Rents.FirstOrDefaultAsync(r => r.RentId == RentId);
-            if (rent == null) 
+            try
             {
-                return BadRequest("There is no such rent.");
+                await _rentService.MarkRentAsReadyToReturnAsync(rentId);
             }
-            else if (rent.Status == RentStatuses.ReadyToReturn)
+            catch (Exception ex)
             {
-                return BadRequest("This rent is already ready to return.");
+                if (ex is KeyNotFoundException or InvalidOperationException)
+                    return BadRequest(ex.Message);
+                throw;
             }
-            else if (rent.Status == RentStatuses.Returned)
-            {
-                return BadRequest("This rent is already closed.");
-            }
-
-            rent.Status = RentStatuses.ReadyToReturn;
-
-            await _context.SaveChangesAsync();
 
             return Ok();
         }

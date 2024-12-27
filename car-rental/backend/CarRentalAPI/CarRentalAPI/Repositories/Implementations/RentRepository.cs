@@ -65,5 +65,21 @@ namespace CarRentalAPI.Repositories.Implementations
 
             return rents;
         }
+
+        public async Task<Rent?> GetRentOrNullByIdAsync(int id)
+        {
+            var rent = await _context.Rents
+                .Include(r => r.Car)
+                .ThenInclude(c => c.Model)
+                .ThenInclude(m => m.Brand)
+                .FirstOrDefaultAsync(r => r.RentId == id);
+
+            return rent;
+        }
+
+        public async Task SaveRepositoryChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
     }
 }

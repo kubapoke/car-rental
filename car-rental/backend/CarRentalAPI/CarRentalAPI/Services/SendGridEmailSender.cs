@@ -25,8 +25,6 @@ namespace CarRentalAPI.Services
             var to = new EmailAddress(rent.UserEmail, rent.UserEmail);
             var plainTextContent = "";
 
-
-
             var htmlContent = "<ul>Your car returned, your rent was:" +
                                   $"<li>Your car: {rent.Car.Model.Brand.Name} {rent.Car.Model.Name}</li>" +
                                   $"<li>Price: {_priceGenerator.GeneratePrice(rent.Car.Model.BasePrice, rent.RentEnd.Value - rent.RentStart)}</li>" +
@@ -37,10 +35,7 @@ namespace CarRentalAPI.Services
             var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
             var response = await client.SendEmailAsync(msg);
 
-            if (response.IsSuccessStatusCode) return true;
-            else return false;
-
-
+            return response.IsSuccessStatusCode;
         }
     }
 }

@@ -10,5 +10,7 @@ namespace CarRentalAPI.Repositories.Abstractions
         public Task<List<CarIdRentDatesDto>> GetChosenCarActiveRentDatesAsync(string? brand, string? model, string? location);
         public Task CreateNewRentAsync(Rent rent);
         public Task<List<RentInfoDto>> GetRentInformationByStatusAsync(RentStatuses? status);
+        public Task<Rent?> GetRentOrNullByIdAsync(int id);
+        public Task SaveRepositoryChangesAsync();
     }
 }

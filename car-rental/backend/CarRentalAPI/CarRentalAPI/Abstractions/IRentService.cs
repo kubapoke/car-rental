@@ -10,5 +10,9 @@ namespace CarRentalAPI.Abstractions
     {
         public Task<NewSearchRentDto> CreateAndGetNewRentAsync(CachedOfferDto offer, string userEmail);
         public Task<List<RentInfoDto>> GetRentInformationByStatusAsync(RentStatuses? status);
+        public Task<Rent> GetRentByIdAsync(int id);
+        public Task CloseRentAsync(Rent rent, DateTime actualStartDate, DateTime actualEndDate, 
+            string imageUri, string description);
+        public Task MarkRentAsReadyToReturnAsync(int id);
     }   
 }
