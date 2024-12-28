@@ -15,7 +15,7 @@ using CarRentalAPI.Services.EmailSenders;
 using CarRentalAPI.Services.ManagerServices;
 using CarRentalAPI.Services.OfferServices;
 using CarRentalAPI.Services.PasswordServices;
-using CarRentalAPI.Services.PriceGeneratorServices;
+using CarRentalAPI.Services.PriceGenerators;
 using CarRentalAPI.Services.RentServices;
 using CarRentalAPI.Services.StorageManagers;
 using CarRentalAPI.Services.TokenManagers;
@@ -30,6 +30,8 @@ DotNetEnv.Env.Load();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
+
+// Context
 builder.Services.AddDbContext<CarRentalDbContext>(options =>
                 options.UseSqlServer(
                     Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING"),
@@ -39,26 +41,34 @@ builder.Services.AddDbContext<CarRentalDbContext>(options =>
                             maxRetryDelay: TimeSpan.FromSeconds(30),
                             errorNumbersToAdd: null)));
 
-builder.Services.AddScoped<IPriceGenerator, PricePerDayToHourGeneratorService>();
+// Model related services
+builder.Services.AddScoped<ICarService, CarService>();
+builder.Services.AddScoped<IOfferService, OfferService>();
+builder.Services.AddScoped<IManagerService, ManagerService>();
+builder.Services.AddScoped<IRentService, RentService>();
+
+// Other services
+builder.Services.AddScoped<ISessionTokenManager, JwtSessionTokenManager>();
+builder.Services.AddScoped<IPriceGenerator, PricePerDayToHourGenerator>();
 builder.Services.AddScoped<IEmailSender, SendGridEmailSender>();
 builder.Services.AddScoped<IPasswordService, Hmacsha256PasswordService>();
-builder.Services.AddScoped<ISessionTokenManager, JwtSessionTokenManager>();
 builder.Services.AddScoped<IStorageManager, AzureBlobStorageManager>();
+builder.Services.AddScoped<IAvailabilityChecker, AvailabilityChecker>();
+builder.Services.AddScoped<IManagerRepository, ManagerRepository>();
+
+// Repositories
 builder.Services.AddScoped<IRentRepository, RentRepository>();
 builder.Services.AddScoped<ICarRepository, CarRepository>();
 builder.Services.AddScoped<IOfferRepository, OfferRepository>();
-builder.Services.AddScoped<IAvailabilityChecker, AvailabilityChecker>();
-builder.Services.AddScoped<IOfferService, OfferService>();
-builder.Services.AddScoped<IManagerService, ManagerService>();
-builder.Services.AddScoped<IManagerRepository, ManagerRepository>();
-builder.Services.AddScoped<ICarService, CarService>();
-builder.Services.AddScoped<IRentService, RentService>();
+
+// Cache service
 builder.Services.AddSingleton<ICacheService>(provider =>
 {
     var connectionString = Environment.GetEnvironmentVariable("REDIS_DATABASE_CONNECTION");
     return new RedisCacheService(connectionString);
 });
 
+// Authentication
 builder.Services.AddAuthentication(options => // that is instruction, how to check bearer token
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -76,6 +86,7 @@ builder.Services.AddAuthentication(options => // that is instruction, how to che
         };
     });
 
+// Authorization
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("Manager", policy => policy.RequireClaim("UserName"));
