@@ -1,10 +1,10 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using CarRentalAPI.Abstractions;
+using Microsoft.IdentityModel.Tokens;
 
-namespace CarRentalAPI.Services
+namespace CarRentalAPI.Services.TokenManagers
 {
     public class JwtSessionTokenManager : ISessionTokenManager
     {

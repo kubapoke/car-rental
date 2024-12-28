@@ -1,7 +1,7 @@
 ﻿using Azure.Storage.Blobs;
 using CarRentalAPI.Abstractions;
 
-namespace CarRentalAPI.Services
+namespace CarRentalAPI.Services.StorageManagers
 {
     public class AzureBlobStorageManager : IStorageManager
     {

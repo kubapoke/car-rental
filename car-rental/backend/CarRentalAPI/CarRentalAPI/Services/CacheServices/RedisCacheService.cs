@@ -1,7 +1,7 @@
 ﻿using CarRentalAPI.Abstractions;
 using StackExchange.Redis;
 
-namespace CarRentalAPI.Services;
+namespace CarRentalAPI.Services.CacheServices;
 
 public class RedisCacheService : ICacheService
 {

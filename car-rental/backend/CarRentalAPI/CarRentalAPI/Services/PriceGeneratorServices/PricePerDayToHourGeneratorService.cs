@@ -1,6 +1,6 @@
 ﻿using CarRentalAPI.Abstractions;
 
-namespace CarRentalAPI.Services;
+namespace CarRentalAPI.Services.PriceGeneratorServices;
 
 public class PricePerDayToHourGeneratorService : IPriceGenerator
 {

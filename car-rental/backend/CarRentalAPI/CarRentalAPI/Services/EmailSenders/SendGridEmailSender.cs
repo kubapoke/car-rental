@@ -2,9 +2,8 @@
 using CarRentalAPI.Models;
 using SendGrid;
 using SendGrid.Helpers.Mail;
-using SendGrid.Helpers.Mail.Model;
 
-namespace CarRentalAPI.Services
+namespace CarRentalAPI.Services.EmailSenders
 {
     public class SendGridEmailSender : IEmailSender
     {

@@ -3,9 +3,8 @@ using CarRentalAPI.DTOs.CarSearch;
 using CarRentalAPI.DTOs.Redis;
 using CarRentalAPI.Models;
 using CarRentalAPI.Repositories.Abstractions;
-using Microsoft.Extensions.Azure;
 
-namespace CarRentalAPI.Services
+namespace CarRentalAPI.Services.CarServices
 {
     public class CarService : ICarService
     {

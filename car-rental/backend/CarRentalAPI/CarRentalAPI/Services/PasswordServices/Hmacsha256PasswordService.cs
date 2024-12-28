@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using CarRentalAPI.Abstractions;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
-namespace CarRentalAPI.Services
+namespace CarRentalAPI.Services.PasswordServices
 {
     public class Hmacsha256PasswordService : IPasswordService
     {

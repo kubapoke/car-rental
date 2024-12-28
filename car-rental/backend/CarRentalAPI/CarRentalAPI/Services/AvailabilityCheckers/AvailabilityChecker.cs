@@ -1,7 +1,7 @@
 ﻿using CarRentalAPI.Abstractions;
 using CarRentalAPI.DTOs.Combinations;
 
-namespace CarRentalAPI.Services
+namespace CarRentalAPI.Services.AvailabilityCheckers
 {
     public class AvailabilityChecker : IAvailabilityChecker
     {

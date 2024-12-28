@@ -6,20 +6,18 @@ using CarRentalAPI.Enums;
 using CarRentalAPI.Models;
 using CarRentalAPI.Repositories.Abstractions;
 
-namespace CarRentalAPI.Services
+namespace CarRentalAPI.Services.RentServices
 {   
     public class RentService : IRentService
     {
         private readonly ICarService _carService;
         private readonly IRentRepository _rentRepository;
-        private readonly IStorageManager _storageManager;
         private const RentStatuses DefaultStatus = RentStatuses.Active;
 
-        public RentService(ICarService carService, IRentRepository rentRepository, IStorageManager storageManager)
+        public RentService(ICarService carService, IRentRepository rentRepository)
         {
             _carService = carService;
             _rentRepository = rentRepository;
-            _storageManager = storageManager;
         }
         
         public async Task<NewSearchRentDto> CreateAndGetNewRentAsync(CachedOfferDto offer, string userEmail)

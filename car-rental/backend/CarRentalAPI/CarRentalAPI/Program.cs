@@ -8,6 +8,17 @@ using System.Text;
 using CarRentalAPI.Repositories;
 using CarRentalAPI.Repositories.Abstractions;
 using CarRentalAPI.Repositories.Implementations;
+using CarRentalAPI.Services.AvailabilityCheckers;
+using CarRentalAPI.Services.CacheServices;
+using CarRentalAPI.Services.CarServices;
+using CarRentalAPI.Services.EmailSenders;
+using CarRentalAPI.Services.ManagerServices;
+using CarRentalAPI.Services.OfferServices;
+using CarRentalAPI.Services.PasswordServices;
+using CarRentalAPI.Services.PriceGeneratorServices;
+using CarRentalAPI.Services.RentServices;
+using CarRentalAPI.Services.StorageManagers;
+using CarRentalAPI.Services.TokenManagers;
 
 var builder = WebApplication.CreateBuilder(args);
 

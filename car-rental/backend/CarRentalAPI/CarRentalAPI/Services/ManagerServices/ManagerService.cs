@@ -3,7 +3,7 @@ using CarRentalAPI.DTOs.Authentication;
 using CarRentalAPI.Models;
 using CarRentalAPI.Repositories.Abstractions;
 
-namespace CarRentalAPI.Services
+namespace CarRentalAPI.Services.ManagerServices
 {
     public class ManagerService : IManagerService
     {
