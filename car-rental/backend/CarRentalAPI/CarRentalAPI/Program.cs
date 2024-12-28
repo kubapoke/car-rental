@@ -42,7 +42,7 @@ builder.Services.AddScoped<IManagerService, ManagerService>();
 builder.Services.AddScoped<IManagerRepository, ManagerRepository>();
 builder.Services.AddScoped<ICarService, CarService>();
 builder.Services.AddScoped<IRentService, RentService>();
-builder.Services.AddSingleton<RedisCacheService>(provider =>
+builder.Services.AddSingleton<ICacheService>(provider =>
 {
     var connectionString = Environment.GetEnvironmentVariable("REDIS_DATABASE_CONNECTION");
     return new RedisCacheService(connectionString);

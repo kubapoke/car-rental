@@ -10,13 +10,13 @@ namespace CarRentalAPI.Repositories.Implementations
 {
     public class OfferRepository : IOfferRepository
     {
-        private readonly RedisCacheService _redisCacheService;
+        private readonly ICacheService _cacheService;
         private readonly IPriceGenerator _priceGenerator;
         private const int DefaultPageSize = 6;
 
-        public OfferRepository(RedisCacheService redisCacheService, IPriceGenerator priceGenerator)
+        public OfferRepository(ICacheService cacheService, IPriceGenerator priceGenerator)
         {
-            _redisCacheService = redisCacheService;
+            _cacheService = cacheService;
             _priceGenerator = priceGenerator;
         }
 
@@ -49,7 +49,7 @@ namespace CarRentalAPI.Repositories.Implementations
             }
             
             var redisTasks = redisOffers.Select(r => 
-                _redisCacheService.GetSetValueTask(r.Guid, JsonConvert.SerializeObject(r.RedisOffer), TimeSpan.FromMinutes(15)));
+                _cacheService.GetSetValueTask(r.Guid, JsonConvert.SerializeObject(r.RedisOffer), TimeSpan.FromMinutes(15)));
             await Task.WhenAll(redisTasks);
 
             var offers = redisOffers.Select(r => new OfferForCarSearchDto
@@ -71,7 +71,7 @@ namespace CarRentalAPI.Repositories.Implementations
 
         public async Task<CachedOfferDto?> GetAndDeleteOfferAsync(string offerId)
         {
-            var offerJson = await _redisCacheService.GetValueAndDeleteKeyAsync(offerId);
+            var offerJson = await _cacheService.GetValueAndDeleteKeyAsync(offerId);
             var offer = offerJson != null ? JsonConvert.DeserializeObject<CachedOfferDto?>(offerJson) : null;
             
             return offer; 
