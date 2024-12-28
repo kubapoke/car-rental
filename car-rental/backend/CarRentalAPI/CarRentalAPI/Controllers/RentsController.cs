@@ -49,8 +49,7 @@ namespace CarRentalAPI.Controllers
 
             try
             {
-                var newSearchRentDto =
-                    _rentService.CreateAndGetNewRentAsync(offer, rentParameters.Email);
+                var newSearchRentDto = await _rentService.CreateAndGetNewRentAsync(offer, rentParameters.Email);
                 
                 return Ok(newSearchRentDto);
             }
