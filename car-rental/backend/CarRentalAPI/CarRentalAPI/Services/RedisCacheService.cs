@@ -4,8 +4,6 @@ namespace CarRentalAPI.Services;
 
 public class RedisCacheService
 {
-    // a service providing all of the necessary basic Redis operations
-    
     private readonly ConnectionMultiplexer _connectionMultiplexer;
     private readonly IDatabase _database;
 
