@@ -42,7 +42,8 @@ builder.Services.AddDbContext<CarRentalDbContext>(options =>
                             errorNumbersToAdd: null)));
 
 // Model related services
-builder.Services.AddScoped<ICarService, CarService>();
+builder.Services.AddScoped<ICarTypeService, CarTypeService>();
+builder.Services.AddScoped<ICarLookupService, CarLookupService>();
 builder.Services.AddScoped<IOfferService, OfferService>();
 builder.Services.AddScoped<IManagerService, ManagerService>();
 builder.Services.AddScoped<IRentService, RentService>();

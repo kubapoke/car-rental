@@ -10,19 +10,19 @@ namespace CarRentalAPI.Services.RentServices
 {   
     public class RentService : IRentService
     {
-        private readonly ICarService _carService;
+        private readonly ICarLookupService _carLookupService;
         private readonly IRentRepository _rentRepository;
         private const RentStatuses DefaultStatus = RentStatuses.Active;
 
-        public RentService(ICarService carService, IRentRepository rentRepository)
+        public RentService(ICarLookupService carLookupService, IRentRepository rentRepository)
         {
-            _carService = carService;
+            _carLookupService = carLookupService;
             _rentRepository = rentRepository;
         }
         
         public async Task<Rent> CreateAndGetNewRentAsync(CachedOfferDto offer, string userEmail)
         {
-            var car = await _carService.GetCarOrNullFromOfferAsync(offer);
+            var car = await _carLookupService.GetCarOrNullFromOfferAsync(offer);
 
             if (car is null)
                 throw new KeyNotFoundException("Error fetching car from database");

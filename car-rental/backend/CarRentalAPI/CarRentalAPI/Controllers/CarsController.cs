@@ -10,17 +10,17 @@ namespace CarRentalAPI.Controller
     [ApiController]
     public class CarsController : ControllerBase
     {
-        private readonly ICarService _carService;
+        private readonly ICarTypeService _carTypeService;
 
-        public CarsController(ICarService carService)
+        public CarsController(ICarTypeService carTypeService)
         {
-            _carService = carService;
+            _carTypeService = carTypeService;
         }
 
         [HttpGet("car-list")]
         public async Task<IActionResult> CarList()
         {
-            var distinctCarModels = await _carService.GetAllDistinctCarTypesAsync();
+            var distinctCarModels = await _carTypeService.GetAllDistinctCarTypesAsync();
 
             return Ok(distinctCarModels);
         }

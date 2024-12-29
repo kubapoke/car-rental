@@ -1,16 +1,15 @@
 ﻿using CarRentalAPI.Abstractions;
 using CarRentalAPI.DTOs.CarSearch;
-using CarRentalAPI.DTOs.Redis;
 using CarRentalAPI.Models;
 using CarRentalAPI.Repositories.Abstractions;
 
 namespace CarRentalAPI.Services.CarServices
 {
-    public class CarService : ICarService
+    public class CarTypeService : ICarTypeService
     {
         private readonly ICarRepository _carRepository;
 
-        public CarService(ICarRepository carRepository)
+        public CarTypeService(ICarRepository carRepository)
         {
             _carRepository = carRepository;
         }
@@ -26,18 +25,11 @@ namespace CarRentalAPI.Services.CarServices
                     ModelName = group.Key.ModelName,
                     BrandName = group.Key.BrandName,
                     Location = group.Key.Location,
-                    IsActive = group.Any(car => car.IsActive) // True if any car of this model is active in this location
+                    IsActive = group.Any(car => car.IsActive)
                 })
                 .ToList();
             
             return distinctCars;
-        }
-
-        public async Task<Car?> GetCarOrNullFromOfferAsync(CachedOfferDto offer)
-        {
-            var car = await _carRepository.GetCarOrNullByIdAsync(offer.CarId);
-
-            return car;
         }
         
         private async Task<List<Car>> GetAllCarsAsync()
