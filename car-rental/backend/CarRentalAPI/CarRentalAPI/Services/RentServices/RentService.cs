@@ -1,5 +1,4 @@
 ﻿using CarRentalAPI.Abstractions;
-using CarRentalAPI.DTOs.CarSearch;
 using CarRentalAPI.DTOs.Redis;
 using CarRentalAPI.DTOs.Rents;
 using CarRentalAPI.Enums;

@@ -1,5 +1,4 @@
-﻿using CarRentalAPI.DTOs.CarSearch;
-using CarRentalAPI.DTOs.Redis;
+﻿using CarRentalAPI.DTOs.Redis;
 using CarRentalAPI.Models;
 
 namespace CarRentalAPI.Repositories.Abstractions

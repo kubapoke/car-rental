@@ -1,9 +1,8 @@
 ﻿using CarRentalAPI.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
-namespace CarRentalAPI.Controller
+namespace CarRentalAPI.Controllers
 {
     [Authorize(Policy = "Backend")]
     [Route("api/[controller]")]

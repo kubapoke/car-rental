@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-namespace CarRentalAPI.Abstractions
+﻿namespace CarRentalAPI.Abstractions
 {
     public interface IStorageManager
     {

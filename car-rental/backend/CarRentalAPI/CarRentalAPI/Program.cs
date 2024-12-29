@@ -1,11 +1,9 @@
 using CarRentalAPI;
 using Microsoft.EntityFrameworkCore;
-using CarRentalAPI.Services;
 using CarRentalAPI.Abstractions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using CarRentalAPI.Repositories;
 using CarRentalAPI.Repositories.Abstractions;
 using CarRentalAPI.Repositories.Implementations;
 using CarRentalAPI.Services.AvailabilityCheckers;

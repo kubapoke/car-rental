@@ -1,10 +1,6 @@
 ﻿using CarRentalAPI.Abstractions;
 using CarRentalAPI.DTOs.Authentication;
-using CarRentalAPI.Models;
-using CarRentalAPI.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace CarRentalAPI.Controllers
 {

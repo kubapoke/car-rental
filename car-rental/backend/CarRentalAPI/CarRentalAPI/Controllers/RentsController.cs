@@ -1,20 +1,11 @@
 ﻿using CarRentalAPI.DTOs.Offers;
 using CarRentalAPI.DTOs.CarSearch;
 using CarRentalAPI.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
-using Azure.Storage.Blobs;
-using EllipticCurve.Utils;
-using Azure.Storage.Blobs.Specialized;
 using CarRentalAPI.DTOs.Rents;
 using CarRentalAPI.Abstractions;
-using CarRentalAPI.DTOs.Redis;
 using CarRentalAPI.Enums;
-using CarRentalAPI.Repositories.Abstractions;
-using CarRentalAPI.Services;
-using Newtonsoft.Json;
 
 namespace CarRentalAPI.Controllers
 {    
