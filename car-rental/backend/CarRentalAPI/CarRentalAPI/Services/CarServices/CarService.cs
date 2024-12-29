@@ -14,11 +14,6 @@ namespace CarRentalAPI.Services.CarServices
         {
             _carRepository = carRepository;
         }
-        
-        public async Task<List<Car>> GetAllCarsAsync()
-        {
-            return await _carRepository.GetAllCarsAsync();
-        }
 
         public async Task<List<CarInfoDto>> GetAllDistinctCarTypesAsync()
         {
@@ -43,6 +38,11 @@ namespace CarRentalAPI.Services.CarServices
             var car = await _carRepository.GetCarOrNullByIdAsync(offer.CarId);
 
             return car;
+        }
+        
+        private async Task<List<Car>> GetAllCarsAsync()
+        {
+            return await _carRepository.GetAllCarsAsync();
         }
     }
 }
