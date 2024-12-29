@@ -45,7 +45,7 @@ public class RedisCacheService : ICacheService
     {
         var tran = _database.CreateTransaction();
         var getResult = tran.StringGetAsync(key);
-        var deleteTask = tran.KeyDeleteAsync(key);
+        _ = tran.KeyDeleteAsync(key);
         
         await tran.ExecuteAsync();
         
