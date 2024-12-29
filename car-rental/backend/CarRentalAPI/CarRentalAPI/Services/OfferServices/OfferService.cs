@@ -41,17 +41,37 @@ namespace CarRentalAPI.Services.OfferServices
             var notAvailableCarIds = _availabilityChecker.GetNotAvailableCarIds(pairs, startDate, endDate);
             var availableCars = await _carRepository.GetCarsByIdAndFiltersAsync(notAvailableCarIds, brand, model, location);
             
-            availableCars = _paginationService.TrimListToPage(availableCars, page, pageSize);
-            var newOffers = await _offerRepository.CreateAndRetrieveOffersAsync(availableCars, 
-                startDate, endDate, conditions, companyName, email, page, pageSize);
+            var trimmedAvailableCars = _paginationService.TrimListToPage(availableCars, page, pageSize);
+            var newOffers = await _offerRepository.CreateAndRetrieveCachedOffersAsync(trimmedAvailableCars, 
+                startDate, endDate, conditions, companyName, page, pageSize);
             
-            return newOffers;
+            return ConvertCachedOffersToCarSearchOffers(newOffers, email);
         }
 
         public async Task<CachedOfferDto?> GetAndDeleteOfferByIdAsync(string offerId)
         {
             var offer = await _offerRepository.GetAndDeleteOfferAsync(offerId);
             return offer;
+        }
+
+        private List<OfferForCarSearchDto> ConvertCachedOffersToCarSearchOffers(
+            List<(string Guid, CachedOfferDto CachedOffer)> cachedOffers, string email)
+        {
+            var offers = cachedOffers.Select(r => new OfferForCarSearchDto
+            {
+                OfferId = r.Guid,
+                Brand = r.CachedOffer.Brand,
+                Model = r.CachedOffer.Model,
+                Price = r.CachedOffer.Price,
+                Conditions = r.CachedOffer.Conditions,
+                CompanyName = r.CachedOffer.CompanyName,
+                Location = r.CachedOffer.Location,
+                StartDate = r.CachedOffer.StartDate,
+                EndDate = r.CachedOffer.EndDate,
+                Email = email,
+            }).ToList();
+
+            return offers;
         }
     }
 }

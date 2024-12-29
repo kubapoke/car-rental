@@ -19,10 +19,11 @@ namespace CarRentalAPI.Repositories.Implementations
             _priceGenerator = priceGenerator;
         }
 
-        public async Task<List<OfferForCarSearchDto>> CreateAndRetrieveOffersAsync(List<Car> cars, DateTime startDate, DateTime endDate, 
-            string conditions, string companyName, string email, int? page, int? pageSize)
+        public async Task<List<(string Guid, CachedOfferDto CachedOffer)>> CreateAndRetrieveCachedOffersAsync(
+            List<Car> cars, DateTime startDate,
+            DateTime endDate, string conditions, string companyName, int? page, int? pageSize)
         {
-            var redisOffers = new List<(string Guid, CachedOfferDto RedisOffer, decimal Price)>();
+            var cachedOffers = new List<(string Guid, CachedOfferDto CachedOffer)>();
 
             foreach (var car in cars)
             {
@@ -42,28 +43,14 @@ namespace CarRentalAPI.Repositories.Implementations
                     EndDate = endDate,
                 };
             
-                redisOffers.Add((offerGuid, cachedOffer, price));
+                cachedOffers.Add((offerGuid, cachedOffer));
             }
             
-            var redisTasks = redisOffers.Select(r => 
-                _cacheService.GetSetValueTask(r.Guid, JsonConvert.SerializeObject(r.RedisOffer), TimeSpan.FromMinutes(15)));
-            await Task.WhenAll(redisTasks);
+            var cacheTasks = cachedOffers.Select(r => 
+                _cacheService.GetSetValueTask(r.Guid, JsonConvert.SerializeObject(r.CachedOffer), TimeSpan.FromMinutes(15)));
+            await Task.WhenAll(cacheTasks);
 
-            var offers = redisOffers.Select(r => new OfferForCarSearchDto
-            {
-                OfferId = r.Guid,
-                Brand = r.RedisOffer.Brand,
-                Model = r.RedisOffer.Model,
-                Price = r.Price,
-                Conditions = conditions,
-                CompanyName = companyName,
-                Location = r.RedisOffer.Location,
-                StartDate = r.RedisOffer.StartDate,
-                EndDate = r.RedisOffer.EndDate,
-                Email = email,
-            }).ToList();
-
-            return offers;
+            return cachedOffers;
         }
 
         public async Task<CachedOfferDto?> GetAndDeleteOfferAsync(string offerId)
