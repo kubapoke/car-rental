@@ -14,6 +14,7 @@ using CarRentalAPI.Services.CarServices;
 using CarRentalAPI.Services.EmailSenders;
 using CarRentalAPI.Services.ManagerServices;
 using CarRentalAPI.Services.OfferServices;
+using CarRentalAPI.Services.PaginationServices;
 using CarRentalAPI.Services.PasswordServices;
 using CarRentalAPI.Services.PriceGenerators;
 using CarRentalAPI.Services.RentServices;
@@ -56,6 +57,7 @@ builder.Services.AddScoped<IPasswordService, Hmacsha256PasswordService>();
 builder.Services.AddScoped<IStorageManager, AzureBlobStorageManager>();
 builder.Services.AddScoped<IAvailabilityChecker, AvailabilityChecker>();
 builder.Services.AddScoped<IManagerRepository, ManagerRepository>();
+builder.Services.AddScoped<IPaginationService, PaginationService>();
 
 // Repositories
 builder.Services.AddScoped<IRentRepository, RentRepository>();

@@ -11,14 +11,17 @@ namespace CarRentalAPI.Services.OfferServices
         private readonly ICarRepository _carRepository;
         private readonly IAvailabilityChecker _availabilityChecker;
         private readonly IOfferRepository _offerRepository;
+        private readonly IPaginationService _paginationService;
 
         public OfferService(IRentRepository rentRepository, ICarRepository carRepository, 
-            IAvailabilityChecker availabilityChecker, IOfferRepository offerRepository)
+            IOfferRepository offerRepository, IAvailabilityChecker availabilityChecker,
+            IPaginationService paginationService)
         {
             _rentRepository = rentRepository;
             _carRepository = carRepository;
-            _availabilityChecker = availabilityChecker;
             _offerRepository = offerRepository;
+            _availabilityChecker = availabilityChecker;
+            _paginationService = paginationService;
         }
 
         public async Task<int> GetOffersCountAsync(string? brand, string? model, DateTime startDate,
@@ -38,6 +41,7 @@ namespace CarRentalAPI.Services.OfferServices
             var notAvailableCarIds = _availabilityChecker.GetNotAvailableCarIds(pairs, startDate, endDate);
             var availableCars = await _carRepository.GetCarsByIdAndFiltersAsync(notAvailableCarIds, brand, model, location);
             
+            availableCars = _paginationService.TrimToPage(availableCars, page, pageSize);
             var newOffers = await _offerRepository.CreateAndRetrieveOffersAsync(availableCars, 
                 startDate, endDate, conditions, companyName, email, page, pageSize);
             
