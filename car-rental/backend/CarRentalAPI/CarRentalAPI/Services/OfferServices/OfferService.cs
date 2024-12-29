@@ -41,7 +41,7 @@ namespace CarRentalAPI.Services.OfferServices
             var notAvailableCarIds = _availabilityChecker.GetNotAvailableCarIds(pairs, startDate, endDate);
             var availableCars = await _carRepository.GetCarsByIdAndFiltersAsync(notAvailableCarIds, brand, model, location);
             
-            availableCars = _paginationService.TrimToPage(availableCars, page, pageSize);
+            availableCars = _paginationService.TrimListToPage(availableCars, page, pageSize);
             var newOffers = await _offerRepository.CreateAndRetrieveOffersAsync(availableCars, 
                 startDate, endDate, conditions, companyName, email, page, pageSize);
             

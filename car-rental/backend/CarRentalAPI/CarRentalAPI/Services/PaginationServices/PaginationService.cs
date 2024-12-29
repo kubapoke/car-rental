@@ -6,7 +6,7 @@ namespace CarRentalAPI.Services.PaginationServices
     {
         private const int DefaultPageSize = 6;
         
-        public List<T> TrimToPage<T>(IEnumerable<T> source, int? page, int? pageSize)
+        public List<T> TrimListToPage<T>(List<T> source, int? page, int? pageSize)
         {
             if(page is null && pageSize is null)
                 return source.ToList();
@@ -14,12 +14,12 @@ namespace CarRentalAPI.Services.PaginationServices
             int pageInt = Math.Max(page ?? 0, 0);
             int pageSizeInt = Math.Max(pageSize ?? DefaultPageSize, 1);
             
-            var trimmedEnumerable = source
+            var trimmedList = source
                 .Skip(pageInt * pageSizeInt)
                 .Take(pageSizeInt)
                 .ToList();
             
-            return trimmedEnumerable;
+            return trimmedList;
         }
     }
 }

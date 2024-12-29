@@ -2,6 +2,6 @@
 {
     public interface IPaginationService
     {
-        public List<T> TrimToPage<T>(IEnumerable<T> source, int? page, int? pageSize);
+        public List<T> TrimListToPage<T>(List<T> source, int? page, int? pageSize);
     }
 }
