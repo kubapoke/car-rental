@@ -1,12 +1,23 @@
 using CarRentalAPI;
 using Microsoft.EntityFrameworkCore;
-using CarRentalAPI.Services;
 using CarRentalAPI.Abstractions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using CarRentalAPI.Abstractions.Repositories;
-using CarRentalAPI.Repositories;
+using CarRentalAPI.Repositories.Abstractions;
+using CarRentalAPI.Repositories.Implementations;
+using CarRentalAPI.Services.AvailabilityCheckers;
+using CarRentalAPI.Services.CacheServices;
+using CarRentalAPI.Services.CarServices;
+using CarRentalAPI.Services.EmailSenders;
+using CarRentalAPI.Services.ManagerServices;
+using CarRentalAPI.Services.OfferServices;
+using CarRentalAPI.Services.PaginationServices;
+using CarRentalAPI.Services.PasswordServices;
+using CarRentalAPI.Services.PriceGenerators;
+using CarRentalAPI.Services.RentServices;
+using CarRentalAPI.Services.StorageManagers;
+using CarRentalAPI.Services.TokenManagers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +29,8 @@ DotNetEnv.Env.Load();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
+
+// Context
 builder.Services.AddDbContext<CarRentalDbContext>(options =>
                 options.UseSqlServer(
                     Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING"),
@@ -27,22 +40,36 @@ builder.Services.AddDbContext<CarRentalDbContext>(options =>
                             maxRetryDelay: TimeSpan.FromSeconds(30),
                             errorNumbersToAdd: null)));
 
-builder.Services.AddScoped<IPriceGenerator, PricePerDayToHourGeneratorService>();
+// Model related services
+builder.Services.AddScoped<ICarTypeService, CarTypeService>();
+builder.Services.AddScoped<ICarLookupService, CarLookupService>();
+builder.Services.AddScoped<IOfferService, OfferService>();
+builder.Services.AddScoped<IManagerService, ManagerService>();
+builder.Services.AddScoped<IRentService, RentService>();
+
+// Other services
+builder.Services.AddScoped<ISessionTokenManager, JwtSessionTokenManager>();
+builder.Services.AddScoped<IPriceGenerator, PricePerDayToHourGenerator>();
 builder.Services.AddScoped<IEmailSender, SendGridEmailSender>();
-builder.Services.AddScoped<PasswordHasher>();
-builder.Services.AddScoped<SessionTokenManager>();
+builder.Services.AddScoped<IPasswordService, Hmacsha256PasswordService>();
 builder.Services.AddScoped<IStorageManager, AzureBlobStorageManager>();
+builder.Services.AddScoped<IAvailabilityChecker, AvailabilityChecker>();
+builder.Services.AddScoped<IManagerRepository, ManagerRepository>();
+builder.Services.AddScoped<IPaginationService, PaginationService>();
+
+// Repositories
 builder.Services.AddScoped<IRentRepository, RentRepository>();
 builder.Services.AddScoped<ICarRepository, CarRepository>();
 builder.Services.AddScoped<IOfferRepository, OfferRepository>();
-builder.Services.AddScoped<AvailabilityChecker>();
-builder.Services.AddScoped<OffersService>();
-builder.Services.AddSingleton<RedisCacheService>(provider =>
+
+// Cache service
+builder.Services.AddSingleton<ICacheService>(provider =>
 {
     var connectionString = Environment.GetEnvironmentVariable("REDIS_DATABASE_CONNECTION");
     return new RedisCacheService(connectionString);
 });
 
+// Authentication
 builder.Services.AddAuthentication(options => // that is instruction, how to check bearer token
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -60,6 +87,7 @@ builder.Services.AddAuthentication(options => // that is instruction, how to che
         };
     });
 
+// Authorization
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("Manager", policy => policy.RequireClaim("UserName"));

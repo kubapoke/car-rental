@@ -1,11 +1,6 @@
 ﻿using CarRentalAPI.Abstractions;
-using CarRentalAPI.DTOs.CarSearch;
-using CarRentalAPI.Models;
-using CarRentalAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace CarRentalAPI.Controllers
 {
@@ -14,13 +9,13 @@ namespace CarRentalAPI.Controllers
    [ApiController]
    public class OffersController : ControllerBase
    {
-       private readonly OffersService _offersService;
+       private readonly IOfferService _offerService;
        private const string Conditions = "{}";
        private const string CompanyName = "CarRental";
    
-       public OffersController(OffersService offersService)
+       public OffersController(IOfferService offerService)
        {
-           _offersService = offersService;
+           _offerService = offerService;
        }
 
        [HttpGet("offer-amount")]
@@ -40,7 +35,7 @@ namespace CarRentalAPI.Controllers
                return BadRequest("Start date must be in the future.");
            }
            
-           var offerCount = await _offersService.GetOffersCountAsync(brand, model, startDate, endDate, location);
+           var offerCount = await _offerService.GetOffersCountAsync(brand, model, startDate, endDate, location);
            return Ok(offerCount);
        }
    
@@ -68,7 +63,7 @@ namespace CarRentalAPI.Controllers
                 return BadRequest("User email is required.");
             }
 
-            List<OfferForCarSearchDto> offers = await _offersService.GetNewOffersAsync(brand, model, startDate, endDate, location, 
+            var offers = await _offerService.GetNewOffersAsync(brand, model, startDate, endDate, location, 
                 email, Conditions, CompanyName, page, pageSize);
 
             if (offers.Count == 0)

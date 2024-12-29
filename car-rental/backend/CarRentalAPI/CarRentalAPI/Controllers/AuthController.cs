@@ -1,9 +1,6 @@
-﻿using CarRentalAPI.DTOs.Authentication;
-using CarRentalAPI.Models;
-using CarRentalAPI.Services;
-using Microsoft.AspNetCore.Http;
+﻿using CarRentalAPI.Abstractions;
+using CarRentalAPI.DTOs.Authentication;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace CarRentalAPI.Controllers
 {
@@ -11,43 +8,41 @@ namespace CarRentalAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly CarRentalDbContext _context;
-        private readonly PasswordHasher _passwordHasher;
-        private readonly SessionTokenManager _sessionTokenManager;
+        private readonly IManagerService _managerService;
+        private readonly IPasswordService _passwordService;
+        private readonly ISessionTokenManager _sessionTokenManager;
 
-        public AuthController(CarRentalDbContext context, PasswordHasher passwordHasher, SessionTokenManager sessionTokenManager)
+        public AuthController(IManagerService managerService, IPasswordService passwordService, ISessionTokenManager sessionTokenManager)
         {
-            _context = context;
-            _passwordHasher = passwordHasher;
+            _managerService = managerService;
+            _passwordService = passwordService;
             _sessionTokenManager = sessionTokenManager;
         }
 
         [HttpPost("log-in")]
         public async Task<IActionResult> LogIn([FromBody] UserNamePasswordDto credentials)
         {
-            var manager = await _context.Managers.FirstOrDefaultAsync(manager => manager.UserName == credentials.UserName);
+            var manager = await _managerService.GetManagerOrNullFromCredentials(credentials);
 
             if (manager == null)
             {
                 return Unauthorized("Your provided wrong username or password!");
             }
 
-            if (!_passwordHasher.VerifyPassword(credentials.Password, manager.PasswordHash, manager.Salt))
+            if (!_passwordService.VerifyPassword(credentials.Password, manager.PasswordHash, manager.Salt))
             {
                 return Unauthorized("Your provided wrong username or password!");
             }
 
-            var jwtToken = _sessionTokenManager.GenerateJwtToken(manager.UserName);
-            return Ok(new { jwtToken });
+            var sessionToken = _sessionTokenManager.GetSessionToken(manager.UserName);
+            return Ok(new { jwtToken = sessionToken });
         }
 
         [HttpPost("get-hash-salt")]
         public async Task<IActionResult> GetHashSalt([FromBody]string password)
         {
-            (string hash, string salt) = _passwordHasher.HashPassowrd(password);
+            (string hash, string salt) = _passwordService.HashPassword(password);
             return Ok(new {hash, salt});
         }
-
-        
     }
 }
