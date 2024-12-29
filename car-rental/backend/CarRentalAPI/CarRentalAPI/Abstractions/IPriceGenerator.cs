@@ -8,6 +8,7 @@ public interface IPriceGenerator
     {
         return await Task.FromResult(GeneratePrice(basePrice, time));
     }
+    
     public decimal GeneratePrice(decimal basePrice, DateTime startDate, DateTime endDate)
     {
         return GeneratePrice(basePrice, endDate.Subtract(startDate));
