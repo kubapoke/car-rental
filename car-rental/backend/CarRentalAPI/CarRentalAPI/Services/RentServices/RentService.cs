@@ -20,7 +20,7 @@ namespace CarRentalAPI.Services.RentServices
             _rentRepository = rentRepository;
         }
         
-        public async Task<NewSearchRentDto> CreateAndGetNewRentAsync(CachedOfferDto offer, string userEmail)
+        public async Task<Rent> CreateAndGetNewRentAsync(CachedOfferDto offer, string userEmail)
         {
             var car = await _carService.GetCarOrNullFromOfferAsync(offer);
 
@@ -31,10 +31,7 @@ namespace CarRentalAPI.Services.RentServices
 
             await _rentRepository.CreateNewRentAsync(newRent);
 
-            var newSearchRent = GetNewSearchRentDto(car.Model.Brand.Name, car.Model.Name, userEmail,
-                offer.StartDate, offer.EndDate, newRent.RentId);
-
-            return newSearchRent;
+            return newRent;
         }
 
         public async Task<List<RentInfoDto>> GetRentInformationByStatusAsync(RentStatuses? status)
@@ -88,20 +85,6 @@ namespace CarRentalAPI.Services.RentServices
                 RentStart = rentStart,
                 RentEnd = rentEnd,
                 Status = DefaultStatus,
-            };
-        }
-
-        private NewSearchRentDto GetNewSearchRentDto(string brand, string model, string email,
-            DateTime startDate, DateTime endDate, int rentalCompanyRentId)
-        {
-            return new NewSearchRentDto()
-            {
-                Brand = brand,
-                Model = model,
-                Email = email,
-                StartDate = startDate,
-                EndDate = endDate,
-                RentalCompanyRentId = rentalCompanyRentId,
             };
         }
     }

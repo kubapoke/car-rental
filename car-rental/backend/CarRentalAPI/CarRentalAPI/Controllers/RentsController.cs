@@ -49,7 +49,10 @@ namespace CarRentalAPI.Controllers
 
             try
             {
-                var newSearchRentDto = await _rentService.CreateAndGetNewRentAsync(offer, rentParameters.Email);
+                var newRent = await _rentService.CreateAndGetNewRentAsync(offer, rentParameters.Email);
+                
+                var newSearchRentDto = GetNewSearchRentDto(offer.Brand, offer.Model,
+                    rentParameters.Email, offer.StartDate, offer.EndDate, newRent.RentId);
                 
                 return Ok(newSearchRentDto);
             }
@@ -122,6 +125,20 @@ namespace CarRentalAPI.Controllers
             }
 
             return Ok();
+        }
+        
+        private NewSearchRentDto GetNewSearchRentDto(string brand, string model, string email,
+            DateTime startDate, DateTime endDate, int rentalCompanyRentId)
+        {
+            return new NewSearchRentDto()
+            {
+                Brand = brand,
+                Model = model,
+                Email = email,
+                StartDate = startDate,
+                EndDate = endDate,
+                RentalCompanyRentId = rentalCompanyRentId,
+            };
         }
     }
 }
