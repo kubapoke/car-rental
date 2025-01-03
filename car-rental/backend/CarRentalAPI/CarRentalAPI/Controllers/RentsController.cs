@@ -1,19 +1,11 @@
 ﻿using CarRentalAPI.DTOs.Offers;
 using CarRentalAPI.DTOs.CarSearch;
 using CarRentalAPI.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
-using Azure.Storage.Blobs;
-using EllipticCurve.Utils;
-using Azure.Storage.Blobs.Specialized;
 using CarRentalAPI.DTOs.Rents;
 using CarRentalAPI.Abstractions;
-using CarRentalAPI.Abstractions.Repositories;
-using CarRentalAPI.DTOs.Redis;
-using CarRentalAPI.Services;
-using Newtonsoft.Json;
+using CarRentalAPI.Enums;
 
 namespace CarRentalAPI.Controllers
 {    
@@ -21,163 +13,123 @@ namespace CarRentalAPI.Controllers
     [ApiController]
     public class RentsController : ControllerBase
     {
-        private readonly CarRentalDbContext _context;
-        private readonly IStorageManager _storageManager;
-        private readonly IOfferRepository _offerRepository;
+        private readonly IOfferService _offerService;
+        private readonly IRentService _rentService;
         private readonly IEmailSender _emailSender;
+        private readonly IStorageManager _storageManager;
 
-        public RentsController(CarRentalDbContext context, IStorageManager storageManager, IOfferRepository offerRepository, IEmailSender emailSender) 
+        public RentsController(IOfferService offerService, IRentService rentService, IEmailSender emailSender,
+            IStorageManager storageManager) 
         {
-            _context = context;
-            _storageManager = storageManager;
-            _offerRepository = offerRepository;
+            _offerService = offerService;
+            _rentService = rentService;
             _emailSender = emailSender;
+            _storageManager = storageManager;
         }
 
         [Authorize(Policy = "Backend")]
         [HttpPost("create-new-rent")]
-        public async Task<IActionResult> CreateNewRent([FromBody] NewRentParametersDto rentPatameters)
+        public async Task<IActionResult> CreateNewRent([FromBody] NewRentParametersDto rentParameters)
         {
-            var offer = await _offerRepository.GetAndDeleteOfferAsync(rentPatameters.OfferId);
+            var offer = await _offerService.GetAndDeleteOfferByIdAsync(rentParameters.OfferId);
 
             if (offer == null)
             {
                 return BadRequest("Couldn't retrieve offer");
             }
-            
-            Car? rentedCar = await _context.Cars
-                .Include(c => c.Model)
-                .ThenInclude(m => m.Brand)
-                .FirstOrDefaultAsync(c => c.CarId == offer.CarId);
-            if (rentedCar == null) { return BadRequest("Car does not exist in database");  }
-            
 
-            RentStatus status = RentStatus.Active;
-
-            var newRent = new Rent
+            try
             {
-                CarId = offer.CarId,
-                UserEmail = rentPatameters.Email,
-                RentStart = offer.StartDate,
-                RentEnd = offer.EndDate,
-                Status = status
-            };
-            
-            await _context.Rents.AddAsync(newRent);
-            await _context.SaveChangesAsync();
-
-            var newSearchRentDto = new NewSearchRentDto
+                var newRent = await _rentService.CreateAndGetNewRentAsync(offer, rentParameters.Email);
+                
+                var newSearchRentDto = GetNewSearchRentDto(offer.Brand, offer.Model,
+                    rentParameters.Email, offer.StartDate, offer.EndDate, newRent.RentId);
+                
+                return Ok(newSearchRentDto);
+            }
+            catch (KeyNotFoundException ex)
             {
-                Brand = rentedCar.Model.Brand.Name,
-                Model = rentedCar.Model.Name,
-                Email = rentPatameters.Email,
-                StartDate = offer.StartDate,
-                EndDate = offer.EndDate,
-                RentalCompanyRentId = newRent.RentId
-            };
-
-            return Ok(newSearchRentDto);
+                return BadRequest(ex.Message);
+            }
         }
 
         [Authorize(Policy = "Manager")]
         [HttpGet("get-rents")]
-        public async Task<IActionResult> GetRents([FromQuery] RentStatus? rentStatus)
+        public async Task<IActionResult> GetRents([FromQuery] RentStatuses? rentStatus)
         {
-            var rents = await _context.Rents
-                .Include(r => r.Car)
-                .ThenInclude(c => c.Model)
-                .ThenInclude(m => m.Brand)
-                .Where(r => r.Status == rentStatus)
-                .Select(rent => new RentInfoDto
-                {
-                    RentId = rent.RentId,
-                    BrandName = rent.Car.Model.Brand.Name,
-                    ModelName = rent.Car.Model.Name,
-                    RentStart = rent.RentStart,
-                    RentEnd = rent.RentEnd,
-                    RentStatus = rent.Status,
-                    ImageUri = rent.ImageUri,
-                    Description = rent.Description,
-                })
-                .ToListAsync();
+            var rents = await _rentService.GetRentInformationByStatusAsync(rentStatus);
             
             return Ok(rents);
         }
 
         [Authorize(Policy = "Manager")]
         [HttpPost("close-rent")]
-        public async Task<IActionResult> CloseRent([FromForm]CloseRentDto closeInfo) 
+        public async Task<IActionResult> CloseRent([FromForm]CloseRentDto closeInfo)
         {
-            var rent = await _context.Rents
-                .Include(r => r.Car)
-                .ThenInclude(c => c.Model)
-                .ThenInclude(m => m.Brand)
-                .FirstOrDefaultAsync(r => r.RentId == closeInfo.Id);
-            if (rent == null) 
+            Rent rent;
+            string uri;
+            
+            try
             {
-                return BadRequest("There is no such rent.");
+                rent = await _rentService.GetRentByIdAsync(closeInfo.Id);
             }
-            else if (rent.Status == RentStatus.Active)
+            catch (Exception ex)
             {
-                return BadRequest("This rent is not ready to be closed.");
-            }
-            else if (rent.Status == RentStatus.Returned)
-            {
-                return BadRequest("This rent is already closed.");
+                if (ex is KeyNotFoundException or InvalidOperationException)
+                    return BadRequest(ex.Message);
+                throw;
             }
 
-            var uri = await _storageManager.UploadImage(closeInfo.Image);
-
-            if (uri == null)
+            try
+            {
+                uri = await _storageManager.UploadImage(closeInfo.Image);
+            }
+            catch (InvalidOperationException ex)
             {
                 return BadRequest("Failed to upload file into Azure Blob storage");
             }
-
-            DateTime startBackup = rent.RentStart;
-            DateTime? endBackup = rent.RentEnd;
-
-            rent.RentStart = closeInfo.ActualStartDate;
-            rent.RentEnd = closeInfo.ActualEndDate;
-
+            
             if (!(await _emailSender.SendReturnConfirmedEmailAsync(rent)))
             {
-                rent.RentStart = startBackup;
-                rent.RentEnd = endBackup;
                 return BadRequest("Failed to send email");
             }
 
-            rent.ImageUri = uri;
-            rent.Description = closeInfo.Description;
-            rent.Status = RentStatus.Returned;
-
-            await _context.SaveChangesAsync();
+            await _rentService.CloseRentAsync(rent, 
+                closeInfo.ActualStartDate, closeInfo.ActualEndDate, uri, closeInfo.Description);
 
             return Ok();
         }
 
         [Authorize(Policy = "Backend")]
         [HttpPost("set-rent-status-ready-to-return")]
-        public async Task<IActionResult> SetRentStatusReadyToReturn([FromBody]int RentId)
+        public async Task<IActionResult> SetRentStatusReadyToReturn([FromBody]int rentId)
         {
-            var rent = await _context.Rents.FirstOrDefaultAsync(r => r.RentId == RentId);
-            if (rent == null) 
+            try
             {
-                return BadRequest("There is no such rent.");
+                await _rentService.MarkRentAsReadyToReturnAsync(rentId);
             }
-            else if (rent.Status == RentStatus.ReadyToReturn)
+            catch (Exception ex)
             {
-                return BadRequest("This rent is already ready to return.");
+                if (ex is KeyNotFoundException or InvalidOperationException)
+                    return BadRequest(ex.Message);
+                throw;
             }
-            else if (rent.Status == RentStatus.Returned)
-            {
-                return BadRequest("This rent is already closed.");
-            }
-
-            rent.Status = RentStatus.ReadyToReturn;
-
-            await _context.SaveChangesAsync();
 
             return Ok();
+        }
+        
+        private NewSearchRentDto GetNewSearchRentDto(string brand, string model, string email,
+            DateTime startDate, DateTime endDate, int rentalCompanyRentId)
+        {
+            return new NewSearchRentDto()
+            {
+                Brand = brand,
+                Model = model,
+                Email = email,
+                StartDate = startDate,
+                EndDate = endDate,
+                RentalCompanyRentId = rentalCompanyRentId,
+            };
         }
     }
 }

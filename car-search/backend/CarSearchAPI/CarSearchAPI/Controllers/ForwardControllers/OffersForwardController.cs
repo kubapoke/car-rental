@@ -19,10 +19,12 @@ namespace CarSearchAPI.Controllers.ForwardControllers
         // this contains all of the external data providers
         private readonly IEnumerable<IExternalDataProvider> _dataProviders;
         private const int DefaultPageSize = 6;
+        private readonly IOfferPageService _offerPageService;
 
-        public OffersForwardController(IEnumerable<IExternalDataProvider> dataProviders)
+        public OffersForwardController(IEnumerable<IExternalDataProvider> dataProviders, IOfferPageService offerPageService)
         {
             _dataProviders = dataProviders;
+            _offerPageService = offerPageService;
         }
         
         [Authorize(Policy = "LegitUser")]
@@ -36,128 +38,23 @@ namespace CarSearchAPI.Controllers.ForwardControllers
         [FromQuery] int? page,
         [FromQuery] int? pageSize)
         {
-            int _page = page ?? 0;
-            int _pageSize = pageSize ?? DefaultPageSize;
-            
-            var offerAmountParametersDto = new GetOfferAmountParametersDto()
-            {
-                Brand = brand,
-                Model = model,
-                StartDate = startDate,
-                EndDate = endDate,
-                Location = location,
-            };
-
-            var totalOfferAmount = 0;
-            var providerOfferAmount = new List<(IExternalDataProvider provider, int amount)>();
+            // initialization
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
-            
-            // get the amount of offers matching the search data from each provider
-            foreach (var provider in _dataProviders)
-            {
-                try
-                {
-                    var offerAmount = await provider.GetOfferAmountAsync(offerAmountParametersDto);
-                    totalOfferAmount += offerAmount;
-                    providerOfferAmount.Add((provider, offerAmount));
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error getting offer amount from provider: {ex.Message}");
-                }
-            }
-            
-            var pageOffers = new List<OfferDto>();
-            var offerPage = new OfferPageDto();
-            
-            var cumulativeAmount = 0;
-            var offersToBePaged = _pageSize;
 
-            foreach (var providerAmount in providerOfferAmount)
-            {
-                var provider = providerAmount.provider;
-                var amount = providerAmount.amount;
-                cumulativeAmount += amount;
+            (int _page, int _pageSize) = _offerPageService.GetPageAndPageSize(page, pageSize);
 
-                if (cumulativeAmount > _page * _pageSize)
-                {
-                    if (offersToBePaged == _pageSize)
-                    {
-                        // we need to start from the offer at the appropriate page, ignoring the ones
-                        // we've already taken from other providers
-                        var startingOffer = _page * _pageSize - (cumulativeAmount - amount);
-                        var startingPage = startingOffer / _pageSize;
-                        
-                        var offerListParametersDto = new GetOfferListParametersDto()
-                        {
-                            Brand = brand,
-                            Model = model,
-                            StartDate = startDate,
-                            EndDate = endDate,
-                            Location = location,
-                            Email = email,
-                            Page = startingPage,
-                            PageSize = _pageSize,
-                        };
+            var offerAmountParametersDto = _offerPageService.GetGetOfferAmountParameters
+                (brand, model, startDate, endDate, location);
 
-                        try
-                        {
-                            var startingOfferPage = await provider.GetOfferListAsync(offerListParametersDto);
-                            var takenOffers = startingOfferPage.Skip(startingOffer % _pageSize).Take(offersToBePaged).ToList();
-                            pageOffers.AddRange(takenOffers);
-                            offersToBePaged -= takenOffers.Count;
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine($"Error fetching data from provider {provider.GetProviderName()}: {ex.Message}");        
-                        }
-                    }
-                    if (offersToBePaged > 0)
-                    {
-                        // we need to start from the offer at the appropriate page, ignoring the ones
-                        // we've already taken from other providers, and the aleady taken offers
-                        var startingOffer = _page * _pageSize - (cumulativeAmount - amount) + (_pageSize - offersToBePaged);
-                        var startingPage = startingOffer / _pageSize;
-                        
-                        var offerListParametersDto = new GetOfferListParametersDto()
-                        {
-                            Brand = brand,
-                            Model = model,
-                            StartDate = startDate,
-                            EndDate = endDate,
-                            Location = location,
-                            Email = email,
-                            Page = startingPage,
-                            PageSize = _pageSize,
-                        };
+            var offerListParametersDto = _offerPageService.GetGetOfferListParameters
+                (brand, model, startDate, endDate, location, email, _pageSize);
 
-                        try
-                        {
-                            var startingOfferPage = await provider.GetOfferListAsync(offerListParametersDto);
-                            var takenOffers = startingOfferPage.Skip(startingOffer % _pageSize).Take(offersToBePaged).ToList();
-                            pageOffers.AddRange(takenOffers);
-                            offersToBePaged -= takenOffers.Count;
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine($"Error fetching data from provider {provider.GetProviderName()}: {ex.Message}");        
-                        }
-                    }
-
-                    if (offersToBePaged <= 0)
-                    {
-                        break;
-                    }
-                }
-            }
-            
-            offerPage.PageCount = totalOfferAmount / _pageSize;
-            if(totalOfferAmount % _pageSize != 0)
-                offerPage.PageCount++;
-            offerPage.Offers = pageOffers;
+            var offerPage = await _offerPageService.GetOfferPageAsync
+                (offerAmountParametersDto, offerListParametersDto, _page, _pageSize);
             
             return Ok(offerPage);
         }
+
     }
 }
 

@@ -1,5 +1,6 @@
 ﻿using CarSearchAPI.Abstractions;
 using CarSearchAPI.DTOs.Rents;
+using CarSearchAPI.Enums;
 using CarSearchAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -14,15 +15,15 @@ namespace CarSearchAPI.Controllers
     [ApiController]
     public class RentsController : ControllerBase
     {
-        private readonly CarSearchDbContext _context;
-        private readonly IConfirmationTokenService _confirmationTokenService;
+        private readonly IRentService _rentService;
+        private readonly IConfirmationTokenValidator _confirmationTokenValidator;
         private readonly IEnumerable<IExternalDataProvider> _dataProviders;
 
-        public RentsController(CarSearchDbContext context, IConfirmationTokenService confirmationTokenService, IEnumerable<IExternalDataProvider> dataProviders)
+        public RentsController(IConfirmationTokenValidator confirmationTokenValidator, IEnumerable<IExternalDataProvider> dataProviders, IRentService rentService)
         {
-            _context = context;
-            _confirmationTokenService = confirmationTokenService;
+            _confirmationTokenValidator = confirmationTokenValidator;
             _dataProviders = dataProviders;
+            _rentService = rentService;
         }
 
         [HttpGet("new-rent-confirm")]
@@ -30,39 +31,15 @@ namespace CarSearchAPI.Controllers
         {
             try
             {
-                var claimsPrincipal = _confirmationTokenService.ValidateConfirmationToken(token);
-                
-                if (!_confirmationTokenService.ValidateOfferClaim(claimsPrincipal)) { return BadRequest("Invalid token"); }
+                var claimsPrincipal = _confirmationTokenValidator.ValidateConfirmationToken(token);                
+                if (!_confirmationTokenValidator.ValidateOfferClaim(claimsPrincipal)) { return BadRequest("Invalid token"); }
 
-                IExternalDataProvider? activeProvider = null;
-
-                foreach (var provider in _dataProviders)
-                {
-                    if (provider.GetProviderName() == claimsPrincipal.FindFirst("CompanyName")?.Value) 
-                    {
-                        activeProvider = provider;
-                        break;
-                    }
-                }
-                
+                IExternalDataProvider? activeProvider = GetActiveDataProvider(claimsPrincipal.FindFirst("CompanyName")?.Value);                
                 if (activeProvider == null) { return BadRequest("Invalid provider name"); }
                 
                 var results = await activeProvider.CreateNewRentAsync(claimsPrincipal);                
 
-                Rent newRent = new Rent()
-                {
-                    UserEmail = results.Email,
-                    Status = RentStatus.Active,
-                    Brand = results.Brand,
-                    Model = results.Model,
-                    StartDate = results.StartDate,
-                    EndDate = results.EndDate,
-                    RentalCompanyName = activeProvider.GetProviderName(),
-                    RentalCompanyRentId = results.RentalCompanyRentId
-                };
-
-                _context.rents.Add(newRent);
-                await _context.SaveChangesAsync();
+                await _rentService.CreateNewRentAsync(results, activeProvider.GetProviderName());
 
                 return Ok();
             }
@@ -86,21 +63,9 @@ namespace CarSearchAPI.Controllers
             {
                 return Unauthorized("You are not logged in");
             }
-            var rentList = await _context.rents.Where(r => r.UserEmail == email).ToListAsync(); 
-            List<RentInfoDto> rentInfoList = new List<RentInfoDto>();
-            foreach (Rent rent in rentList)
-            {
-                RentInfoDto rentInfoDto = new RentInfoDto()
-                {
-                    RentId = rent.RentId,
-                    Brand = rent.Brand,
-                    Model = rent.Model,
-                    StartDate = rent.StartDate,
-                    EndDate = rent.EndDate,
-                    Status = rent.Status
-                };
-                rentInfoList.Add(rentInfoDto);
-            }
+
+            var rentInfoList = await _rentService.GetRentInfoListByEmailAsync(email);
+
             return Ok(rentInfoList);
         }
 
@@ -108,37 +73,40 @@ namespace CarSearchAPI.Controllers
         [HttpPost("return-car")]
         public async Task<IActionResult> ReturnCar([FromBody]int rentId)
         {
-            var rent = await _context.rents.FirstOrDefaultAsync(r => r.RentId == rentId);
+            var rent = await _rentService.GetRentOrNullByIdAsync(rentId);
             if (rent == null)
             {
                 return NotFound("Rent not found");
             }
 
+            IExternalDataProvider? activeProvider = GetActiveDataProvider(rent.RentalCompanyName);                
+            if (activeProvider == null) { return BadRequest("Invalid provider name"); }
+
+            var isSuccess = await activeProvider.SetRentStatusReadyToReturnAsync(rent.RentalCompanyRentId);
+            if (!isSuccess)
+             {
+                 return BadRequest();
+             }
+
+            await _rentService.MarkRentAsReturnedAsync(rent);
+            
+            return Ok();
+        }
+        
+        private IExternalDataProvider? GetActiveDataProvider(string givenProviderName)
+        {
             IExternalDataProvider? activeProvider = null;
 
             foreach (var provider in _dataProviders)
             {
-                if (provider.GetProviderName() == rent.RentalCompanyName) 
+                if (provider.GetProviderName() == givenProviderName)
                 {
                     activeProvider = provider;
                     break;
                 }
             }
-                
-            if (activeProvider == null) { return BadRequest("Invalid provider name"); }
 
-            var rentalApiResponse = await activeProvider.SetRentStatusReadyToReturnAsync(rent.RentalCompanyRentId);
-            if (!rentalApiResponse)
-             {
-                 return BadRequest();
-             }
-
-            rent.Status = RentStatus.Returned;
-            // TODO: check if we need these two lines stuff below
-            _context.rents.Update(rent);
-            await _context.SaveChangesAsync();
-            
-            return Ok();
+            return activeProvider;
         }
     }
 }
