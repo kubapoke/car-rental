@@ -64,7 +64,7 @@ jobs:
         uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
         with:
-          app-name: 'carsearch'
+          app-name: 'CarSearchFront'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_2E07AAC139EF446DA244AC632C954B41 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3726426E14B6469096030C1B1D23CABB }}
           package: dist.zip # Point to the zipped package

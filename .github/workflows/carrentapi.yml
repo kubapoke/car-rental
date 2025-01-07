@@ -65,18 +65,18 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: .net-app
-      
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_7682ECE7E38E420B9A2792F48DC92B52 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_6166A5C7588645BB93AF144AE0D65CD0 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_D2DBAAAE1F7B4852928C575796831D20 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_FD48A8C4E85D4D5C88AF121C9B877B07 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_2592998DE9C546F191C8A6EEF199B8D6 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_DA7746DBF0F2460DAB2DE8A93BAE7669 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'carrentapi'
+          app-name: 'CarRentalBack'
           slot-name: 'Production'
           package: .
