@@ -1,5 +1,13 @@
 # car-rental
 
-[Car search user website](https://carsearch.azurewebsites.net/)
+## Web applications
 
-[Car rental employee website](https://carrentemployee.azurewebsites.net)
+[Car search user website](https://carsearchfront.azurewebsites.net/)
+
+[Car rental employee website](https://carrentalfront.azurewebsites.net)
+
+## APIs
+
+[Integrator API](https://carsearchback.azurewebsites.net/)
+
+[Rental service API](https://carrentalback.azurewebsites.net)
