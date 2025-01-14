@@ -1,17 +1,14 @@
-﻿using CarSearchAPI.Abstractions;
-using CarSearchAPI.DTOs.CarRental;
-using CarSearchAPI.DTOs.CarSearch;
-using CarSearchAPI.DTOs.ForwardingParameters;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
+using CarSearchAPI.Abstractions;
+using CarSearchAPI.DTOs.CarRental;
+using CarSearchAPI.DTOs.CarSearch;
+using CarSearchAPI.DTOs.ForwardingParameters;
 using CarSearchAPI.DTOs.Users;
-using CarSearchAPI.Models;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -157,14 +154,14 @@ namespace CarSearchAPI.Services.DataProviders
             throw new HttpRequestException(errorMessage);
         }        
      
-        public async Task<bool> SetRentStatusReadyToReturnAsync(int RentId)
+        public async Task<bool> SetRentStatusReadyToReturnAsync(int rentId)
         {
             var client = GetClientWithBearerToken();
 
             var url = GetUrlWithoutQuery("/api/Rents/set-rent-status-ready-to-return");
 
             var jsonContent = new StringContent(
-                JsonSerializer.Serialize(RentId),
+                JsonSerializer.Serialize(rentId),
                 Encoding.UTF8,
                 "application/json"
             );
