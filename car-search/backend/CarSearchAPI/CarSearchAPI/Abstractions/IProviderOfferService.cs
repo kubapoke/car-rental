@@ -5,7 +5,7 @@ namespace CarSearchAPI.Abstractions
 {
     public interface IProviderOfferService
     {
-        public Task<int> GetOfferAmountAsync(GetOfferAmountParametersDto parameters);
-        public Task<List<OfferDto>> GetOfferListAsync(GetOfferListParametersDto parameters);
+        public Task<int> GetOfferAmountAsync(HttpClient client, string url);
+        public Task<List<OfferDto>> GetOfferListAsync(HttpClient client, string url);
     }
 }
