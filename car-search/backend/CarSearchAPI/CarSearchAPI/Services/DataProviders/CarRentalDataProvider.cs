@@ -16,14 +16,18 @@ namespace CarSearchAPI.Services.DataProviders
 {
     public class CarRentalDataProvider : IExternalDataProvider
     {
-        // This will get data from an appropriate endpoint (using FromQuery parameters!) from CarRentalAPI
         private readonly IHttpClientFactory _httpClientFactory;
-
+        private readonly IProviderCarService _carService;
+        private readonly IProviderOfferService _offerService;
+        private readonly IProviderRentService _rentService;
         private readonly string _accessToken;
 
-        public CarRentalDataProvider(IHttpClientFactory httpClientFactory)
+        public CarRentalDataProvider(IHttpClientFactory httpClientFactory, IProviderServiceFactory providerServiceFactory)
         {
             _httpClientFactory = httpClientFactory;
+            _carService = providerServiceFactory.GetProviderCarService(GetProviderName());
+            _offerService = providerServiceFactory.GetProviderOfferService(GetProviderName());
+            _rentService = providerServiceFactory.GetProviderRentService(GetProviderName());
             _accessToken = GenerateAccessToken();
         }
 
@@ -38,18 +42,7 @@ namespace CarSearchAPI.Services.DataProviders
 
             var url = GetUrlWithoutQuery("/api/Cars/car-list");          
             
-            var response = await client.GetAsync(url);
-            
-            if (response.IsSuccessStatusCode)
-            {
-                var responseContent = await response.Content.ReadAsStringAsync();
-                var cars = JsonConvert.DeserializeObject<List<CarDto>>(responseContent);
-                return cars;
-            }
-            else
-            {
-                throw new Exception($"Error fetching data from \"/api/Cars/car-list\" at Car Rental API");
-            }
+            return await _carService.GetCarListAsync(client, url);
         }
 
         public async Task<int> GetOfferAmountAsync(GetOfferAmountParametersDto parameters)
@@ -67,22 +60,10 @@ namespace CarSearchAPI.Services.DataProviders
                 { "location", parameters.Location },
             };
             
-            // this creates an appropriate url
             var url = QueryHelpers.AddQueryString(urlWithoutQuery, 
                 queryParameters.Where(p => p.Value != null));
             
-            var response = await client.GetAsync(url);
-            
-            if (response.IsSuccessStatusCode)
-            {
-                var responseContent = await response.Content.ReadAsStringAsync();
-                var amount = int.Parse(responseContent);
-                return amount;
-            }
-            else
-            {
-                throw new Exception($"Error fetching data from \"/api/Offers/offer-amount\" at Car Rental API");
-            }
+            return await _offerService.GetOfferAmountAsync(client, url);
         }
 
         public async Task<List<OfferDto>> GetOfferListAsync(GetOfferListParametersDto parameters)
@@ -103,22 +84,10 @@ namespace CarSearchAPI.Services.DataProviders
                 { "pageSize", parameters.PageSize.ToString() },
             };
             
-            // this creates an appropriate url
             var url = QueryHelpers.AddQueryString(urlWithoutQuery, 
                 queryParameters.Where(p => p.Value != null));
             
-            var response = await client.GetAsync(url);
-            
-            if (response.IsSuccessStatusCode)
-            {
-                var responseContent = await response.Content.ReadAsStringAsync();
-                var offers = JsonConvert.DeserializeObject<List<OfferDto>>(responseContent);
-                return offers;
-            }
-            else
-            {
-                throw new Exception($"Error fetching data from \"/api/Offers/offer-list\" at Car Rental API");
-            }
+            return await _offerService.GetOfferListAsync(client, url);
         }
 
         public async Task<NewSearchRentDto> CreateNewRentAsync(ClaimsPrincipal claimsPrincipal)
@@ -142,16 +111,7 @@ namespace CarSearchAPI.Services.DataProviders
                 "application/json"
             );
 
-            var response = await client.PostAsync(url, jsonContent);
-
-            if (response.IsSuccessStatusCode)
-            {
-                NewSearchRentDto newSearchRentDto = await response.Content.ReadFromJsonAsync<NewSearchRentDto>();
-                return newSearchRentDto;
-            }
-
-            var errorMessage = $"Error fetching data from \"/api/Rents/create-new-rent\" at Car Rental API. StatusCode: {response.StatusCode}, ReasonPhrase: {response.ReasonPhrase}";
-            throw new HttpRequestException(errorMessage);
+            return await _rentService.CreateNewRentAsync(client, url, jsonContent);
         }        
      
         public async Task<bool> SetRentStatusReadyToReturnAsync(int rentId)
@@ -166,15 +126,7 @@ namespace CarSearchAPI.Services.DataProviders
                 "application/json"
             );
 
-            var response = await client.PostAsync(url, jsonContent);
-
-            if (response.IsSuccessStatusCode)
-            {
-                return true;
-            }
-
-            var errorMessage = $"Error fetching data from \"/api/Rents/set-rent-status-ready-to-return\" at Car Rental API. StatusCode: {response.StatusCode}, ReasonPhrase: {response.ReasonPhrase}";
-            throw new HttpRequestException(errorMessage);
+            return await _rentService.SetRentStatusReadyToReturnAsync(client, url, jsonContent);
         }
 
         private HttpClient GetClientWithBearerToken()
