@@ -34,5 +34,10 @@ namespace CarSearchAPI.Services.ProviderServices.ProviderRentServices
             var errorMessage = $"Error fetching data from \"/api/Rents/set-rent-status-ready-to-return\" at Car Rental API. StatusCode: {response.StatusCode}, ReasonPhrase: {response.ReasonPhrase}";
             throw new HttpRequestException(errorMessage);
         }
+        
+        public string GetProviderName()
+        {
+            return "CarRental";
+        }
     }
 }

@@ -8,14 +8,13 @@ using CarSearchAPI.Models;
 
 namespace CarSearchAPI.Abstractions
 {
-    public interface IExternalDataProvider
+    public interface IExternalDataProvider : IProviderService
     {
         // This interface exists in order to create a generalized structure for getting data from different APIs
         public Task<List<CarDto>> GetCarListAsync();
         public Task<int> GetOfferAmountAsync(GetOfferAmountParametersDto parameters);
         public Task<List<OfferDto>> GetOfferListAsync(GetOfferListParametersDto parameters);
         public Task<NewSearchRentDto> CreateNewRentAsync(ClaimsPrincipal claimsPrincipal);
-        public string GetProviderName(); 
         public Task<bool> SetRentStatusReadyToReturnAsync(int rentId);
     }
 }

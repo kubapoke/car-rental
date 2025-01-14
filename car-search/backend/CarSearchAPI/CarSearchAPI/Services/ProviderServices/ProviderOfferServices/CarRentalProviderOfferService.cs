@@ -38,5 +38,10 @@ namespace CarSearchAPI.Services.ProviderServices.ProviderOfferServices
                 throw new Exception($"Error fetching data from \"/api/Offers/offer-list\" at Car Rental API");
             }
         }
+        
+        public string GetProviderName()
+        {
+            return "CarRental";
+        }
     }
 }

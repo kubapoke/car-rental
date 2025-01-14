@@ -2,7 +2,7 @@
 
 namespace CarSearchAPI.Abstractions
 {
-    public interface IProviderCarService
+    public interface IProviderCarService : IProviderService
     {
         public Task<List<CarDto>> GetCarListAsync(HttpClient client, string url);
     }
