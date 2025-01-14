@@ -6,18 +6,22 @@ using System.Text;
 using System.Text.Json.Serialization;
 using CarSearchAPI.Utilities;
 using CarSearchAPI.Abstractions;
-using CarSearchAPI.Services.DataProviders;
 using System.Security.Cryptography;
 using System.IdentityModel.Tokens.Jwt;
 using CarSearchAPI.Repositories.Abstractions;
 using CarSearchAPI.Repositories.Implementations;
 using CarSearchAPI.Services.Authenticators;
+using CarSearchAPI.Services.DataProviders;
 using CarSearchAPI.Services.TokenManagers;
 using CarSearchAPI.Services.EmailsSenders;
 using Microsoft.AspNetCore.WebSockets;
 using CarSearchAPI.Services.UserServices;
 using CarSearchAPI.Services.RentServices;
 using CarSearchAPI.Services.OfferServices;
+using CarSearchAPI.Services.ProviderServices;
+using CarSearchAPI.Services.ProviderServices.ProviderCarServices;
+using CarSearchAPI.Services.ProviderServices.ProviderOfferServices;
+using CarSearchAPI.Services.ProviderServices.ProviderRentServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +58,12 @@ builder.Services.AddScoped<IRentService, RentService>();
 builder.Services.AddScoped<IConfirmationTokenGenerator, JwtConfirmationTokenGenerator>();
 builder.Services.AddScoped<IConfirmationTokenValidator, JwtConfirmationTokenValidator>();
 builder.Services.AddScoped<ISessionTokenManager, JwtSessionTokenManager>();
+
+// Provider services
+builder.Services.AddScoped<IProviderServiceFactory, ProviderServiceFactory>();
+builder.Services.AddTransient<IProviderCarService, CarRentalProviderCarService>();
+builder.Services.AddTransient<IProviderOfferService, CarRentalProviderOfferService>();
+builder.Services.AddTransient<IProviderRentService, CarRentalProviderRentService>();
 
 // Other services
 builder.Services.AddScoped<IEmailSender, SendGridEmailService>();
