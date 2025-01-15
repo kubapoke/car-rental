@@ -1,6 +1,5 @@
 import {Link, useSearchParams} from "react-router-dom";
 import {FaCheck, FaSkullCrossbones} from "react-icons/fa";
-import {Fragment} from "react";
 
 const RentConfirmedPage = () => {
     const [searchParams] = useSearchParams();
