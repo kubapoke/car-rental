@@ -51,7 +51,7 @@ namespace CarSearchAPI.Controllers
             }
             catch (SecurityTokenExpiredException)
             {
-                return Redirect(frontAddress + "/new-rent-confirm?status=error&message=Token has fucking expired");
+                return Redirect(frontAddress + "/new-rent-confirm?status=error&message=Token has expired");
             }
             catch (Exception)
             {
