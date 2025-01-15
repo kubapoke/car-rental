@@ -61,9 +61,14 @@ builder.Services.AddScoped<ISessionTokenManager, JwtSessionTokenManager>();
 
 // Provider services
 builder.Services.AddScoped<IProviderServiceFactory, ProviderServiceFactory>();
-builder.Services.AddTransient<IProviderCarService, CarRentalProviderCarService>();
-builder.Services.AddTransient<IProviderOfferService, CarRentalProviderOfferService>();
-builder.Services.AddTransient<IProviderRentService, CarRentalProviderRentService>();
+
+builder.Services.AddScoped<IProviderCarService, CarRentalProviderCarService>();
+builder.Services.AddScoped<IProviderOfferService, CarRentalProviderOfferService>();
+builder.Services.AddScoped<IProviderRentService, CarRentalProviderRentService>();
+
+builder.Services.AddScoped<IProviderCarService, DriveEasyProviderCarService>();
+builder.Services.AddScoped<IProviderOfferService, DriveEasyProviderOfferService>();
+builder.Services.AddScoped<IProviderRentService, DriveEasyProviderRentService>();
 
 // Other services
 builder.Services.AddScoped<IEmailSender, SendGridEmailService>();
@@ -77,6 +82,7 @@ builder.Services.AddScoped<IRentRepository, RentRepository>();
 
 // External data providers
 builder.Services.AddScoped<IExternalDataProvider, CarRentalDataProvider>();
+builder.Services.AddScoped<IExternalDataProvider, DriveEasyDataProvider>();
 
 // Authentication
 builder.Services.AddAuthentication(options =>
