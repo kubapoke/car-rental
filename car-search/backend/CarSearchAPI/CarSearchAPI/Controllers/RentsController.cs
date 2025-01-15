@@ -29,27 +29,33 @@ namespace CarSearchAPI.Controllers
         [HttpGet("new-rent-confirm")]
         public async Task<IActionResult> NewRentConfirm(string token)
         {
+            var frontAddress = Environment.GetEnvironmentVariable("CAR_SEARCH_FRONT_URL");
             try
             {
-                var claimsPrincipal = _confirmationTokenValidator.ValidateConfirmationToken(token);                
-                if (!_confirmationTokenValidator.ValidateOfferClaim(claimsPrincipal)) { return BadRequest("Invalid token"); }
+                var claimsPrincipal = _confirmationTokenValidator.ValidateConfirmationToken(token);
 
-                IExternalDataProvider? activeProvider = GetActiveDataProvider(claimsPrincipal.FindFirst("CompanyName")?.Value);                
-                if (activeProvider == null) { return BadRequest("Invalid provider name"); }
+                if (!_confirmationTokenValidator.ValidateOfferClaim(claimsPrincipal))
+                {
+                    return Redirect(frontAddress + $"/new-rent-confirm?status=error&message=InvalidToken"); }
+
+                IExternalDataProvider? activeProvider = GetActiveDataProvider(claimsPrincipal.FindFirst("CompanyName")?.Value);
+                if (activeProvider == null)
+                {
+                    return Redirect(frontAddress + "/new-rent-confirm?status=error&message=InvalidProvider");
+                }
                 
                 var results = await activeProvider.CreateNewRentAsync(claimsPrincipal);                
-
                 await _rentService.CreateNewRentAsync(results, activeProvider.GetProviderName());
 
-                return Ok();
+                return Redirect(frontAddress + "/new-rent-confirm?status=success");
             }
             catch (SecurityTokenExpiredException)
             {
-                return BadRequest("Token has expired");
+                return Redirect(frontAddress + "/new-rent-confirm?status=error&message=Token has fucking expired");
             }
             catch (Exception)
             {
-                return BadRequest("Invalid token, this message may be showing, because you already confirmed your rent.");
+                return Redirect(frontAddress + "/new-rent-confirm?status=error&message=Invalid token, this message may be showing, because you already confirmed your rent.");
             }
            
         }
