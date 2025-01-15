@@ -54,6 +54,12 @@ namespace CarRentalAPI.Services.OfferServices
             return offer;
         }
 
+        public async Task<CachedOfferDto?> GetOfferByIdAsync(string offerId)
+        {
+            var offer = await _offerRepository.GetOfferAsync(offerId);
+            return offer;
+        }
+
         private List<OfferForCarSearchDto> ConvertCachedOffersToCarSearchOffers(
             List<(string Guid, CachedOfferDto CachedOffer)> cachedOffers, string email)
         {

@@ -58,5 +58,13 @@ namespace CarRentalAPI.Repositories.Implementations
             
             return offer; 
         }
+
+        public async Task<CachedOfferDto?> GetOfferAsync(string offerId)
+        {
+            var offerJson = await _cacheService.GetValueAsync(offerId);
+            var offer = offerJson != null ? JsonConvert.DeserializeObject<CachedOfferDto?>(offerJson) : null;
+            
+            return offer; 
+        }
     }
 }
