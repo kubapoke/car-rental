@@ -11,5 +11,6 @@ namespace CarRentalAPI.Abstractions
             DateTime endDate, string? location, string email, string conditions, string companyName, int? page,
             int? pageSize);
         public Task<CachedOfferDto?> GetAndDeleteOfferByIdAsync(string offerId);
+        public Task<CachedOfferDto?> GetOfferByIdAsync(string offerId);
     }
 }
