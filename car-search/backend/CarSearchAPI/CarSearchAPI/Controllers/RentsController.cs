@@ -36,7 +36,8 @@ namespace CarSearchAPI.Controllers
 
                 if (!_confirmationTokenValidator.ValidateOfferClaim(claimsPrincipal))
                 {
-                    return Redirect(frontAddress + $"/new-rent-confirm?status=error&message=InvalidToken"); }
+                    return Redirect(frontAddress + $"/new-rent-confirm?status=error&message=InvalidToken"); 
+                }
 
                 IExternalDataProvider? activeProvider = GetActiveDataProvider(claimsPrincipal.FindFirst("CompanyName")?.Value);
                 if (activeProvider == null)
@@ -90,9 +91,9 @@ namespace CarSearchAPI.Controllers
 
             var isSuccess = await activeProvider.SetRentStatusReadyToReturnAsync(rent.RentalCompanyRentId);
             if (!isSuccess)
-             {
+            {
                  return BadRequest();
-             }
+            }
 
             await _rentService.MarkRentAsReturnedAsync(rent);
             
