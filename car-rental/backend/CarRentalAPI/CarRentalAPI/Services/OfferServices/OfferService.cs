@@ -56,7 +56,7 @@ namespace CarRentalAPI.Services.OfferServices
 
         public async Task<CachedOfferDto?> GetOfferByIdAsync(string offerId)
         {
-            var offer = await _offerRepository.GetAndDeleteOfferAsync(offerId);
+            var offer = await _offerRepository.GetOfferAsync(offerId);
             return offer;
         }
 
