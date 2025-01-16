@@ -65,7 +65,7 @@ public class DriveEasyDataProvider : IExternalDataProvider
         throw new NotImplementedException();
     }
 
-    public Task<bool> SetRentStatusReadyToReturnAsync(int rentId)
+    public Task<bool> SetRentStatusReadyToReturnAsync(string rentId)
     {
         throw new NotImplementedException();
     }

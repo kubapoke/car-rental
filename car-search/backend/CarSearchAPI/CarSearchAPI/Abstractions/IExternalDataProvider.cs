@@ -15,6 +15,6 @@ namespace CarSearchAPI.Abstractions
         public Task<int> GetOfferAmountAsync(GetOfferAmountParametersDto parameters);
         public Task<List<OfferDto>> GetOfferListAsync(GetOfferListParametersDto parameters);
         public Task<NewSearchRentDto> CreateNewRentAsync(ClaimsPrincipal claimsPrincipal);
-        public Task<bool> SetRentStatusReadyToReturnAsync(int rentId);
+        public Task<bool> SetRentStatusReadyToReturnAsync(string rentId);
     }
 }

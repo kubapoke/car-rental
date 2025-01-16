@@ -16,7 +16,7 @@ namespace CarSearchAPI.Services.ProviderServices.ProviderRentServices
             throw new NotImplementedException();
         }
 
-        public Task<bool> SetRentStatusReadyToReturnAsync(HttpClient client, string url, int rentId)
+        public Task<bool> SetRentStatusReadyToReturnAsync(HttpClient client, string url, string rentId)
         {
             throw new NotImplementedException();
         }

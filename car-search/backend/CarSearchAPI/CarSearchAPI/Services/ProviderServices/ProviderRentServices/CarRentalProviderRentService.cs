@@ -45,7 +45,7 @@ namespace CarSearchAPI.Services.ProviderServices.ProviderRentServices
         }
 
         public async Task<bool> SetRentStatusReadyToReturnAsync(HttpClient client, string url,
-            int rentId)
+            string rentId)
         {
             url += ReadyToReturnEndpoint;
             

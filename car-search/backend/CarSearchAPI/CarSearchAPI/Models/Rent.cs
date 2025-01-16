@@ -34,6 +34,6 @@ namespace CarSearchAPI.Models
         public string RentalCompanyName { get; set; }
         
         [Required]
-        public int RentalCompanyRentId { get; set; }
+        public string RentalCompanyRentId { get; set; }
     }
 }
