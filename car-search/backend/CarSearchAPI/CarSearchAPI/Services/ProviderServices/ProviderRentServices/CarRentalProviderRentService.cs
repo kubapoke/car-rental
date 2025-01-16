@@ -50,7 +50,7 @@ namespace CarSearchAPI.Services.ProviderServices.ProviderRentServices
             url += ReadyToReturnEndpoint;
             
             var jsonContent = new StringContent(
-                JsonSerializer.Serialize(rentId),
+                JsonSerializer.Serialize(int.Parse(rentId)),
                 Encoding.UTF8,
                 "application/json"
             );
