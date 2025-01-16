@@ -5,5 +5,6 @@
         public IProviderCarService GetProviderCarService(string providerName);
         public IProviderOfferService GetProviderOfferService(string providerName);
         public IProviderRentService GetProviderRentService(string providerName);
+        public IProviderCustomerService GetProviderClientService(string providerName);
     }
 }

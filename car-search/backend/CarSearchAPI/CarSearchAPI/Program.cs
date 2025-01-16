@@ -20,6 +20,7 @@ using CarSearchAPI.Services.RentServices;
 using CarSearchAPI.Services.OfferServices;
 using CarSearchAPI.Services.ProviderServices;
 using CarSearchAPI.Services.ProviderServices.ProviderCarServices;
+using CarSearchAPI.Services.ProviderServices.ProviderClientServices;
 using CarSearchAPI.Services.ProviderServices.ProviderOfferServices;
 using CarSearchAPI.Services.ProviderServices.ProviderRentServices;
 
@@ -69,6 +70,7 @@ builder.Services.AddScoped<IProviderRentService, CarRentalProviderRentService>()
 builder.Services.AddScoped<IProviderCarService, DriveEasyProviderCarService>();
 builder.Services.AddScoped<IProviderOfferService, DriveEasyProviderOfferService>();
 builder.Services.AddScoped<IProviderRentService, DriveEasyProviderRentService>();
+builder.Services.AddScoped<IProviderCustomerService, DriveEasyProviderCustomerService>();
 
 // Other services
 builder.Services.AddScoped<IEmailSender, SendGridEmailService>();
