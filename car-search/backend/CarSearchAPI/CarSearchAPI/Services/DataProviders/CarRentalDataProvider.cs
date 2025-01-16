@@ -73,7 +73,7 @@ namespace CarSearchAPI.Services.DataProviders
             return await _rentService.CreateNewRentAsync(client, url, claimsPrincipal);
         }        
      
-        public async Task<bool> SetRentStatusReadyToReturnAsync(string rentId)
+        public async Task<bool> SetRentStatusReadyToReturnAsync(int rentId)
         {
             var client = GetClientWithBearerToken();
 

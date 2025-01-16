@@ -7,6 +7,6 @@
         public string Email { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public string RentalCompanyRentId { get; set; }
+        public int RentalCompanyRentId { get; set; }
     }
 }

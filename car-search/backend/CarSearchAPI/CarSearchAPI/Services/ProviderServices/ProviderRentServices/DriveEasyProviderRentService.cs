@@ -36,7 +36,7 @@ namespace CarSearchAPI.Services.ProviderServices.ProviderRentServices
                     Email = email,
                     StartDate = newSearchRentDto.Start,
                     EndDate = newSearchRentDto.End,
-                    RentalCompanyRentId = newSearchRentDto.RentId,
+                    RentalCompanyRentId = int.Parse(newSearchRentDto.RentId),
                 };
             }
 
@@ -44,7 +44,7 @@ namespace CarSearchAPI.Services.ProviderServices.ProviderRentServices
             throw new HttpRequestException(errorMessage);
         }
 
-        public Task<bool> SetRentStatusReadyToReturnAsync(HttpClient client, string url, string rentId)
+        public Task<bool> SetRentStatusReadyToReturnAsync(HttpClient client, string url, int rentId)
         {
             throw new NotImplementedException();
         }

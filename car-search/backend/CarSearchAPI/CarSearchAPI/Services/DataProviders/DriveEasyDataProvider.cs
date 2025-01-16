@@ -70,7 +70,7 @@ public class DriveEasyDataProvider : IExternalDataProvider
         return await _rentService.CreateNewRentAsync(client, url, claimsPrincipal);
     }
 
-    public Task<bool> SetRentStatusReadyToReturnAsync(string rentId)
+    public Task<bool> SetRentStatusReadyToReturnAsync(int rentId)
     {
         throw new NotImplementedException();
     }

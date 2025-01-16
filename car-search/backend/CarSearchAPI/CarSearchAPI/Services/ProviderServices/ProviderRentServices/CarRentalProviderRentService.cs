@@ -37,17 +37,9 @@ namespace CarSearchAPI.Services.ProviderServices.ProviderRentServices
 
             if (response.IsSuccessStatusCode)
             {
-                NewCarSearchRentDto newSearchRentDto = await response.Content.ReadFromJsonAsync<NewCarSearchRentDto>();
-                
-                return new NewSearchRentDto()
-                {
-                    Brand = newSearchRentDto.Brand,
-                    Model = newSearchRentDto.Model,
-                    Email = newSearchRentDto.Email,
-                    StartDate = newSearchRentDto.StartDate,
-                    EndDate = newSearchRentDto.EndDate,
-                    RentalCompanyRentId = newSearchRentDto.RentalCompanyRentId.ToString(),
-                };
+                NewSearchRentDto newSearchRentDto = await response.Content.ReadFromJsonAsync<NewSearchRentDto>();
+
+                return newSearchRentDto;
             }
 
             var errorMessage = $"Error fetching data from \"/api/Rents/create-new-rent\" at Car Rental API. StatusCode: {response.StatusCode}, ReasonPhrase: {response.ReasonPhrase}";
@@ -55,12 +47,12 @@ namespace CarSearchAPI.Services.ProviderServices.ProviderRentServices
         }
 
         public async Task<bool> SetRentStatusReadyToReturnAsync(HttpClient client, string url,
-            string rentId)
+            int rentId)
         {
             url += ReadyToReturnEndpoint;
             
             var jsonContent = new StringContent(
-                JsonSerializer.Serialize(int.Parse(rentId)),
+                JsonSerializer.Serialize(rentId),
                 Encoding.UTF8,
                 "application/json"
             );

@@ -7,6 +7,6 @@ namespace CarSearchAPI.Abstractions
     public interface IProviderRentService : IProviderService
     {
         public Task<NewSearchRentDto> CreateNewRentAsync(HttpClient client, string url, ClaimsPrincipal claimsPrincipal);
-        public Task<bool> SetRentStatusReadyToReturnAsync(HttpClient client, string url, string rentId);
+        public Task<bool> SetRentStatusReadyToReturnAsync(HttpClient client, string url, int rentId);
     }
 }
