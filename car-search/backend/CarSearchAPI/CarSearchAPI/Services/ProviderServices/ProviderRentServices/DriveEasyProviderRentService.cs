@@ -44,9 +44,19 @@ namespace CarSearchAPI.Services.ProviderServices.ProviderRentServices
             throw new HttpRequestException(errorMessage);
         }
 
-        public Task<bool> SetRentStatusReadyToReturnAsync(HttpClient client, string url, int rentId)
+        public async Task<bool> SetRentStatusReadyToReturnAsync(HttpClient client, string url, int rentId)
         {
-            throw new NotImplementedException();
+            url = $"{url}{ReadyToReturnEndpoint}{rentId}";
+            
+            var response = await client.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+
+            var errorMessage = $"Error fetching data from \"/api/Rent/readyToReturn/\" at Drive Easy API. StatusCode: {response.StatusCode}, ReasonPhrase: {response.ReasonPhrase}";
+            throw new HttpRequestException(errorMessage);
         }
         
         private string CreateIdFromEmail(string email)
