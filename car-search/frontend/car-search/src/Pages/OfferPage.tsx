@@ -3,25 +3,29 @@ import {FaArrowLeft, FaMapMarker} from "react-icons/fa";
 import notFoundPage from "./ErrorPage.tsx";
 import {useOffers, Offer} from "../Context/OffersContext.tsx";
 import {calculateDaysBetweenDates} from "../Components/CarOffer.tsx";
+import {useEffect} from "react";
 
 const OfferPage = () => {
     const navigate = useNavigate();
     const { id } = useParams();
-    if (!id) {
-        navigate("/error", { state: { message: "Offer ID is missing", status: 400 } });
-        return null;
-    }
 
     // get offers from the context
     const { offers } = useOffers();
 
+    useEffect(() => {
+        if (!id) {
+            navigate("/error", { state: { message: "Offer ID is missing", status: 400 } });
+        }
+    }, [id, navigate]);
+
     // find appropriate offer
     const offer = offers.find((offer) => offer.offerId === id);
 
-    if (!offer) {
-        navigate("/error", { state: { message: "Offer not found", status: 404 } });
-        return null;
-    }
+    useEffect(() => {
+        if (id && !offer) {
+            navigate("/error", { state: { message: "Offer not found", status: 404 } });
+        }
+    }, [id, offer, navigate]);
     
     const onRentClick = async (offer: Offer) => {
         // rentCar(offer);
