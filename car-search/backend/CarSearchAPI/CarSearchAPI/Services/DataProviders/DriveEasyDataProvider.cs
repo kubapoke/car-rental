@@ -44,17 +44,20 @@ public class DriveEasyDataProvider : IExternalDataProvider
         
         var url = GetUrlWithoutQuery();
 
-        if (!(await CheckIfCustomerExistsAsync(parameters.Email)))
-        {
-            await CreateCustomerAsync(parameters.Email);
-        }
+        var customerId = await GetCustomerIdFromEmailAsync(parameters.Email);
         
-        throw new NotImplementedException();
+        return await _offerService.GetOfferAmountAsync(client, url, parameters, customerId);
     }
 
-    public Task<List<OfferDto>> GetOfferListAsync(GetOfferListParametersDto parameters)
+    public async Task<List<OfferDto>> GetOfferListAsync(GetOfferListParametersDto parameters)
     {
-        throw new NotImplementedException();
+        var client = _httpClientFactory.CreateClient();
+        
+        var url = GetUrlWithoutQuery();
+
+        var customerId = await GetCustomerIdFromEmailAsync(parameters.Email);
+        
+        return await _offerService.GetOfferListAsync(client, url, parameters, customerId);
     }
 
     public Task<NewSearchRentDto> CreateNewRentAsync(ClaimsPrincipal claimsPrincipal)
@@ -74,21 +77,12 @@ public class DriveEasyDataProvider : IExternalDataProvider
         return url;
     }
 
-    private async Task<bool> CheckIfCustomerExistsAsync(string? email)
+    private async Task<string> GetCustomerIdFromEmailAsync(string? email)
     {
         var client = _httpClientFactory.CreateClient();
         
         var url = GetUrlWithoutQuery();
         
-        return await _customerService.CheckIfCustomerExistsAsync(client, url, email);
-    }
-
-    private async Task CreateCustomerAsync(string? email)
-    {
-        var client = _httpClientFactory.CreateClient();
-        
-        var url = GetUrlWithoutQuery();
-        
-        await _customerService.CreateCustomerAsync(client, url, email);
+        return await _customerService.GetCustomerIdAsync(client, url, email);
     }
 }

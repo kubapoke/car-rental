@@ -10,9 +10,9 @@ namespace CarSearchAPI.Services.ProviderServices.ProviderClientServices
         private const string ClientExistsEndpoint = "/api/Client/checkClient/";
         private const string CreateClientEndpoint = "/api/Client/createClient";
         
-        public async Task<bool> CheckIfCustomerExistsAsync(HttpClient client, string url, string? email)
+        public async Task<bool> CheckIfCustomerExistsAsync(HttpClient client, string url, string? customerId)
         {
-            url = $"{url}{ClientExistsEndpoint}{CreateIdFromEmail(email)}";
+            url = $"{url}{ClientExistsEndpoint}{customerId}";
             
             var response = await client.GetAsync(url);
             
@@ -21,13 +21,13 @@ namespace CarSearchAPI.Services.ProviderServices.ProviderClientServices
             return responseString == "Client found";
         }
 
-        public async Task CreateCustomerAsync(HttpClient client, string url, string? email)
+        public async Task CreateCustomerAsync(HttpClient client, string url, string? customerId, string? email)
         {
             url += CreateClientEndpoint;
 
             var customerCreationParameters = new DriveEasyCustomerCreationParametersDto()
             {
-                Id = CreateIdFromEmail(email),
+                Id = customerId,
                 Name = email,
                 Surname = "Car Rental Customer",
                 Email = email,
@@ -41,7 +41,19 @@ namespace CarSearchAPI.Services.ProviderServices.ProviderClientServices
             
             await client.PostAsync(url, jsonContent);
         }
-        
+
+        public async Task<string> GetCustomerIdAsync(HttpClient client, string url, string? email)
+        {
+            var id = CreateIdFromEmail(email);
+
+            if (!(await CheckIfCustomerExistsAsync(client, url, id)))
+            {
+                await CreateCustomerAsync(client, url, id, email);
+            }
+
+            return id;
+        }
+
         public string GetProviderName()
         {
             return "DriveEasy";

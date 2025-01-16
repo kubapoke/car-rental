@@ -12,7 +12,7 @@ namespace CarSearchAPI.Services.ProviderServices.ProviderOfferServices
         private const string OfferListUrl = "/api/Offers/offer-list";
         
         public async Task<int> GetOfferAmountAsync(HttpClient client, string url,
-            GetOfferAmountParametersDto parameters)
+            GetOfferAmountParametersDto parameters, string? customerId)
         {
             url += OfferAmountEndpoint;
             
@@ -43,7 +43,7 @@ namespace CarSearchAPI.Services.ProviderServices.ProviderOfferServices
         }
 
         public async Task<List<OfferDto>> GetOfferListAsync(HttpClient client, string url,
-            GetOfferListParametersDto parameters)
+            GetOfferListParametersDto parameters, string? customerId)
         {
             url += OfferListUrl;
             

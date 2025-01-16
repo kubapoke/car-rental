@@ -51,7 +51,7 @@ namespace CarSearchAPI.Services.DataProviders
 
             var url = GetUrlWithoutQuery();
             
-            return await _offerService.GetOfferAmountAsync(client, url, parameters);
+            return await _offerService.GetOfferAmountAsync(client, url, parameters, null);
         }
 
         public async Task<List<OfferDto>> GetOfferListAsync(GetOfferListParametersDto parameters)
@@ -60,7 +60,7 @@ namespace CarSearchAPI.Services.DataProviders
 
             var url = GetUrlWithoutQuery();
             
-            return await _offerService.GetOfferListAsync(client, url, parameters);
+            return await _offerService.GetOfferListAsync(client, url, parameters, null);
         }
 
         public async Task<NewSearchRentDto> CreateNewRentAsync(ClaimsPrincipal claimsPrincipal)
