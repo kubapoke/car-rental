@@ -3,6 +3,7 @@ using CarSearchAPI.Abstractions;
 using CarSearchAPI.DTOs.CarRental;
 using CarSearchAPI.DTOs.CarSearch;
 using CarSearchAPI.DTOs.ForwardingParameters;
+using CarSearchAPI.DTOs.Rents;
 using CarSearchAPI.DTOs.Users;
 
 namespace CarSearchAPI.Services.DataProviders;

@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using CarSearchAPI.Abstractions;
 using CarSearchAPI.DTOs.CarSearch;
+using CarSearchAPI.DTOs.Rents;
 
 namespace CarSearchAPI.Services.ProviderServices.ProviderRentServices
 {

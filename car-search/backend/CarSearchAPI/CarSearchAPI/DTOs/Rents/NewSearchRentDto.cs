@@ -1,4 +1,4 @@
-﻿namespace CarSearchAPI.DTOs.CarSearch
+﻿namespace CarSearchAPI.DTOs.Rents
 {
     public class NewSearchRentDto
     {

@@ -6,6 +6,7 @@ using CarSearchAPI.Abstractions;
 using CarSearchAPI.DTOs.CarRental;
 using CarSearchAPI.DTOs.CarSearch;
 using CarSearchAPI.DTOs.ForwardingParameters;
+using CarSearchAPI.DTOs.Rents;
 using CarSearchAPI.DTOs.Users;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.IdentityModel.Tokens;
