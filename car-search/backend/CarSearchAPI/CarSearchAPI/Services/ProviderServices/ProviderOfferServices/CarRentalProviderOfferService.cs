@@ -1,14 +1,33 @@
 ﻿using CarSearchAPI.Abstractions;
 using CarSearchAPI.DTOs.CarRental;
 using CarSearchAPI.DTOs.ForwardingParameters;
+using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
 
 namespace CarSearchAPI.Services.ProviderServices.ProviderOfferServices
 {
     public class CarRentalProviderOfferService : IProviderOfferService
     {
-        public async Task<int> GetOfferAmountAsync(HttpClient client, string url)
+        private const string OfferAmountEndpoint = "/api/Offers/offer-amount";
+        private const string OfferListUrl = "/api/Offers/offer-list";
+        
+        public async Task<int> GetOfferAmountAsync(HttpClient client, string url,
+            GetOfferAmountParametersDto parameters, string? customerId)
         {
+            url += OfferAmountEndpoint;
+            
+            var queryParameters = new Dictionary<string, string?>()
+            {
+                { "model", parameters.Model },
+                { "brand", parameters.Brand },
+                { "startDate", parameters.StartDate.ToString("o") },
+                { "endDate", parameters.EndDate.ToString("o") },
+                { "location", parameters.Location },
+            };
+            
+            url = QueryHelpers.AddQueryString(url, 
+                queryParameters.Where(p => p.Value != null));
+            
             var response = await client.GetAsync(url);
             
             if (response.IsSuccessStatusCode)
@@ -23,8 +42,26 @@ namespace CarSearchAPI.Services.ProviderServices.ProviderOfferServices
             }
         }
 
-        public async Task<List<OfferDto>> GetOfferListAsync(HttpClient client, string url)
+        public async Task<List<OfferDto>> GetOfferListAsync(HttpClient client, string url,
+            GetOfferListParametersDto parameters, string? customerId)
         {
+            url += OfferListUrl;
+            
+            var queryParameters = new Dictionary<string, string?>()
+            {
+                { "model", parameters.Model },
+                { "brand", parameters.Brand },
+                { "startDate", parameters.StartDate.ToString("o") },
+                { "endDate", parameters.EndDate.ToString("o") },
+                { "location", parameters.Location },
+                { "email", parameters.Email },
+                { "page", parameters.Page.ToString() },
+                { "pageSize", parameters.PageSize.ToString() },
+            };
+            
+            url = QueryHelpers.AddQueryString(url, 
+                queryParameters.Where(p => p.Value != null));
+            
             var response = await client.GetAsync(url);
             
             if (response.IsSuccessStatusCode)

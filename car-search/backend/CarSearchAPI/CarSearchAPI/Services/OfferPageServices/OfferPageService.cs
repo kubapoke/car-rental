@@ -40,7 +40,7 @@ namespace CarSearchAPI.Services.OfferServices
         
 
         public GetOfferAmountParametersDto GetGetOfferAmountParameters
-            (string? brand, string? model, DateTime startDate, DateTime endDate, string? location) 
+            (string? brand, string? model, DateTime startDate, DateTime endDate, string? location, string? email) 
         {
             var offerAmountParametersDto = new GetOfferAmountParametersDto()
             {
@@ -49,6 +49,7 @@ namespace CarSearchAPI.Services.OfferServices
                 StartDate = startDate,
                 EndDate = endDate,
                 Location = location,
+                Email = email,
             };
 
             return offerAmountParametersDto;

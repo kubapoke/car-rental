@@ -3,6 +3,7 @@ using CarSearchAPI.DTOs.ForwardingParameters;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using CarSearchAPI.DTOs.CarRental;
+using CarSearchAPI.DTOs.Rents;
 using CarSearchAPI.DTOs.Users;
 using CarSearchAPI.Models;
 

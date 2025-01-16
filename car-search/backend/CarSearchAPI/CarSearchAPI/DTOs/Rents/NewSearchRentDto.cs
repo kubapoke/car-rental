@@ -1,4 +1,4 @@
-﻿namespace CarSearchAPI.DTOs.CarSearch
+﻿namespace CarSearchAPI.DTOs.Rents
 {
     public class NewSearchRentDto
     {
@@ -8,6 +8,5 @@
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public int RentalCompanyRentId { get; set; }
-
     }
 }
