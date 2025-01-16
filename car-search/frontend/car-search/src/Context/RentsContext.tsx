@@ -19,7 +19,7 @@ interface RentsContextProps {
     rents: Rent[];
     setRents: React.Dispatch<React.SetStateAction<Rent[]>>;
     fetchRents: () => Promise<void>;
-    returnCar: (rentId: number) => Promise<void>;
+    returnCar: (rentId: number) => Promise<Response>;
 }
 
 const RentsContext = createContext<RentsContextProps | undefined>(undefined);
@@ -48,7 +48,7 @@ export const RentsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         }
     }, []);
     
-    const returnCar= useCallback(async (rentId: number): Promise<void> => {
+    const returnCar= useCallback(async (rentId: number): Promise<Response> => {
         console.log("returning car", rentId);
         const token = sessionStorage.getItem('authToken');
         const headers = {
@@ -68,9 +68,11 @@ export const RentsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             if (!res.ok) {
                 console.error(`Error: HTTP ${res.status} - ${res.statusText}`);
             }
+            return res;
         }
         catch (error){
             console.error('Error returning car:', error);
+            throw error;
         }
         
     }, []);
