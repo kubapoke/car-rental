@@ -68,7 +68,7 @@ namespace CarSearchAPI.Services.ProviderServices.ProviderOfferServices
                 queryParameters.Where(p => p.Value != null));
             
             var response = await client.GetAsync(url);
-            
+
             if (response.IsSuccessStatusCode)
             {
                 var responseContent = await response.Content.ReadAsStringAsync();
@@ -82,7 +82,7 @@ namespace CarSearchAPI.Services.ProviderServices.ProviderOfferServices
                 }
 
                 var offers = driveEasyOffers.Select(o => new OfferDto()
-                {  
+                {
                     OfferId = o.Id,
                     Brand = o.Car.Brand,
                     Model = o.Car.Model,
@@ -94,6 +94,14 @@ namespace CarSearchAPI.Services.ProviderServices.ProviderOfferServices
                     StartDate = o.StartDate,
                     EndDate = o.EndDate,
                 }).ToList();
+
+                if (parameters.Page != null || parameters.PageSize != null)
+                {
+                    var page = parameters.Page ?? 0;
+                    var pageSize = parameters.PageSize ?? 6;
+                    
+                    offers = offers.Skip((page) * pageSize).Take(pageSize).ToList();
+                }
                 
                 return offers;
             }
