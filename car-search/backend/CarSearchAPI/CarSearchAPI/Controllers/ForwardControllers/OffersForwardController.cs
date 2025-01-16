@@ -41,7 +41,7 @@ namespace CarSearchAPI.Controllers.ForwardControllers
             (int _page, int _pageSize) = _offerPageService.GetPageAndPageSize(page, pageSize);
 
             var offerAmountParametersDto = _offerPageService.GetGetOfferAmountParameters
-                (brand, model, startDate, endDate, location);
+                (brand, model, startDate, endDate, location, email);
 
             var offerListParametersDto = _offerPageService.GetGetOfferListParameters
                 (brand, model, startDate, endDate, location, email, _pageSize);

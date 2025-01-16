@@ -1,13 +1,18 @@
-﻿using CarSearchAPI.Abstractions;
+﻿using System.Text;
+using System.Text.Json;
+using CarSearchAPI.Abstractions;
+using CarSearchAPI.DTOs.DriveEasy;
 
 namespace CarSearchAPI.Services.ProviderServices.ProviderClientServices
 {
     public class DriveEasyProviderCustomerService : IProviderCustomerService
     {
         private const string ClientExistsEndpoint = "/api/Client/checkClient/";
-        public async Task<bool> CheckIfClientExists(HttpClient client, string url, string customerEmail)
+        private const string CreateClientEndpoint = "/api/Client/createClient";
+        
+        public async Task<bool> CheckIfCustomerExistsAsync(HttpClient client, string url, string? email)
         {
-            url = $"{url}{ClientExistsEndpoint}{CreateIdFromEmail(customerEmail)}";
+            url = $"{url}{ClientExistsEndpoint}{CreateIdFromEmail(email)}";
             
             var response = await client.GetAsync(url);
             
@@ -16,9 +21,25 @@ namespace CarSearchAPI.Services.ProviderServices.ProviderClientServices
             return responseString == "Client found";
         }
 
-        public async Task CreateCustomerAsync(HttpClient client, string url)
+        public async Task CreateCustomerAsync(HttpClient client, string url, string? email)
         {
-            await client.PostAsync(url, null);
+            url += CreateClientEndpoint;
+
+            var customerCreationParameters = new DriveEasyCustomerCreationParametersDto()
+            {
+                Id = CreateIdFromEmail(email),
+                Name = email,
+                Surname = "Car Rental Customer",
+                Email = email,
+            };
+            
+            var jsonContent = new StringContent(
+                JsonSerializer.Serialize(customerCreationParameters),
+                Encoding.UTF8,
+                "application/json"
+            );
+            
+            await client.PostAsync(url, jsonContent);
         }
         
         public string GetProviderName()

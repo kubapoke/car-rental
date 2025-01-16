@@ -37,7 +37,7 @@ namespace CarSearchAPI.Services.ProviderServices
             return _rentServices[providerName];
         }
 
-        public IProviderCustomerService GetProviderClientService(string providerName)
+        public IProviderCustomerService GetProviderCustomerService(string providerName)
         {
             return _clientServices[providerName];
         }

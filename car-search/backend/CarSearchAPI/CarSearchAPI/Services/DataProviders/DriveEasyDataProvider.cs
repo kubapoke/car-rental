@@ -13,6 +13,7 @@ public class DriveEasyDataProvider : IExternalDataProvider
     private readonly IProviderCarService _carService;
     private readonly IProviderOfferService _offerService;
     private readonly IProviderRentService _rentService;
+    private readonly IProviderCustomerService _customerService;
 
     public DriveEasyDataProvider(IHttpClientFactory httpClientFactory, IProviderServiceFactory providerServiceFactory)
     {
@@ -20,7 +21,9 @@ public class DriveEasyDataProvider : IExternalDataProvider
         _carService = providerServiceFactory.GetProviderCarService(GetProviderName());
         _offerService = providerServiceFactory.GetProviderOfferService(GetProviderName());
         _rentService = providerServiceFactory.GetProviderRentService(GetProviderName());
+        _customerService = providerServiceFactory.GetProviderCustomerService(GetProviderName());
     }
+    
     public string GetProviderName()
     {
         return "DriveEasy";
@@ -35,8 +38,17 @@ public class DriveEasyDataProvider : IExternalDataProvider
         return await _carService.GetCarListAsync(client, url);
     }
 
-    public Task<int> GetOfferAmountAsync(GetOfferAmountParametersDto parameters)
+    public async Task<int> GetOfferAmountAsync(GetOfferAmountParametersDto parameters)
     {
+        var client = _httpClientFactory.CreateClient();
+        
+        var url = GetUrlWithoutQuery();
+
+        if (!(await CheckIfCustomerExistsAsync(parameters.Email)))
+        {
+            await CreateCustomerAsync(parameters.Email);
+        }
+        
         throw new NotImplementedException();
     }
 
@@ -60,5 +72,23 @@ public class DriveEasyDataProvider : IExternalDataProvider
         var driveEasyApiUrl = Environment.GetEnvironmentVariable("DRIVE_EASY_API_URL");
         var url = $"{driveEasyApiUrl}{endpoint}";
         return url;
+    }
+
+    private async Task<bool> CheckIfCustomerExistsAsync(string? email)
+    {
+        var client = _httpClientFactory.CreateClient();
+        
+        var url = GetUrlWithoutQuery();
+        
+        return await _customerService.CheckIfCustomerExistsAsync(client, url, email);
+    }
+
+    private async Task CreateCustomerAsync(string? email)
+    {
+        var client = _httpClientFactory.CreateClient();
+        
+        var url = GetUrlWithoutQuery();
+        
+        await _customerService.CreateCustomerAsync(client, url, email);
     }
 }

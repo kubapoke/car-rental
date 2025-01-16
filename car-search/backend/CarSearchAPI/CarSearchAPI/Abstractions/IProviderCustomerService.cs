@@ -2,7 +2,7 @@
 {
     public interface IProviderCustomerService : IProviderService
     {
-        public Task<bool> CheckIfClientExists(HttpClient client, string url, string customerEmail);
-        public Task CreateCustomerAsync(HttpClient client, string url);
+        public Task<bool> CheckIfCustomerExistsAsync(HttpClient client, string url, string? email);
+        public Task CreateCustomerAsync(HttpClient client, string url, string? email);
     }
 }
