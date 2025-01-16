@@ -17,6 +17,7 @@ import RentConfirmationPage from "../Pages/RentConfirmationPage.tsx";
 import UserRentsPage from "../Pages/UserRentsPage.tsx";
 import {RentsProvider} from "../Context/RentsContext.tsx";
 import {AuthProvider, useAuth} from "../Context/AuthContext.tsx";
+import RentConfirmedPage from "../Pages/RentConfirmedPage.tsx";
 
 function App() {
   return(
@@ -45,6 +46,7 @@ function MainRouter() {
                 <Route path='/offers/rent-confirmation' element={<RentConfirmationPage/>}/>
                 <Route path="/user-rents" element={isLoggedIn ? <UserRentsPage/> : <NotFoundPage/>}/>
                 <Route path="*" element={<NotFoundPage/>}/>
+                <Route path="/new-rent-confirm" element={<RentConfirmedPage/>}/>
             </Route>
         )
     );

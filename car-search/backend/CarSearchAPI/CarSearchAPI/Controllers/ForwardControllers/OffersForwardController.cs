@@ -17,13 +17,10 @@ namespace CarSearchAPI.Controllers.ForwardControllers
     public class OffersForwardController : ControllerBase
     {
         // this contains all of the external data providers
-        private readonly IEnumerable<IExternalDataProvider> _dataProviders;
-        private const int DefaultPageSize = 6;
         private readonly IOfferPageService _offerPageService;
 
-        public OffersForwardController(IEnumerable<IExternalDataProvider> dataProviders, IOfferPageService offerPageService)
+        public OffersForwardController(IOfferPageService offerPageService)
         {
-            _dataProviders = dataProviders;
             _offerPageService = offerPageService;
         }
         

@@ -73,6 +73,19 @@ namespace CarRentalAPI.Controllers
 
             return Ok(offers);
         }
+
+       [HttpGet("offer/{id}")]
+       public async Task<IActionResult> GetOffer([FromRoute] string id)
+       {
+           var offer = await _offerService.GetOfferByIdAsync(id);
+
+           if (offer == null)
+           {
+               return BadRequest("Offer with given id does not exist.");
+           }
+           
+           return Ok(offer);
+       }
    } 
 }
 
