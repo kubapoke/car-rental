@@ -8,9 +8,14 @@ const UserRentTile = ({rent}: { rent: Rent }) => {
     
     const handleReturn = async () => {
         try {
-            await returnCar(rent.rentId);
-            rent.status = RentStatus.Returned;
-            setIsReturned(true);
+            const response = await returnCar(rent.rentId);
+            if (response.ok) {
+                console.log('Car returned:', rent.rentId);
+                rent.status = RentStatus.Returned;
+                setIsReturned(true);
+            } else {
+                console.error('Failed to return car:', response.statusText);
+            }
         } catch (error) {
             console.error('Error returning car:', error);
         }
