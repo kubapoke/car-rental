@@ -67,14 +67,14 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_5DA27A1EC070421EAC9CFE9A5DD9B63D }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_391FFE1FFACC4024ACBD0D511E01A2B4 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_20574EF43DE540898AD4C2F77D7812D8 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_58BFCE58F67F4B288449001F8111771F }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_4F12419BA3834EAFBDC5ABB54A025BC6 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_D8075ACE677C49ED906206326AA4C379 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'carsearchapi'
+          app-name: 'CarSearchBack'
           slot-name: 'Production'
           package: .
