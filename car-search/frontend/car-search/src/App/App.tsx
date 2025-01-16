@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom';
 import MainLayout from "../Layouts/MainLayout.tsx";
 import HomePage from "../Pages/HomePage.tsx";
-import NotFoundPage from "../Pages/NotFoundPage.tsx";
+import ErrorPage from "../Pages/ErrorPage.tsx";
 import BrowseOffersPage from "../Pages/BrowseOffersPage.tsx";
 import OfferPage from "../Pages/OfferPage.tsx";
 import NewUserForm from "../Pages/NewUserForm.tsx";
@@ -44,9 +44,9 @@ function MainRouter() {
                 <Route path='/new-user-form' element={<NewUserForm/>}/>
                 <Route path='/offers/:id' element={<OfferPage/>}/>
                 <Route path='/offers/rent-confirmation' element={<RentConfirmationPage/>}/>
-                <Route path="/user-rents" element={isLoggedIn ? <UserRentsPage/> : <NotFoundPage/>}/>
-                <Route path="*" element={<NotFoundPage/>}/>
-                <Route path="/error" element={<NotFoundPage/>}/>
+                <Route path="/user-rents" element={isLoggedIn ? <UserRentsPage/> : <ErrorPage/>}/>
+                <Route path="*" element={<ErrorPage/>}/>
+                <Route path="/error" element={<ErrorPage/>}/>
                 <Route path="/new-rent-confirm" element={<RentConfirmedPage/>}/>
             </Route>
         )

@@ -1,6 +1,6 @@
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {FaArrowLeft, FaMapMarker} from "react-icons/fa";
-import notFoundPage from "./NotFoundPage.tsx";
+import notFoundPage from "./ErrorPage.tsx";
 import {useOffers, Offer} from "../Context/OffersContext.tsx";
 import {calculateDaysBetweenDates} from "../Components/CarOffer.tsx";
 
