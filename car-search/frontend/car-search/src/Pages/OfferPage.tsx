@@ -8,7 +8,8 @@ const OfferPage = () => {
     const navigate = useNavigate();
     const { id } = useParams();
     if (!id) {
-        throw new Response("Offer ID is missing", { status: 400 });
+        navigate("/error", { state: { message: "Offer ID is missing", status: 400 } });
+        return null;
     }
 
     // get offers from the context
@@ -18,7 +19,8 @@ const OfferPage = () => {
     const offer = offers.find((offer) => offer.offerId === id);
 
     if (!offer) {
-        throw new Response("Offer not found", { status: 404 });
+        navigate("/error", { state: { message: "Offer not found", status: 404 } });
+        return null;
     }
     
     const onRentClick = async (offer: Offer) => {

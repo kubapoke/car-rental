@@ -46,6 +46,7 @@ function MainRouter() {
                 <Route path='/offers/rent-confirmation' element={<RentConfirmationPage/>}/>
                 <Route path="/user-rents" element={isLoggedIn ? <UserRentsPage/> : <NotFoundPage/>}/>
                 <Route path="*" element={<NotFoundPage/>}/>
+                <Route path="/error" element={<NotFoundPage/>}/>
                 <Route path="/new-rent-confirm" element={<RentConfirmedPage/>}/>
             </Route>
         )
