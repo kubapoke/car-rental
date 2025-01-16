@@ -7,8 +7,12 @@ namespace CarSearchAPI.Services.ProviderServices.ProviderCarServices;
 
 public class DriveEasyProviderCarService : IProviderCarService
 {
+    private const string CarListEndpoint = "/api/Car";
+    
     public async Task<List<CarDto>> GetCarListAsync(HttpClient client, string url)
     {
+        url += CarListEndpoint;
+        
         var response = await client.GetAsync(url);
             
         if (response.IsSuccessStatusCode)

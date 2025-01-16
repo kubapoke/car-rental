@@ -40,7 +40,7 @@ namespace CarSearchAPI.Services.DataProviders
         {
             var client = GetClientWithBearerToken();
 
-            var url = GetUrlWithoutQuery("/api/Cars/car-list");          
+            var url = GetUrlWithoutQuery();          
             
             return await _carService.GetCarListAsync(client, url);
         }
@@ -49,84 +49,36 @@ namespace CarSearchAPI.Services.DataProviders
         {
             var client = GetClientWithBearerToken();
 
-            var urlWithoutQuery = GetUrlWithoutQuery("/api/Offers/offer-amount");
-
-            var queryParameters = new Dictionary<string, string?>()
-            {
-                { "model", parameters.Model },
-                { "brand", parameters.Brand },
-                { "startDate", parameters.StartDate.ToString("o") },
-                { "endDate", parameters.EndDate.ToString("o") },
-                { "location", parameters.Location },
-            };
+            var url = GetUrlWithoutQuery();
             
-            var url = QueryHelpers.AddQueryString(urlWithoutQuery, 
-                queryParameters.Where(p => p.Value != null));
-            
-            return await _offerService.GetOfferAmountAsync(client, url);
+            return await _offerService.GetOfferAmountAsync(client, url, parameters);
         }
 
         public async Task<List<OfferDto>> GetOfferListAsync(GetOfferListParametersDto parameters)
         {
             var client = GetClientWithBearerToken();
 
-            var urlWithoutQuery = GetUrlWithoutQuery("/api/Offers/offer-list");
+            var url = GetUrlWithoutQuery();
             
-            var queryParameters = new Dictionary<string, string?>()
-            {
-                { "model", parameters.Model },
-                { "brand", parameters.Brand },
-                { "startDate", parameters.StartDate.ToString("o") },
-                { "endDate", parameters.EndDate.ToString("o") },
-                { "location", parameters.Location },
-                { "email", parameters.Email },
-                { "page", parameters.Page.ToString() },
-                { "pageSize", parameters.PageSize.ToString() },
-            };
-            
-            var url = QueryHelpers.AddQueryString(urlWithoutQuery, 
-                queryParameters.Where(p => p.Value != null));
-            
-            return await _offerService.GetOfferListAsync(client, url);
+            return await _offerService.GetOfferListAsync(client, url, parameters);
         }
 
         public async Task<NewSearchRentDto> CreateNewRentAsync(ClaimsPrincipal claimsPrincipal)
         {
             var client = GetClientWithBearerToken();
 
-            string offerId = claimsPrincipal.FindFirst("OfferId")?.Value;
-            string email = claimsPrincipal.FindFirst("Email")?.Value;
-
-            NewRentalRentDto newRentDto = new NewRentalRentDto
-            {
-                OfferId = offerId,
-                Email = email,
-            };
-
-            var url = GetUrlWithoutQuery("/api/Rents/create-new-rent");
-
-            var jsonContent = new StringContent(
-                JsonSerializer.Serialize(newRentDto),
-                Encoding.UTF8,
-                "application/json"
-            );
-
-            return await _rentService.CreateNewRentAsync(client, url, jsonContent);
+            var url = GetUrlWithoutQuery();
+            
+            return await _rentService.CreateNewRentAsync(client, url, claimsPrincipal);
         }        
      
         public async Task<bool> SetRentStatusReadyToReturnAsync(int rentId)
         {
             var client = GetClientWithBearerToken();
 
-            var url = GetUrlWithoutQuery("/api/Rents/set-rent-status-ready-to-return");
+            var url = GetUrlWithoutQuery();
 
-            var jsonContent = new StringContent(
-                JsonSerializer.Serialize(rentId),
-                Encoding.UTF8,
-                "application/json"
-            );
-
-            return await _rentService.SetRentStatusReadyToReturnAsync(client, url, jsonContent);
+            return await _rentService.SetRentStatusReadyToReturnAsync(client, url, rentId);
         }
 
         private HttpClient GetClientWithBearerToken()
@@ -154,7 +106,7 @@ namespace CarSearchAPI.Services.DataProviders
             return tokenHandler.WriteToken(token);
         }
 
-        private string GetUrlWithoutQuery(string endpoint)
+        private string GetUrlWithoutQuery(string endpoint = "")
         {
             var carRentalApiUrl = Environment.GetEnvironmentVariable("CAR_RENTAL_API_URL");
             var url = $"{carRentalApiUrl}{endpoint}";

@@ -1,4 +1,5 @@
-﻿using CarSearchAPI.Abstractions;
+﻿using System.Security.Claims;
+using CarSearchAPI.Abstractions;
 using CarSearchAPI.DTOs.CarSearch;
 
 namespace CarSearchAPI.Services.ProviderServices.ProviderRentServices
@@ -10,12 +11,12 @@ namespace CarSearchAPI.Services.ProviderServices.ProviderRentServices
             return "DriveEasy";
         }
 
-        public Task<NewSearchRentDto> CreateNewRentAsync(HttpClient client, string url, StringContent? jsonContent)
+        public Task<NewSearchRentDto> CreateNewRentAsync(HttpClient client, string url, ClaimsPrincipal claimsPrincipal)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> SetRentStatusReadyToReturnAsync(HttpClient client, string url, StringContent? jsonContent)
+        public Task<bool> SetRentStatusReadyToReturnAsync(HttpClient client, string url, int rentId)
         {
             throw new NotImplementedException();
         }

@@ -30,7 +30,7 @@ public class DriveEasyDataProvider : IExternalDataProvider
     {
         var client = _httpClientFactory.CreateClient();
         
-        var url = GetUrlWithoutQuery("/api/Car"); 
+        var url = GetUrlWithoutQuery(); 
         
         return await _carService.GetCarListAsync(client, url);
     }
@@ -55,7 +55,7 @@ public class DriveEasyDataProvider : IExternalDataProvider
         throw new NotImplementedException();
     }
     
-    private string GetUrlWithoutQuery(string endpoint)
+    private string GetUrlWithoutQuery(string endpoint = "")
     {
         var driveEasyApiUrl = Environment.GetEnvironmentVariable("DRIVE_EASY_API_URL");
         var url = $"{driveEasyApiUrl}{endpoint}";

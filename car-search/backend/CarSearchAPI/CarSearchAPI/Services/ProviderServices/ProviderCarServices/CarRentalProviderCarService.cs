@@ -6,8 +6,12 @@ namespace CarSearchAPI.Services.ProviderServices.ProviderCarServices
 {
     public class CarRentalProviderCarService : IProviderCarService
     {
+        private const string CarListEndpoint = "/api/Cars/car-list";
+        
         public async Task<List<CarDto>> GetCarListAsync(HttpClient client, string url)
         {
+            url += CarListEndpoint;
+            
             var response = await client.GetAsync(url);
             
             if (response.IsSuccessStatusCode)

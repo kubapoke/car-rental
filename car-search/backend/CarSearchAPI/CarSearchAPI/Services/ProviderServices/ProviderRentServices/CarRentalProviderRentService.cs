@@ -1,14 +1,37 @@
 ﻿using System.Security.Claims;
+using System.Text;
+using System.Text.Json;
 using CarSearchAPI.Abstractions;
+using CarSearchAPI.DTOs.CarRental;
 using CarSearchAPI.DTOs.CarSearch;
 
 namespace CarSearchAPI.Services.ProviderServices.ProviderRentServices
 {
     public class CarRentalProviderRentService : IProviderRentService
     {
+        private const string NewRentEndpoint = "/api/Rents/create-new-rent";
+        private const string ReadyToReturnEndpoint = "/api/Rents/set-rent-status-ready-to-return";
+        
         public async Task<NewSearchRentDto> CreateNewRentAsync(HttpClient client, string url,
-            StringContent? jsonContent)
+            ClaimsPrincipal claimsPrincipal)
         {
+            url += NewRentEndpoint;
+            
+            string offerId = claimsPrincipal.FindFirst("OfferId")?.Value;
+            string email = claimsPrincipal.FindFirst("Email")?.Value;
+
+            NewRentalRentDto newRentDto = new NewRentalRentDto
+            {
+                OfferId = offerId,
+                Email = email,
+            };
+            
+            var jsonContent = new StringContent(
+                JsonSerializer.Serialize(newRentDto),
+                Encoding.UTF8,
+                "application/json"
+            );
+            
             var response = await client.PostAsync(url, jsonContent);
 
             if (response.IsSuccessStatusCode)
@@ -22,8 +45,16 @@ namespace CarSearchAPI.Services.ProviderServices.ProviderRentServices
         }
 
         public async Task<bool> SetRentStatusReadyToReturnAsync(HttpClient client, string url,
-            StringContent? jsonContent)
+            int rentId)
         {
+            url += ReadyToReturnEndpoint;
+            
+            var jsonContent = new StringContent(
+                JsonSerializer.Serialize(rentId),
+                Encoding.UTF8,
+                "application/json"
+            );
+            
             var response = await client.PostAsync(url, jsonContent);
 
             if (response.IsSuccessStatusCode)
