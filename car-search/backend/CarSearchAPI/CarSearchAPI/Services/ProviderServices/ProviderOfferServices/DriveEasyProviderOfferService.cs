@@ -46,7 +46,7 @@ namespace CarSearchAPI.Services.ProviderServices.ProviderOfferServices
             }
             else
             {
-                throw new Exception($"Error fetching data from \"/api/Offers/offer-amount\" at Car Rental API");
+                throw new Exception($"Error fetching data from \"/api/Offer\" at Drive Easy API");
             }
         }
 
@@ -99,7 +99,7 @@ namespace CarSearchAPI.Services.ProviderServices.ProviderOfferServices
             }
             else
             {
-                throw new Exception($"Error fetching data from \"/api/Offers/offer-amount\" at Car Rental API");
+                throw new Exception($"Error fetching data from \"/api/Offer\" at Drive Easy API");
             }
         }
         

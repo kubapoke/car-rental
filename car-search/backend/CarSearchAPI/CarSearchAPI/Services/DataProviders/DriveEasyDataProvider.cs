@@ -61,9 +61,13 @@ public class DriveEasyDataProvider : IExternalDataProvider
         return await _offerService.GetOfferListAsync(client, url, parameters, customerId);
     }
 
-    public Task<NewSearchRentDto> CreateNewRentAsync(ClaimsPrincipal claimsPrincipal)
+    public async Task<NewSearchRentDto> CreateNewRentAsync(ClaimsPrincipal claimsPrincipal)
     {
-        throw new NotImplementedException();
+        var client = _httpClientFactory.CreateClient();
+        
+        var url = GetUrlWithoutQuery();
+
+        return await _rentService.CreateNewRentAsync(client, url, claimsPrincipal);
     }
 
     public Task<bool> SetRentStatusReadyToReturnAsync(string rentId)
