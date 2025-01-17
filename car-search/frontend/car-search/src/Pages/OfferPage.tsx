@@ -19,17 +19,19 @@ const OfferPage = () => {
     }, [id, navigate]);
 
     // find and save appropriate offer
-    const offerData = sessionStorage.getItem("offerData");
     let offer: Offer | null = null;
 
-    if (offerData) {
-        offer = JSON.parse(offerData);
-    }
+    offer = offers.find((offer) => offer.offerId === id) || null;
 
     if (!offer) {
-        offer = offers.find((offer) => offer.offerId === id) || null;
-        sessionStorage.setItem("offerData", JSON.stringify(offer));
+        const offerData = sessionStorage.getItem("offerData");
+
+        if(offerData) {
+            offer = JSON.parse(offerData);
+        }
     }
+
+    sessionStorage.setItem("offerData", JSON.stringify(offer));
     
     const onRentClick = async (offer: Offer) => {
         // rentCar(offer);
