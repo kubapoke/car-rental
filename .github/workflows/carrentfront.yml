@@ -34,7 +34,7 @@ jobs:
           npm run test --if-present
 
       - name: Ensure web.config is in dist folder
-        working-directory: car-search/frontend/car-search
+        working-directory: car-rental/frontend/car-rental
         run: |
           cp web.config dist/
 
