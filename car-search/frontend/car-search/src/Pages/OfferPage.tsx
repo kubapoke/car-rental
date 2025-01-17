@@ -18,14 +18,18 @@ const OfferPage = () => {
         }
     }, [id, navigate]);
 
-    // find appropriate offer
-    const offer = offers.find((offer) => offer.offerId === id);
+    // find and save appropriate offer
+    const offerData = sessionStorage.getItem("offerData");
+    let offer: Offer | null = null;
 
-    useEffect(() => {
-        if (id && !offer) {
-            navigate("/error", { state: { message: "Offer not found", status: 404 } });
-        }
-    }, [id, offer, navigate]);
+    if (offerData) {
+        offer = JSON.parse(offerData);
+    }
+
+    if (!offer) {
+        offer = offers.find((offer) => offer.offerId === id) || null;
+        sessionStorage.setItem("offerData", JSON.stringify(offer));
+    }
     
     const onRentClick = async (offer: Offer) => {
         // rentCar(offer);
